@@ -335,9 +335,7 @@
             line-height: 45px;
         }
     </style>
-    <!-- 引入JSONEditor库的样式和脚本（CDN方式，无需下载） -->
-    <link href="https://cdn.jsdelivr.net/npm/jsoneditor@9.10.3/dist/jsoneditor.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/jsoneditor@9.10.3/dist/jsoneditor.min.js"></script>
+
 </head>
 
 <body>
@@ -446,11 +444,11 @@
                     <div class="tool-desc">长度/重量/面积换算，支持米/千米/斤/公斤/平方米等</div>
                 </a>
 
-                <!-- JSON格式化工具卡片（顶配版） -->
+                <!-- JSON格式化工具卡片 -->
                 <a href="#" class="tool-card" data-tool="json-format">
                     <div class="tool-icon">🔧</div>
                     <div class="tool-title">JSON格式化</div>
-                    <div class="tool-desc">可视化编辑/树形视图/代码格式化/校验</div>
+                    <div class="tool-desc">JSON美化/压缩/校验，支持高亮显示</div>
                 </a>
 
                 <!-- 可扩展：加更多工具，复制上面的结构改参数就行 -->
@@ -596,29 +594,20 @@
             </div>
         </div>
 
-        <!-- 工具7：JSON格式化页面（顶配版） -->
+        <!-- 工具7：JSON格式化页面 -->
         <div class="tool-page" id="json-format">
-            <h2>JSON格式化工具（专业版）</h2>
+            <h2>JSON格式化工具</h2>
             <div class="tool-content">
-                <!-- JSON编辑器容器（核心） -->
-                <div id="json-editor"
-                    style="width:100%; height:400px; border:1px solid #ddd; border-radius:6px; margin-bottom:15px;">
-                </div>
-
-                <!-- 操作按钮 -->
-                <button class="btn" id="json-get-formatted">获取格式化JSON</button>
-                <button class="btn" id="json-get-compressed">获取压缩JSON</button>
-                <button class="btn" id="json-clear">清空内容</button>
-                <button class="btn" id="json-switch-mode" style="margin-left:10px;">切换视图（树形/代码）</button>
-
-                <!-- 结果展示区域 -->
+                <textarea class="input-area" id="json-input"
+                    placeholder="请输入需要格式化的JSON文本（支持未格式化/压缩的JSON）..."></textarea>
+                <button class="btn" id="json-format-btn">格式化（美化）</button>
+                <button class="btn" id="json-compress-btn">压缩（精简）</button>
+                <button class="btn" id="json-validate-btn">校验合法性</button>
                 <div class="result-area" style="margin-top:20px;">
                     <div class="result-title">处理结果：</div>
                     <pre id="json-result"
-                        style="white-space: pre-wrap; word-wrap: break-word; font-family: monospace; font-size:14px; padding:10px; background:#f5f5f5; border-radius:4px;">请操作编辑器后点击按钮获取结果</pre>
+                        style="white-space: pre-wrap; word-wrap: break-word; font-family: monospace; font-size:14px;">请输入JSON文本后选择操作</pre>
                 </div>
-
-                <!-- 辅助按钮 -->
                 <button class="btn" style="margin-top:10px;" onclick="copyResult('json-result')">复制结果</button>
                 <a href="#" class="back-btn" onclick="showDirectory()" style="margin-left:10px;">← 返回工具目录</a>
             </div>
@@ -918,81 +907,10 @@
             });
 
 
-            // ========== 初始化JSON编辑器（顶配版） ==========
-            let jsonEditorInstance; // 全局存储编辑器实例
-            let currentMode = 'code'; // 默认视图：code（代码），可选tree（树形）
 
-            // 初始化编辑器（仅当容器存在时执行）
-            const editorContainer = document.getElementById('json-editor');
-            if (editorContainer) {
-                // 编辑器配置项
-                const editorOptions = {
-                    mode: currentMode, // 初始视图
-                    modes: ['tree', 'code', 'view'], // 支持切换的视图类型
-                    onChange: function () {
-                        // 内容变化时自动校验（控制台提示，不干扰用户）
-                        try {
-                            jsonEditorInstance.getText();
-                        } catch (e) {
-                            console.log('JSON格式错误：', e.message);
-                        }
-                    },
-                    // 样式适配（和你的网站风格统一）
-                    theme: 'light'
-                };
-
-                // 创建编辑器实例
-                jsonEditorInstance = new JSONEditor(editorContainer, editorOptions);
-            }
-
-            // 1. 获取格式化JSON
-            if (document.getElementById('json-get-formatted')) {
-                document.getElementById('json-get-formatted').addEventListener('click', function () {
-                    try {
-                        // 获取编辑器内容并格式化（缩进2个空格）
-                        const jsonText = jsonEditorInstance.getText();
-                        const jsonObj = JSON.parse(jsonText);
-                        const formattedJson = JSON.stringify(jsonObj, null, 2);
-                        document.getElementById('json-result').textContent = formattedJson;
-                    } catch (e) {
-                        document.getElementById('json-result').textContent = `❌ JSON格式错误：${e.message}`;
-                    }
-                });
-            }
-
-            // 2. 获取压缩JSON
-            if (document.getElementById('json-get-compressed')) {
-                document.getElementById('json-get-compressed').addEventListener('click', function () {
-                    try {
-                        const jsonText = jsonEditorInstance.getText();
-                        const jsonObj = JSON.parse(jsonText);
-                        const compressedJson = JSON.stringify(jsonObj);
-                        document.getElementById('json-result').textContent = compressedJson;
-                    } catch (e) {
-                        document.getElementById('json-result').textContent = `❌ JSON格式错误：${e.message}`;
-                    }
-                });
-            }
-
-            // 3. 清空内容
-            if (document.getElementById('json-clear')) {
-                document.getElementById('json-clear').addEventListener('click', function () {
-                    jsonEditorInstance.setText('');
-                    document.getElementById('json-result').textContent = '内容已清空';
-                });
-            }
-
-            // 4. 切换视图（树形/代码）
-            if (document.getElementById('json-switch-mode')) {
-                document.getElementById('json-switch-mode').addEventListener('click', function () {
-                    currentMode = currentMode === 'code' ? 'tree' : 'code';
-                    jsonEditorInstance.setMode(currentMode);
-                    this.textContent = `切换视图（${currentMode === 'code' ? '树形' : '代码'}）`;
-                    alert(`已切换到${currentMode === 'code' ? '代码' : '树形'}视图`);
-                });
-            }
-            // ========== JSON编辑器逻辑结束 ==========
         });
+
+
 
         // 新增：5. 大小写转换功能
         // 转全部大写
@@ -1122,6 +1040,64 @@
         document.getElementById('reset-number').addEventListener('click', function () {
             document.getElementById('number-input').value = '';
             document.getElementById('number-result').textContent = '请输入数字后点击「转中文大写」';
+        });
+
+        // 8. JSON格式化功能
+        // 格式化（美化）
+        document.getElementById('json-format-btn').addEventListener('click', function () {
+            const input = document.getElementById('json-input').value.trim();
+            const resultEl = document.getElementById('json-result');
+
+            if (!input) {
+                resultEl.textContent = '请输入JSON文本！';
+                return;
+            }
+
+            try {
+                // 先解析为JSON对象，再格式化输出（缩进2个空格）
+                const jsonObj = JSON.parse(input);
+                const formattedJson = JSON.stringify(jsonObj, null, 2);
+                resultEl.textContent = formattedJson;
+            } catch (e) {
+                resultEl.textContent = `JSON格式错误：${e.message}`;
+            }
+        });
+
+        // 压缩（精简）
+        document.getElementById('json-compress-btn').addEventListener('click', function () {
+            const input = document.getElementById('json-input').value.trim();
+            const resultEl = document.getElementById('json-result');
+
+            if (!input) {
+                resultEl.textContent = '请输入JSON文本！';
+                return;
+            }
+
+            try {
+                const jsonObj = JSON.parse(input);
+                const compressedJson = JSON.stringify(jsonObj);
+                resultEl.textContent = compressedJson;
+            } catch (e) {
+                resultEl.textContent = `JSON格式错误：${e.message}`;
+            }
+        });
+
+        // 校验合法性
+        document.getElementById('json-validate-btn').addEventListener('click', function () {
+            const input = document.getElementById('json-input').value.trim();
+            const resultEl = document.getElementById('json-result');
+
+            if (!input) {
+                resultEl.textContent = '请输入JSON文本！';
+                return;
+            }
+
+            try {
+                JSON.parse(input);
+                resultEl.textContent = '✅ JSON格式合法！';
+            } catch (e) {
+                resultEl.textContent = `❌ JSON格式错误：${e.message}`;
+            }
         });
 
         // 显示工具目录

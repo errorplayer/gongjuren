@@ -334,6 +334,40 @@
             color: #222;
             line-height: 45px;
         }
+
+        /* JSON语法高亮样式 */
+        .json-key {
+            color: #c792ea;
+        }
+
+        /* 键名：紫色 */
+        .json-string {
+            color: #c3e88d;
+        }
+
+        /* 字符串：绿色 */
+        .json-number {
+            color: #f78c6c;
+        }
+
+        /* 数字：橙色 */
+        .json-boolean {
+            color: #82aaff;
+        }
+
+        /* 布尔值：蓝色 */
+        .json-null {
+            color: #ff5370;
+        }
+
+        /* null：红色 */
+        #json-result {
+            background-color: #282c34;
+            color: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
     </style>
 
 </head>
@@ -1043,62 +1077,74 @@
         });
 
         // 8. JSON格式化功能
-        // 格式化（美化）
+        // 新增：JSON高亮函数
+        function highlightJson(jsonString) {
+            if (!jsonString) return '';
+            // 替换不同类型的JSON内容，添加样式类
+            return jsonString
+                .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*")(\s*:)/g, '<span class="json-key">$1</span>$3') // 键名
+                .replace(/: (true|false|null)/g, ': <span class="json-boolean">$1</span>') // 布尔值/null
+                .replace(/: (-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, ': <span class="json-number">$1</span>') // 数字
+                .replace(/: "([^"]*)"/g, ': <span class="json-string">"$1"</span>'); // 字符串
+        }
+
+        // 重写格式化按钮逻辑（带高亮）
         document.getElementById('json-format-btn').addEventListener('click', function () {
             const input = document.getElementById('json-input').value.trim();
             const resultEl = document.getElementById('json-result');
 
             if (!input) {
-                resultEl.textContent = '请输入JSON文本！';
+                resultEl.innerHTML = '请输入JSON文本！';
                 return;
             }
 
             try {
-                // 先解析为JSON对象，再格式化输出（缩进2个空格）
                 const jsonObj = JSON.parse(input);
                 const formattedJson = JSON.stringify(jsonObj, null, 2);
-                resultEl.textContent = formattedJson;
+                const highlightedJson = highlightJson(formattedJson);
+                resultEl.innerHTML = highlightedJson; // 改用innerHTML渲染样式
             } catch (e) {
-                resultEl.textContent = `JSON格式错误：${e.message}`;
+                resultEl.innerHTML = `JSON格式错误：${e.message}`;
             }
         });
 
-        // 压缩（精简）
+        // 压缩和校验逻辑不变，仅把textContent改为innerHTML
         document.getElementById('json-compress-btn').addEventListener('click', function () {
             const input = document.getElementById('json-input').value.trim();
             const resultEl = document.getElementById('json-result');
 
             if (!input) {
-                resultEl.textContent = '请输入JSON文本！';
+                resultEl.innerHTML = '请输入JSON文本！';
                 return;
             }
 
             try {
                 const jsonObj = JSON.parse(input);
                 const compressedJson = JSON.stringify(jsonObj);
-                resultEl.textContent = compressedJson;
+                resultEl.innerHTML = compressedJson;
             } catch (e) {
-                resultEl.textContent = `JSON格式错误：${e.message}`;
+                resultEl.innerHTML = `JSON格式错误：${e.message}`;
             }
         });
 
-        // 校验合法性
         document.getElementById('json-validate-btn').addEventListener('click', function () {
             const input = document.getElementById('json-input').value.trim();
             const resultEl = document.getElementById('json-result');
 
             if (!input) {
-                resultEl.textContent = '请输入JSON文本！';
+                resultEl.innerHTML = '请输入JSON文本！';
                 return;
             }
 
             try {
                 JSON.parse(input);
-                resultEl.textContent = '✅ JSON格式合法！';
+                resultEl.innerHTML = '✅ JSON格式合法！';
             } catch (e) {
-                resultEl.textContent = `❌ JSON格式错误：${e.message}`;
+                resultEl.innerHTML = `❌ JSON格式错误：${e.message}`;
             }
         });
+
+
 
         // 显示工具目录
         function showDirectory() {

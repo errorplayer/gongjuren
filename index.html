@@ -738,7 +738,55 @@
                     </div>
                 </div>
 
+                <!-- 全局移动端适配样式 -->
+                <style>
+                    /* 屏幕宽度≤768px（手机端）时的适配规则 */
+                    @media (max-width: 768px) {
 
+                        /* 核心输入区域改为单列 */
+                        #drug-calculator .tool-content>div:first-of-type {
+                            grid-template-columns: 1fr !important;
+                            gap: 15px !important;
+                        }
+
+                        /* 频率+时间范围区域改为单列 */
+                        #drug-calculator .tool-content>div:nth-of-type(2) {
+                            grid-template-columns: 1fr !important;
+                            gap: 15px !important;
+                        }
+
+                        /* 优化移动端输入框/下拉框大小 */
+                        #drug-calculator input[type="datetime-local"],
+                        #drug-calculator select {
+                            font-size: 14px !important;
+                            padding: 10px !important;
+                        }
+
+                        /* 按钮全屏宽，取消横向间距 */
+                        #drug-calc-btn,
+                        #drug-reset-btn {
+                            width: 100% !important;
+                            margin-left: 0 !important;
+                            margin-top: 10px !important;
+                        }
+
+                        /* 结果区域适配移动端 */
+                        #drug-time-list {
+                            font-size: 13px !important;
+                            padding: 10px !important;
+                            max-height: 250px !important;
+                        }
+
+                        /* 减少移动端内边距，提升显示空间 */
+                        #drug-calculator .tool-content {
+                            padding: 0 5px !important;
+                        }
+
+                        #drug-calculator .result-area {
+                            padding: 15px !important;
+                        }
+                    }
+                </style>
 
                 <!-- 操作按钮 -->
                 <button class="btn" id="drug-calc-btn"
@@ -1428,63 +1476,63 @@
         }
 
         // 通用复制结果函数（适配移动端+HTTPS/HTTP）
-function copyResult(id) {
-    const el = document.getElementById(id);
-    // 优先获取纯文本（兼容pre/普通div）
-    const text = el.innerText || el.textContent || '';
-    
-    if (!text || text === '请点击「开始计算」生成列表') {
-        alert('暂无可复制的内容！');
-        return;
-    }
+        function copyResult(id) {
+            const el = document.getElementById(id);
+            // 优先获取纯文本（兼容pre/普通div）
+            const text = el.innerText || el.textContent || '';
 
-    // 方案1：尝试使用Clipboard API（HTTPS环境优先）
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => {
-            alert('复制成功！');
-        }).catch((err) => {
-            console.log('Clipboard API失败：', err);
-            fallbackCopyTextToClipboard(text); // 兜底方案
-        });
-    } else {
-        // 方案2：文本域兜底（兼容HTTP/移动端所有浏览器）
-        fallbackCopyTextToClipboard(text);
-    }
-}
+            if (!text || text === '请点击「开始计算」生成列表') {
+                alert('暂无可复制的内容！');
+                return;
+            }
 
-// 兜底复制方案（兼容所有环境）
-function fallbackCopyTextToClipboard(text) {
-    // 创建临时文本域（隐藏）
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    // 定位到视口外（避免闪烁）
-    textArea.style.position = 'fixed';
-    textArea.style.top = '-999px';
-    textArea.style.left = '-999px';
-    textArea.style.width = '200px';
-    textArea.style.height = '200px';
-    document.body.appendChild(textArea);
-    
-    // 选中并复制
-    textArea.focus();
-    textArea.select();
-    textArea.setSelectionRange(0, text.length); // 兼容移动端
-    
-    try {
-        const successful = document.execCommand('copy');
-        if (successful) {
-            alert('复制成功！');
-        } else {
-            alert('复制失败，请手动复制');
+            // 方案1：尝试使用Clipboard API（HTTPS环境优先）
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('复制成功！');
+                }).catch((err) => {
+                    console.log('Clipboard API失败：', err);
+                    fallbackCopyTextToClipboard(text); // 兜底方案
+                });
+            } else {
+                // 方案2：文本域兜底（兼容HTTP/移动端所有浏览器）
+                fallbackCopyTextToClipboard(text);
+            }
         }
-    } catch (err) {
-        console.log('兜底方案失败：', err);
-        alert('复制失败，请手动复制');
-    } finally {
-        // 移除临时文本域
-        document.body.removeChild(textArea);
-    }
-}
+
+        // 兜底复制方案（兼容所有环境）
+        function fallbackCopyTextToClipboard(text) {
+            // 创建临时文本域（隐藏）
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            // 定位到视口外（避免闪烁）
+            textArea.style.position = 'fixed';
+            textArea.style.top = '-999px';
+            textArea.style.left = '-999px';
+            textArea.style.width = '200px';
+            textArea.style.height = '200px';
+            document.body.appendChild(textArea);
+
+            // 选中并复制
+            textArea.focus();
+            textArea.select();
+            textArea.setSelectionRange(0, text.length); // 兼容移动端
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    alert('复制成功！');
+                } else {
+                    alert('复制失败，请手动复制');
+                }
+            } catch (err) {
+                console.log('兜底方案失败：', err);
+                alert('复制失败，请手动复制');
+            } finally {
+                // 移除临时文本域
+                document.body.removeChild(textArea);
+            }
+        }
     </script>
 </body>
 

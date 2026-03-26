@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-
+import DailyHot from './_components/DailyHot';
 
 export const dynamic = 'force-dynamic';   // ← 加这一行，禁用缓存
 
@@ -27,6 +27,8 @@ export default async function Home() {
       <div className="ad-top">
         <p>【广告位】- 顶部横幅广告</p>
       </div>
+
+      <DailyHot />
 
       <p style={{ margin: '15px 0', color: '#666' }}>精选好用的免费工具，在线即用，无需下载安装</p>
       <div className="tools-grid">

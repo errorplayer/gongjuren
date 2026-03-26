@@ -624,42 +624,39 @@ header {
   word-wrap: break-word;
 }
 
-/* 每日热搜 */
-.daily-hot {
-  display: flex !important;
-  flex-wrap: nowrap !important;
-  gap: 8px;
+/* 每日热搜 - 跑马灯 */
+.daily-hot-wrapper {
+  overflow: hidden;
   margin: 15px 0;
-  padding-bottom: 5px;
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
-  -webkit-overflow-scrolling: touch !important;
-  scrollbar-width: none !important;
-  width: 100% !important;
 }
 
-.daily-hot>* {
-  flex-shrink: 0 !important;
+.daily-hot {
+  overflow: hidden;
 }
 
-.daily-hot::-webkit-scrollbar {
-  display: none !important;
+.daily-hot-track {
+  display: flex;
+  gap: 8px;
+  width: max-content;
+  animation: daily-hot-scroll 30s linear infinite;
 }
 
+.daily-hot-track:hover {
+  animation-play-state: paused;
+}
 
+@keyframes daily-hot-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
 
-
-
+.daily-hot-item {
+  flex-shrink: 0;
+}
 
 .daily-hot-link {
   text-decoration: none;
-  flex-shrink: 0;
 }
-
-.daily-hot>span {
-  flex-shrink: 0;
-}
-
 
 .daily-hot-tag {
   display: inline-flex;
@@ -671,7 +668,6 @@ header {
   line-height: 1.5;
   cursor: default;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  flex-shrink: 0;
 }
 
 .daily-hot-link .daily-hot-tag:hover {

@@ -38,6 +38,11 @@ export default async function Home() {
             <div className="tool-usage-count">使用量： {statsMap[tool.id] || 0} </div>
           </Link>
         ))}
+        <Link href="/guestbook" key="guestbook" className="tool-card">
+          <div className="tool-icon">💬</div>
+          <div className="tool-title">留言板</div>
+          <div className="tool-desc">欢迎大家留言交流，分享使用体验和建议</div>
+        </Link>
         <Link href="#" className="tool-card">
           <div className="tool-icon">➕</div>
           <div className="tool-title">更多工具</div>

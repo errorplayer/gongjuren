@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
               <a href="/" className="logo">实用小工具合集</a>
               <FlipClock />
             </div>
-            <span 
+            {/* <span 
               className="header-tag" 
               style={{ 
                 fontFamily: "system-ui, -apple-system, sans-serif, emoji",
@@ -35,7 +35,8 @@ export default function RootLayout({ children }) {
               }}
             >
               🆓 easy to use
-            </span><DailyQuote />
+            </span> */}
+            <DailyQuote />
           </div>
         </header>
         {children}

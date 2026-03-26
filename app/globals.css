@@ -322,11 +322,11 @@ header {
 
 /* 翻页动画 */
 .flip-digit.flipping .top {
-  animation: flipTop 0.6s ease-in forwards;
+  animation: flipTop 0.4s ease-in forwards;
 }
 
 .flip-digit.flipping .bottom {
-  animation: flipBottom 0.6s ease-out forwards;
+  animation: flipBottom 0.7s ease-out forwards;
 }
 
 @keyframes flipTop {
@@ -487,4 +487,139 @@ header {
 .daily-quote-from {
   color: #bbb;
   font-size: 26px;
+}
+
+
+/* 留言板表单 */
+.guestbook-form {
+  background: #fff;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.guestbook-row {
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.guestbook-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.guestbook-input:focus {
+  border-color: #3498db;
+}
+
+.guestbook-input-nickname {
+  max-width: 300px;
+}
+
+.guestbook-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.guestbook-char-count {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  color: #bbb;
+  font-size: 12px;
+}
+
+.guestbook-captcha-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.guestbook-captcha-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  white-space: nowrap;
+}
+
+.guestbook-captcha-input {
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.guestbook-refresh {
+  padding: 8px 14px;
+  font-size: 13px;
+  background: #95a5a6;
+}
+
+.guestbook-error {
+  color: #ff5370;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+/* 留言列表 */
+.guestbook-list {
+  background: #fff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.guestbook-list-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.guestbook-empty {
+  text-align: center;
+  color: #999;
+  padding: 30px 0;
+}
+
+.guestbook-item {
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.guestbook-item:last-child {
+  border-bottom: none;
+}
+
+.guestbook-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.guestbook-nickname {
+  font-weight: 600;
+  color: #3498db;
+  font-size: 15px;
+}
+
+.guestbook-time {
+  color: #bbb;
+  font-size: 12px;
+}
+
+.guestbook-item-content {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.6;
+  word-wrap: break-word;
 }

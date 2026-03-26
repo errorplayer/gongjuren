@@ -32,7 +32,7 @@ export default async function Home() {
             <div className="tool-icon">{tool.icon}</div>
             <div className="tool-title">{tool.title}</div>
             <div className="tool-desc">{tool.desc}</div>
-            <div className="tool-usage-count">已使用 {statsMap[tool.id] || 0} 次</div>
+            <div className="tool-usage-count">使用量： {statsMap[tool.id] || 0} </div>
           </Link>
         ))}
         <Link href="#" className="tool-card">

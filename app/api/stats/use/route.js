@@ -9,11 +9,27 @@ export async function POST(request) {
             return Response.json({ error: '缺少 tool_id' }, { status: 400 });
         }
 
-        const { error } = await supabase.rpc('increment_use_count', { p_tool_id: tool_id });
+        // 先读取当前值
+        const { data: row, error: fetchError } = await supabase
+            .from('tool_stats')
+            .select('use_count')
+            .eq('id', tool_id)
+            .single();
 
-        if (error) {
-            console.error('统计失败:', error);
-            return Response.json({ error: '统计失败' }, { status: 500 });
+        if (fetchError) {
+            console.error('查询失败:', fetchError);
+            return Response.json({ error: '查询失败' }, { status: 500 });
+        }
+
+        // 再写入新值
+        const { error: updateError } = await supabase
+            .from('tool_stats')
+            .update({ use_count: (row.use_count || 0) + 1 })
+            .eq('id', tool_id);
+
+        if (updateError) {
+            console.error('更新失败:', updateError);
+            return Response.json({ error: '更新失败' }, { status: 500 });
         }
 
         return Response.json({ success: true });

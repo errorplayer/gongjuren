@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 
+
 export const dynamic = 'force-dynamic';   // ← 加这一行，禁用缓存
 
 const tools = [

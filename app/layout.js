@@ -1,6 +1,7 @@
 import './globals.css';
 import Script from 'next/script';
 import FlipClock from './_components/FlipClock';
+import DailyQuote from './_components/DailyQuote'; 
 
 export const metadata = {
   title: '实用小工具合集 - 免费好用的日常工具',
@@ -34,7 +35,7 @@ export default function RootLayout({ children }) {
               }}
             >
               🆓 easy to use
-            </span>
+            </span><DailyQuote />
           </div>
         </header>
         {children}

@@ -471,3 +471,20 @@ header {
     padding: 15px !important;
   }
 }
+
+
+.daily-quote {
+  text-align: center;
+  color: #999;
+  font-size: 26px;
+  font-style: italic;
+  padding: 15px 20px;
+  margin: 10px auto;
+  max-width: 600px;
+  line-height: 1.8;
+}
+
+.daily-quote-from {
+  color: #bbb;
+  font-size: 26px;
+}

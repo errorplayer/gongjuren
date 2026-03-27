@@ -108,8 +108,10 @@ header {
 }
 
 .tool-card {
+  position: relative;
+  /* 新增 */
   background-color: #fff;
-  border-radius: 8px;
+  border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 25px;
   text-align: center;
@@ -121,7 +123,89 @@ header {
 
 .tool-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 15px rgba(83, 113, 196, 0.747);
+}
+
+/* 通用标签样式 */
+
+/* 标签容器：flex 横向排列，标签之间留 5px 间距 */
+.tool-badges {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  display: flex;
+  gap: 15px;
+  z-index: 1;
+}
+
+.tool-badge {
+  font-size: 15px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #fff;
+  letter-spacing: 0.5px;
+  z-index: 1;
+  
+}
+
+
+/* ===== AI 标签 - 缓慢脉冲呼吸感 ===== */
+.badge-ai {
+  background: linear-gradient(100deg, #4661da, #e2c1df);
+  animation: badge-breathe 0.8s ease-in-out infinite;
+}
+
+@keyframes badge-breathe {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+/* ===== Hot 标签 - 快速弹跳，有活力 ===== */
+.badge-hot {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  animation: badge-bounce 0.5s ease-in-out infinite;
+}
+
+@keyframes badge-bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* ===== New 标签 - 左右摇摆，俏皮 ===== */
+.badge-new {
+  background: linear-gradient(135deg, #39493e, #38f9d7);
+  animation: badge-wiggle 1s ease-in-out infinite;
+}
+
+@keyframes badge-wiggle {
+
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(6deg);
+  }
+
+  75% {
+    transform: rotate(-6deg);
+  }
 }
 
 .tool-icon {

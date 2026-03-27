@@ -5,15 +5,15 @@ import DailyHot from './_components/DailyHot';
 export const dynamic = 'force-dynamic';   // ← 加这一行，禁用缓存
 
 const tools = [
-  { id: 'text-heal', icon: '✨', title: '文本治愈排版', desc: 'AI智能优化，让工作邮件/社交媒体/文章更有温度' },
-  { id: 'drug-calculator', icon: '💊', title: '药品服用次数计算', desc: 'CRC专用 | 按给药时间/频率精准计算服药次数' },
+  { id: 'text-heal', icon: '✨', title: '文本治愈排版', desc: 'AI智能优化，让工作邮件/社交媒体/文章更有温度', badge: ['AI', 'New'] },
+  { id: 'drug-calculator', icon: '💊', title: '药品服用次数计算', desc: 'CRC专用 | 按给药时间/频率精准计算服药次数', badge: ['Hot'] },
   { id: 'word-count', icon: '📝', title: '字数统计工具', desc: '统计中文、英文、字符数，含空格/不含空格' },
   { id: 'qrcode-generator', icon: '📱', title: '二维码生成器', desc: '输入文字/链接，一键生成二维码，可保存' },
   { id: 'timestamp-convert', icon: '⏰', title: '时间戳转换', desc: 'Unix时间戳与普通日期时间互转' },
   { id: 'case-convert', icon: '🔤', title: '大小写转换', desc: '文本全部大写/小写/首字母大写，一键转换' },
   { id: 'number-case-convert', icon: '🔢', title: '数字大小写转换', desc: '阿拉伯数字转中文大写（财务专用，支持小数）' },
   { id: 'unit-convert', icon: '📏', title: '常用单位换算', desc: '长度/重量/面积换算，支持米/千米/斤/公斤/平方米等' },
-  { id: 'json-format', icon: '🔧', title: 'JSON格式化', desc: 'JSON美化/压缩/校验，支持高亮显示' },
+  { id: 'json-format', icon: '🔧', title: 'JSON格式化', desc: 'JSON美化/压缩/校验，支持高亮显示和元素折叠', badge: ['New'] },
 ];
 
 export default async function Home() {
@@ -35,6 +35,13 @@ export default async function Home() {
       <div className="tools-grid">
         {tools.map(tool => (
           <Link href={`/tools/${tool.id}`} key={tool.id} className="tool-card">
+            {tool.badge && (
+              <div className="tool-badges">
+                {tool.badge.map(b => (
+                  <span key={b} className={`tool-badge badge-${b.toLowerCase()}`}>{b}</span>
+                ))}
+              </div>
+            )}
             <div className="tool-icon">{tool.icon}</div>
             <div className="tool-title">{tool.title}</div>
             <div className="tool-desc">{tool.desc}</div>
@@ -42,6 +49,7 @@ export default async function Home() {
           </Link>
         ))}
         <Link href="/guestbook" key="guestbook" className="tool-card">
+          <div className="tool-badges"><span className="tool-badge badge-hot">Hot</span></div>
           <div className="tool-icon">💬</div>
           <div className="tool-title">留言板</div>
           <div className="tool-desc">欢迎大家留言交流，分享使用体验和建议</div>

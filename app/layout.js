@@ -5,8 +5,8 @@ import DailyQuote from './_components/DailyQuote';
 
 export const metadata = {
   title: '实用小工具合集 - 免费好用的日常工具',
-  keywords: '实用小工具,字数统计,二维码生成,时间戳转换,免费工具',
-  description: '免费好用的实用小工具合集，包含字数统计、二维码生成、时间戳转换等工具，无需下载，在线即用！',
+  keywords: '免费好用的实用小工具合集，包含文本智能润色、字数统计、二维码生成、时间戳转换、JSON格式美化等工具，无需下载，在线即用！',
+  description: '免费好用的实用小工具合集，包含文本智能润色、字数统计、二维码生成、时间戳转换、JSON格式美化等工具，无需下载，在线即用！',
   charset: 'UTF-8',
 };
 

@@ -6,7 +6,8 @@ export const dynamic = 'force-dynamic';   // ← 加这一行，禁用缓存
 
 const tools = [
   { id: 'text-heal', icon: '✨', title: '文本治愈排版', desc: 'AI智能优化，让工作邮件/社交媒体/文章更有温度', badge: ['AI', 'New'] },
-  { id: 'drug-calculator', icon: '💊', title: '药品服用次数计算', desc: 'CRC专用 | 按给药时间/频率精准计算服药次数', badge: ['Hot'] },
+  { id: 'career', icon: '💼', title: '职场工具箱', desc: 'AI驱动的求职能力诊断与优化平台', badge: ['Beta'] },
+  { id: 'drug-calculator', icon: '💊', title: '药品服用次数计算', desc: 'CRC专用 | 按给药时间/频率精准计算服药次数' },
   { id: 'word-count', icon: '📝', title: '字数统计工具', desc: '统计中文、英文、字符数，含空格/不含空格' },
   { id: 'qrcode-generator', icon: '📱', title: '二维码生成器', desc: '输入文字/链接，一键生成二维码，可保存' },
   { id: 'timestamp-convert', icon: '⏰', title: '时间戳转换', desc: 'Unix时间戳与普通日期时间互转' },

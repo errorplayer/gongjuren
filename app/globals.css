@@ -168,6 +168,24 @@ header {
   }
 }
 
+/* ===== Beta 标签 - 缓慢脉冲呼吸感 ===== */
+.badge-beta {
+  background: linear-gradient(100deg, #3253e6, #687bd1);
+  animation: badge-breathe 0.8s ease-in-out infinite;
+}
+@keyframes badge-breathe {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+
 /* ===== Hot 标签 - 快速弹跳，有活力 ===== */
 .badge-hot {
   background: linear-gradient(135deg, #f093fb, #f5576c);

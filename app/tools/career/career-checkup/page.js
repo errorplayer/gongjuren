@@ -20,6 +20,15 @@ export default function CareerCheckup() {
   const [result, setResult] = useState(null);
   const [editableResult, setEditableResult] = useState('');
   const [exampleIndex, setExampleIndex] = useState(0);
+  const [showNotice, setShowNotice] = useState(true);
+
+  // 读取通知关闭状态
+  useEffect(() => {
+    const noticeDismissed = localStorage.getItem('career-checkup-notice-dismissed');
+    if (noticeDismissed) {
+      setShowNotice(false);
+    }
+  }, []);
 
   // 项目经历多条目管理
   const [projectItems, setProjectItems] = useState([]);
@@ -127,7 +136,7 @@ export default function CareerCheckup() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ tool_id: 'career' })
-    }).catch(() => {});
+    }).catch(() => { });
 
     const polishKey = getPolishKey(selectedScene.id);
     const insightKey = getInsightKey(selectedScene.id);
@@ -232,6 +241,35 @@ export default function CareerCheckup() {
     return !!modules[sceneId].confirmed;
   };
 
+  const handleDismissNotice = () => {
+    setShowNotice(false);
+    localStorage.setItem('career-checkup-notice-dismissed', 'true');
+  };
+
+  const handleResetAllData = () => {
+    if (!confirm('⚠️ 确认重置？\n\n将清空所有已保存的润色内容和设置，包括：\n• 个人画像信息\n• 各模块润色结果\n• 通知条偏好\n\n此操作不可撤销。')) {
+      return;
+    }
+    if (!confirm('再次确认：确定要清空所有数据吗？')) {
+      return;
+    }
+    // 清除 localStorage
+    localStorage.removeItem('career-checkup-session');
+    localStorage.removeItem('career-checkup-notice-dismissed');
+    // 重置 state
+    // setUserProfile({});
+    // setModules({
+    //   project_experience: { items: [] },
+    //   work_responsibility: { original: '', confirmed: '', insight: '' },
+    //   self_evaluation: { original: '', confirmed: '', insight: '' },
+    //   cover_letter: { original: '', confirmed: '', insight: '' },
+    // });
+    // setShowNotice(true);
+    // 刷新页面
+    window.location.reload();
+  };
+
+
   const allModulesCompleted =
     modules.project_experience.items.length > 0 &&
     modules.work_responsibility.confirmed &&
@@ -242,10 +280,43 @@ export default function CareerCheckup() {
 
   return (
     <div className="career-checkup">
+      {/* 通知条 */}
+      {showNotice && (
+        <div className="notice-bar">
+          <div className="notice-content">
+            <span className="notice-icon">💡</span>
+            <span className="notice-text">
+              建议使用PC端浏览器访问，体验更佳。所有数据仅保存于浏览器本地，仅在需要时发送至大模型处理。
+            </span>
+          </div>
+          <button className="notice-close" onClick={handleDismissNotice}>
+            ✕
+          </button>
+        </div>
+      )}
+
       <div className="checkup-header">
-        <Link href="/tools/career" className="back-link">
-          ← 返回职场工具箱
-        </Link>
+        <div className="header-top">
+          <Link href="/tools/career" className="back-link" style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '8px 16px',
+            background: 'linear-gradient(90deg, #764ba2 0%, #d2d8f3 100%)',
+            color: 'white',
+            textDecoration: 'none',
+            borderRadius: '20px',
+            fontWeight: 500,
+            fontSize: '0.9rem',
+            transition: 'all 0.2s ease',
+            boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)',
+          }}>
+            ← 返回职场工具箱
+          </Link>
+
+          <button className="reset-data-btn" onClick={handleResetAllData}>
+            重置数据
+          </button></div>
         <h1 className="checkup-title">🩺 求职体检</h1>
         <p className="checkup-subtitle">
           AI诊断你的求职准备度，给出个性化优化建议
@@ -326,9 +397,8 @@ export default function CareerCheckup() {
           {sceneList.map((scene) => (
             <div
               key={scene.id}
-              className={`scene-card ${
-                selectedScene?.id === scene.id ? 'active' : ''
-              } ${isModuleCompleted(scene.id) ? 'completed' : ''}`}
+              className={`scene-card ${selectedScene?.id === scene.id ? 'active' : ''
+                } ${isModuleCompleted(scene.id) ? 'completed' : ''}`}
               onClick={() => setSelectedScene(scene)}
             >
               {isModuleCompleted(scene.id) && (
@@ -560,31 +630,29 @@ export default function CareerCheckup() {
           <div
             className="progress-track"
             style={{
-              width: `${
-                ([
+              width: `${([
+                isModuleCompleted('project_experience') ? 1 : 0,
+                isModuleCompleted('work_responsibility') ? 1 : 0,
+                isModuleCompleted('self_evaluation') ? 1 : 0,
+                isModuleCompleted('cover_letter') ? 1 : 0,
+              ].reduce((a, b) => a + b, 0) /
+                4) *
+                100
+                }%`,
+            }}
+          >
+            <div
+              className="progress-fill"
+              style={{
+                width: `${([
                   isModuleCompleted('project_experience') ? 1 : 0,
                   isModuleCompleted('work_responsibility') ? 1 : 0,
                   isModuleCompleted('self_evaluation') ? 1 : 0,
                   isModuleCompleted('cover_letter') ? 1 : 0,
                 ].reduce((a, b) => a + b, 0) /
                   4) *
-                100
-              }%`,
-            }}
-          >
-            <div
-              className="progress-fill"
-              style={{
-                width: `${
-                  ([
-                    isModuleCompleted('project_experience') ? 1 : 0,
-                    isModuleCompleted('work_responsibility') ? 1 : 0,
-                    isModuleCompleted('self_evaluation') ? 1 : 0,
-                    isModuleCompleted('cover_letter') ? 1 : 0,
-                  ].reduce((a, b) => a + b, 0) /
-                    4) *
                   100
-                }%`,
+                  }%`,
               }}
             />
           </div>
@@ -598,21 +666,151 @@ export default function CareerCheckup() {
           padding: 2rem 1rem;
         }
 
+        /* 通知条样式 */
+        .notice-bar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          padding: 1rem 1.5rem;
+          border-radius: 12px;
+          margin-bottom: 1.5rem;
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+          animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .notice-content {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          flex: 1;
+        }
+
+        .notice-icon {
+          font-size: 1.5rem;
+          flex-shrink: 0;
+        }
+
+        .notice-text {
+          font-size: 0.95rem;
+          line-height: 1.5;
+          font-weight: 500;
+        }
+
+        .notice-close {
+          background: rgba(255, 255, 255, 0.2);
+          color: white;
+          border: none;
+          width: 32px;
+          height: 32px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 1.2rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.2s;
+          flex-shrink: 0;
+        }
+
+        .notice-close:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+          .notice-bar {
+            flex-direction: column;
+            gap: 0.75rem;
+            text-align: center;
+          }
+
+          .notice-content {
+            flex-direction: column;
+            gap: 0.5rem;
+          }
+
+          .notice-close {
+            width: 28px;
+            height: 28px;
+            font-size: 1rem;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+          }
+
+          .notice-bar {
+            position: relative;
+            padding-top: 2rem;
+            padding-bottom: 1rem;
+          }
+        }
+
         .checkup-header {
           margin-bottom: 2rem;
         }
 
+        .header-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.5rem;
+        }
+
+
         .back-link {
-          display: inline-block;
-          color: #3498db;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 16px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
           text-decoration: none;
-          margin-bottom: 1rem;
+          border-radius: 20px;
           font-weight: 500;
+          font-size: 0.9rem;
+          transition: all 0.2s ease;
+          box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
         }
 
         .back-link:hover {
-          text-decoration: underline;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
+
+        .reset-data-btn {
+          background: #f8f9fa;
+          border: 2px solid #e9ecef;
+          color: #6c757d;
+          font-size: 0.85rem;
+          padding: 8px 16px;
+          border-radius: 20px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-weight: 500;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .reset-data-btn:hover {
+          color: #e74c3c;
+          border-color: #e74c3c;
+          background: rgba(231, 76, 60, 0.08);
+          box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
+        }
+
 
         .checkup-title {
           font-size: 2rem;

@@ -5,6 +5,20 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { sceneList } from '../../../../lib/resume-polish-scenes';
 
+// 生成 modules 的内容指纹
+const getModulesFingerprint = (modules) => {
+  const fingerprintData = {
+    project_experience: modules.project_experience.items.map(item => ({
+      id: item.id,
+      confirmed: item.confirmed
+    })),
+    work_responsibility: modules.work_responsibility.confirmed,
+    self_evaluation: modules.self_evaluation.confirmed,
+    cover_letter: modules.cover_letter.confirmed,
+  };
+  return JSON.stringify(fingerprintData);
+};
+
 export default function ReportPreview() {
   const router = useRouter();
   const [userProfile, setUserProfile] = useState({});
@@ -16,6 +30,7 @@ export default function ReportPreview() {
   });
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [hasValidCache, setHasValidCache] = useState(false);
 
   // 加载 localStorage 数据
   useEffect(() => {
@@ -24,6 +39,14 @@ export default function ReportPreview() {
       const data = JSON.parse(saved);
       if (data.profile) setUserProfile(data.profile);
       if (data.modules) setModules(data.modules);
+
+      // 检查缓存是否有效
+      const cachedReport = localStorage.getItem('career-checkup-report-cache');
+      if (cachedReport) {
+        const cache = JSON.parse(cachedReport);
+        const currentFingerprint = getModulesFingerprint(data.modules);
+        setHasValidCache(cache.modulesFingerprint === currentFingerprint);
+      }
     }
     setLoading(false);
   }, []);
@@ -56,6 +79,8 @@ export default function ReportPreview() {
     router.push('/tools/career/career-checkup/report');
   };
 
+
+
   if (loading) {
     return (
       <div className="report-preview">
@@ -72,7 +97,20 @@ export default function ReportPreview() {
       <div className="preview-header">
         <Link
           href="/tools/career/career-checkup"
-          className="back-link"
+          className="back-link" style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '8px 16px',
+            background: 'linear-gradient(90deg, #764ba2 0%, #d2d8f3 100%)',
+            color: 'white',
+            textDecoration: 'none',
+            borderRadius: '20px',
+            fontWeight: 500,
+            fontSize: '0.9rem',
+            transition: 'all 0.2s ease',
+            boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)',
+          }}
         >
           ← 返回编辑
         </Link>
@@ -182,13 +220,31 @@ export default function ReportPreview() {
 
       {/* 操作按钮 */}
       <div className="action-section">
-        <button
-          className="confirm-button"
-          onClick={handleConfirmAndGenerate}
-          disabled={generating}
-        >
-          {generating ? '生成中...' : '✓ 确认无误，生成体检报告'}
-        </button>
+        {hasValidCache ? (
+          <>
+            <div className="cache-hint">
+              <div className="cache-icon">✓</div>
+              <div className="cache-content">
+                <div className="cache-title">报告已就绪</div>
+                <div className="cache-desc">检测到已生成的体检报告，内容未变动可直接查看</div>
+              </div>
+            </div>
+            <button
+              className="confirm-button"
+              onClick={() => router.push('/tools/career/career-checkup/report')}
+            >
+              查看体检报告
+            </button>
+          </>
+        ) : (
+          <button
+            className="confirm-button"
+            onClick={handleConfirmAndGenerate}
+            disabled={generating}
+          >
+            {generating ? '生成中...' : '确认无误，生成体检报告'}
+          </button>
+        )}
       </div>
 
       <style jsx>{`
@@ -361,28 +417,91 @@ export default function ReportPreview() {
           padding: 2rem;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
           text-align: center;
+          position: relative;
+        }
+
+        .action-section::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 120px;
+          height: 3px;
+          background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+          border-radius: 0 0 3px 3px;
+        }
+
+        .cache-hint {
+          background: linear-gradient(135deg, #f8f9ff 0%, #faf5ff 100%);
+          border: 1px solid #e0d4fc;
+          border-radius: 12px;
+          padding: 1.25rem 1.5rem;
+          margin-bottom: 1.5rem;
+          display: flex;
+          align-items: flex-start;
+          gap: 1rem;
+          text-align: left;
+        }
+
+        .cache-icon {
+          flex-shrink: 0;
+          width: 40px;
+          height: 40px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 1.2rem;
+          font-weight: bold;
+        }
+
+        .cache-content {
+          flex: 1;
+        }
+
+        .cache-title {
+          font-size: 1rem;
+          font-weight: 600;
+          color: #5a4fcf;
+          margin-bottom: 0.25rem;
+        }
+
+        .cache-desc {
+          font-size: 0.9rem;
+          color: #6b7280;
+          line-height: 1.5;
         }
 
         .confirm-button {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
+          display: inline-block;
+          text-decoration: none;
           border: none;
           padding: 1rem 3rem;
-          border-radius: 8px;
-          font-size: 1.2rem;
+          border-radius: 10px;
+          font-size: 1rem;
           font-weight: 600;
           cursor: pointer;
-          transition: transform 0.2s, box-shadow 0.2s;
+          transition: all 0.3s ease;
+          white-space: nowrap;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.25);
+          min-width: 220px;
+          width: auto;
         }
 
         .confirm-button:hover:not(:disabled) {
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
         .confirm-button:disabled {
           opacity: 0.6;
           cursor: not-allowed;
+          transform: none;
         }
 
         @media (max-width: 768px) {

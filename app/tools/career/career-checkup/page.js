@@ -35,6 +35,9 @@ export default function CareerCheckup() {
   const [currentProjectId, setCurrentProjectId] = useState(null);
   const [editingProjectId, setEditingProjectId] = useState(null);
 
+  // 查看详情的状态
+  const [viewingProject, setViewingProject] = useState(null);
+
   // localStorage 数据结构：modules 对象
   const [modules, setModules] = useState({
     project_experience: { items: [] },
@@ -186,6 +189,13 @@ export default function CareerCheckup() {
     setEditableResult(item.confirmed);
     setCurrentProjectId(item.id);
     setSelectedScene(sceneList.find((s) => s.id === 'project_experience'));
+
+    // 恢复洞察结果
+    const insightKey = getInsightKey('project_experience');
+    setResult({
+      [getPolishKey('project_experience')]: item.confirmed,
+      [insightKey]: item.insight,
+    });
   };
 
   const handleDeleteProject = (itemId) => {
@@ -206,6 +216,7 @@ export default function CareerCheckup() {
     setInputText('');
     setEditableResult('');
     setResult(null);
+    setViewingProject(null);
   };
 
   const parseResult = (text) => {
@@ -241,6 +252,37 @@ export default function CareerCheckup() {
     return !!modules[sceneId].confirmed;
   };
 
+  // 处理点击场景卡片
+  const handleSceneClick = (scene) => {
+    setSelectedScene(scene);
+
+    // 如果是已完成的非项目经历模块，还原之前的结果
+    if (scene.id !== 'project_experience' && isModuleCompleted(scene.id)) {
+      const moduleData = modules[scene.id];
+      const polishKey = getPolishKey(scene.id);
+      const insightKey = getInsightKey(scene.id);
+
+      setInputText(moduleData.original);
+      setEditableResult(moduleData.confirmed);
+      setResult({
+        [polishKey]: moduleData.confirmed,
+        [insightKey]: moduleData.insight,
+      });
+    } else if (scene.id === 'project_experience' && editingProjectId) {
+      // 项目经历：如果有正在编辑的项目，保持编辑状态
+      const editingItem = modules.project_experience.items.find(item => item.id === editingProjectId);
+      if (editingItem) {
+        setInputText(editingItem.original);
+        setEditableResult(editingItem.confirmed);
+        const insightKey = getInsightKey('project_experience');
+        setResult({
+          [getPolishKey('project_experience')]: editingItem.confirmed,
+          [insightKey]: editingItem.insight,
+        });
+      }
+    }
+  };
+
   const handleDismissNotice = () => {
     setShowNotice(false);
     localStorage.setItem('career-checkup-notice-dismissed', 'true');
@@ -256,6 +298,7 @@ export default function CareerCheckup() {
     // 清除 localStorage
     localStorage.removeItem('career-checkup-session');
     localStorage.removeItem('career-checkup-notice-dismissed');
+    localStorage.removeItem('career-checkup-report-cache');
     // 重置 state
     // setUserProfile({});
     // setModules({
@@ -399,7 +442,7 @@ export default function CareerCheckup() {
               key={scene.id}
               className={`scene-card ${selectedScene?.id === scene.id ? 'active' : ''
                 } ${isModuleCompleted(scene.id) ? 'completed' : ''}`}
-              onClick={() => setSelectedScene(scene)}
+              onClick={() => handleSceneClick(scene)}
             >
               {isModuleCompleted(scene.id) && (
                 <div className="completed-badge">✓</div>
@@ -442,11 +485,7 @@ export default function CareerCheckup() {
                       <div className="project-item-actions">
                         <button
                           className="action-btn view-btn"
-                          onClick={() => {
-                            alert(
-                              `原始：${item.original}\n\n润色后：${item.confirmed}\n\n洞察：${item.insight}`
-                            );
-                          }}
+                          onClick={() => setViewingProject(item.id)}
                         >
                           查看
                         </button>
@@ -472,8 +511,45 @@ export default function CareerCheckup() {
                 >
                   + 添加新项目
                 </button>
+
+                {/* 查看项目详情的内联展示 */}
+                {viewingProject && (() => {
+                  const item = modules.project_experience.items.find(i => i.id === viewingProject);
+                  if (!item) return null;
+                  const insightKey = getInsightKey('project_experience');
+                  return (
+                    <div className="project-view-detail">
+                      <div className="view-detail-header">
+                        <h3>📄 项目详情</h3>
+                        <button
+                          className="close-view-btn"
+                          onClick={() => setViewingProject(null)}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                      <div className="view-detail-content">
+                        <div className="view-section">
+                          <h4>原始文本</h4>
+                          <div className="view-text">{item.original}</div>
+                        </div>
+                        <div className="view-section">
+                          <h4>润色结果</h4>
+                          <div className="view-text">{item.confirmed}</div>
+                        </div>
+                        {item.insight && (
+                          <div className="view-section insight-section">
+                            <h4>💡 洞察分析</h4>
+                            <div className="view-text">{item.insight}</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             )}
+             
 
           {/* 示例轮播 */}
           {examples.length > 0 && (
@@ -541,6 +617,21 @@ export default function CareerCheckup() {
                   rows={10}
                 />
                 <div className="result-actions">
+                  <button
+                    className="clear-button"
+                    onClick={() => {
+                      setInputText('');
+                      setResult(null);
+                      setEditableResult('');
+                      setViewingProject(null);
+                      if (selectedScene.id === 'project_experience') {
+                        setEditingProjectId(null);
+                        setCurrentProjectId(null);
+                      }
+                    }}
+                  >
+                    🗑️ 清空重写
+                  </button>
                   <button
                     className="confirm-button"
                     onClick={handleConfirmResult}
@@ -945,6 +1036,82 @@ export default function CareerCheckup() {
           background: #45a049;
         }
 
+        /* 项目查看详情 */
+        .project-view-detail {
+          background: #f0f7ff;
+          border: 2px solid #3498db;
+          border-radius: 10px;
+          padding: 1.5rem;
+          margin-top: 1rem;
+          animation: slideDown 0.3s ease-out;
+        }
+
+        .view-detail-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
+          padding-bottom: 0.75rem;
+          border-bottom: 1px solid #d0e3ff;
+        }
+
+        .view-detail-header h3 {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #1a1a1a;
+          margin: 0;
+        }
+
+        .close-view-btn {
+          background: rgba(52, 152, 219, 0.1);
+          color: #3498db;
+          border: none;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          cursor: pointer;
+          font-size: 1.2rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.2s;
+        }
+
+        .close-view-btn:hover {
+          background: rgba(52, 152, 219, 0.2);
+        }
+
+        .view-detail-content {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .view-section {
+          background: white;
+          border-radius: 8px;
+          padding: 1rem;
+        }
+
+        .view-section h4 {
+          font-size: 0.95rem;
+          font-weight: 600;
+          color: #555;
+          margin: 0 0 0.75rem 0;
+        }
+
+        .view-section.insight-section {
+          background: #fff8e1;
+          border: 1px solid #ffc107;
+        }
+
+        .view-text {
+          line-height: 1.8;
+          color: #333;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+        }
+
         /* 个人画像表单 */
         .profile-form {
           display: flex;
@@ -1280,6 +1447,25 @@ export default function CareerCheckup() {
         .confirm-button:hover {
           transform: translateY(-2px);
           box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+
+        .clear-button {
+          background: #f8f9fa;
+          border: 2px solid #e9ecef;
+          color: #6c757d;
+          font-size: 0.95rem;
+          padding: 0.75rem 1.5rem;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-weight: 500;
+        }
+
+        .clear-button:hover {
+          color: #e74c3c;
+          border-color: #e74c3c;
+          background: rgba(231, 76, 60, 0.08);
+          box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
         }
 
         /* 进度条 */

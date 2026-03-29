@@ -6,11 +6,26 @@ import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+// 生成 modules 的内容指纹，用于判断是否需要重新生成报告
+const getModulesFingerprint = (modules) => {
+  const fingerprintData = {
+    project_experience: modules.project_experience.items.map(item => ({
+      id: item.id,
+      confirmed: item.confirmed
+    })),
+    work_responsibility: modules.work_responsibility.confirmed,
+    self_evaluation: modules.self_evaluation.confirmed,
+    cover_letter: modules.cover_letter.confirmed,
+  };
+  return JSON.stringify(fingerprintData);
+};
+
 export default function CareerReport() {
   const router = useRouter();
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [generatedAt, setGeneratedAt] = useState(null);
 
   useEffect(() => {
     generateReport();
@@ -24,7 +39,22 @@ export default function CareerReport() {
       }
 
       const data = JSON.parse(sessionData);
+      const currentFingerprint = getModulesFingerprint(data.modules);
 
+      // 检查缓存
+      const cachedReport = localStorage.getItem('career-checkup-report-cache');
+      if (cachedReport) {
+        const cache = JSON.parse(cachedReport);
+        if (cache.modulesFingerprint === currentFingerprint) {
+          // 缓存有效，直接使用
+          setReport(cache.report);
+          setGeneratedAt(cache.generatedAt);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // 缓存无效或不存在，调用 API 生成
       const response = await fetch('/api/career-report', {
         method: 'POST',
         headers: {
@@ -40,6 +70,16 @@ export default function CareerReport() {
 
       if (result.success) {
         setReport(result.result);
+        const now = Date.now();
+        setGeneratedAt(now);
+
+        // 保存到缓存
+        const newCache = {
+          report: result.result,
+          modulesFingerprint: currentFingerprint,
+          generatedAt: now,
+        };
+        localStorage.setItem('career-checkup-report-cache', JSON.stringify(newCache));
       } else {
         throw new Error(result.error || '生成报告失败');
       }
@@ -150,7 +190,20 @@ export default function CareerReport() {
       <div className="report-header">
         <Link
           href="/tools/career/career-checkup"
-          className="back-link"
+          className="back-link" style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '8px 16px',
+            background: 'linear-gradient(90deg, #764ba2 0%, #d2d8f3 100%)',
+            color: 'white',
+            textDecoration: 'none',
+            borderRadius: '20px',
+            fontWeight: 500,
+            fontSize: '0.9rem',
+            transition: 'all 0.2s ease',
+            boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)',
+          }}
         >
           ← 返回首页
         </Link>
@@ -187,7 +240,7 @@ export default function CareerReport() {
       </div>
 
       <div className="report-footer">
-        <p>报告生成时间：{new Date().toLocaleString('zh-CN')}</p>
+        <p>报告生成时间：{generatedAt ? new Date(generatedAt).toLocaleString('zh-CN') : '-'}</p>
         <p>
           温馨提示：报告内容仅供参考，请结合自身情况综合判断
         </p>

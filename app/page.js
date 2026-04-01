@@ -8,7 +8,7 @@ const tools = [
   { id: 'text-heal', icon: '✨', title: '文本治愈排版', desc: 'AI智能优化，让工作邮件/社交媒体/文章更有温度', badge: ['AI'] },
   { id: 'random-chat', icon: '⚧️', title: '随机聊天室', desc: '上班累了吧？来这里遇见陌生的Ta ~', badge: ['New'] },
   { id: 'career', icon: '💼', title: '职场工具箱', desc: 'AI驱动的求职能力诊断与优化平台', badge: ['Beta'] },
-  { id: 'drug-calculator', icon: '💊', title: '药品服用次数计算', desc: 'CRC专用 | 按给药时间/频率精准计算服药次数' },
+  { id: 'drug-calculator', icon: '💊', title: '药品服用次数计算', desc: '临研必备 | 按给药时间/频率精准计算服药次数' },
   { id: 'json-format', icon: '🔧', title: 'JSON格式化', desc: 'JSON美化/压缩/校验，支持高亮显示和元素折叠', badge: ['New'] },
   { id: 'word-count', icon: '📝', title: '字数统计工具', desc: '统计中文、英文、字符数，含空格/不含空格' },
   { id: 'qrcode-generator', icon: '📱', title: '二维码生成器', desc: '输入文字/链接，一键生成二维码，可保存' },
@@ -33,7 +33,7 @@ export default async function Home() {
 
       <DailyHot />
 
-      <p style={{ margin: '15px 0', color: '#666' }}>精选好用的免费工具，在线即用，无需下载安装</p>
+      <p style={{ margin: '15px 0', color: '#666' }}>精选好用的免费工具，在线即用</p>
       <div className="tools-grid">
         {tools.map(tool => (
           <Link href={`/tools/${tool.id}`} key={tool.id} className="tool-card">

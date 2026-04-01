@@ -576,19 +576,47 @@ header {
 
 
 .daily-quote {
+  position: relative;
   text-align: center;
   color: #999;
   font-size: 20px;
   font-style: italic;
-  padding: 2px 10px;
-  margin: 2px auto;
+  padding: 10px 10px;
+  margin: 8px auto;
   max-width: 600px;
   line-height: 1.8;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.daily-quote.collapsed {
+  font-size: 12px;
+  line-height: 1.2;
+  padding: 2px 10px;
+  margin: 0 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90%;
+}
+
+.daily-quote.collapsed:hover {
+  color: #666;
+}
+
+.daily-quote:hover:not(.collapsed) {
+  color: #666;
 }
 
 .daily-quote-from {
   color: #bbb;
-  font-size: 20px;
+  font-size: 16px;
+}
+
+/* 收起时署名也缩小 */
+.daily-quote.collapsed .daily-quote-from {
+  font-size: 11px;
 }
 
 

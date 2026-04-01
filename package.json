@@ -6,7 +6,8 @@
     "dev": "next dev -p 8585",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "clean": "rd /s /q .next 2>nul && rd /s /q .swc 2>nul && rd /s /q node_modules\\.cache 2>nul"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.100.0",

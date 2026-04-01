@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';   // ← 加这一行，禁用缓存
 
 const tools = [
   { id: 'text-heal', icon: '✨', title: '文本治愈排版', desc: 'AI智能优化，让工作邮件/社交媒体/文章更有温度', badge: ['AI'] },
-  { id: 'random-chat', icon: '🎲', title: '随机聊天室', desc: '匿名随机匹配，一对一实时文字聊天（无需注册）', badge: ['New'] },
+  { id: 'random-chat', icon: '⚧️', title: '随机聊天室', desc: '上班累了吧？来这里遇见陌生的Ta ~', badge: ['New'] },
   { id: 'career', icon: '💼', title: '职场工具箱', desc: 'AI驱动的求职能力诊断与优化平台', badge: ['Beta'] },
   { id: 'drug-calculator', icon: '💊', title: '药品服用次数计算', desc: 'CRC专用 | 按给药时间/频率精准计算服药次数' },
   { id: 'json-format', icon: '🔧', title: 'JSON格式化', desc: 'JSON美化/压缩/校验，支持高亮显示和元素折叠', badge: ['New'] },

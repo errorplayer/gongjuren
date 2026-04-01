@@ -421,13 +421,13 @@ export default function RandomChatPage() {
     <div className="tool-page" style={{ display: 'block' }}>
       <h2>随机聊天室</h2>
       <p style={{ color: '#666', marginBottom: '16px', fontSize: '14px' }}>
-        匿名随机匹配一对一文字聊天，无需登录。为节省成本，消息通过实时通道传递、不会写入数据库；关闭页面会自动退出队列或房间。
+        欢迎来到牛马茶馆，在这里你可以匿名随机匹配一对一文字聊天，无需登录。消息通过实时通道传递、不会写入数据库；关闭、切换、刷新页面会自动退出队列或房间。
       </p>
 
       {phase === 'idle' && (
         <div className="tool-content">
           <button type="button" className="btn" onClick={startChat}>
-            进入聊天
+            寻找我的缘分
           </button>
           {hint ? (
             <p style={{ marginTop: '12px', color: '#c0392b' }}>{hint}</p>

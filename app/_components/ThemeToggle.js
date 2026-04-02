@@ -33,8 +33,8 @@ export default function ThemeToggle() {
         padding: '8px',
         borderRadius: '50%',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        // alignItems: 'center',
+        // justifyContent: 'center',
         transition: 'all 0.3s ease',
       }}
       title={theme === 'light' ? '切换到暗色模式' : '切换到亮色模式'}

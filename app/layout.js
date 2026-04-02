@@ -113,7 +113,7 @@ export default function RootLayout({ children }) {
         <header>
           <div className="header-container">
             <div className="header-main">
-              <a href="/" className="logo">520tool.cc</a>
+              <a href="/" className="logo">520tool.cc</a><ThemeToggle />
               <FlipClock />
             </div>
             {/* <span 
@@ -126,7 +126,7 @@ export default function RootLayout({ children }) {
               🆓 easy to use
             </span> */}
             <DailyQuote />
-            <ThemeToggle />
+            
           </div>
         </header>
         {children}

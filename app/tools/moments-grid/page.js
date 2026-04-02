@@ -1,12 +1,23 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from './page.module.css';
 // 引入zip和文件保存库
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
 export default function MomentsGrid() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ) || window.innerWidth <= 768;
+    };
+    setIsMobile(checkMobile());
+  }, []);
+
   const CONFIG = {
     squareSize: 1080,
     sliceCount: 3,
@@ -321,11 +332,19 @@ export default function MomentsGrid() {
         <h2 className={styles.toolTitle}>朋友圈九宫格切图</h2>
         <p className={styles.toolDesc}>保护隐私 · 本地处理 · 使用更放心</p>
 
-        <label ref={uploadRef} className={styles.uploadBox}>
-          <input type="file" accept="image/*" onChange={onUpload} />
-          <div className={styles.uploadText}>点击或拖拽上传图片</div>
-          <div className={styles.uploadTip}>支持 10M 以内 JPG / PNG 图片</div>
-        </label>
+        {isMobile ? (
+          <div className={styles.uploadBoxDisabled}>
+            <div className={styles.uploadDisabledIcon}>🖥️</div>
+            <div className={styles.uploadText}>目前仅支持PC端</div>
+            <div className={styles.uploadTip}>请在电脑浏览器中打开本页面使用</div>
+          </div>
+        ) : (
+          <label ref={uploadRef} className={styles.uploadBox}>
+            <input type="file" accept="image/*" onChange={onUpload} />
+            <div className={styles.uploadText}>点击或拖拽上传图片</div>
+            <div className={styles.uploadTip}>支持 10M 以内 JPG / PNG 图片</div>
+          </label>
+        )}
 
         <div ref={controlRef} className={`${styles.controlPanel} ${styles.hidden}`}>
           <div className={styles.colorGroup}>
@@ -366,10 +385,8 @@ export default function MomentsGrid() {
               提示：也可长按预览图单张保存
             </p>
           )}
-        </div><div ref={btnGroupRef} className={`${styles.btnGroup} ${styles.hidden}`}>
-          <button className={`${styles.actionBtn} ${styles.btnReset}`} onClick={resetTool}>重新上传</button>
-          <button className={`${styles.actionBtn} ${styles.btnDownload}`} onClick={download}>下载九宫格</button>
         </div>
+
       </div>
     </div>
   );

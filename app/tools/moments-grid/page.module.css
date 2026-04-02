@@ -122,6 +122,50 @@
   background-size: 8px 8px;
 }
 
+.templateGroup {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.templateTitle {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.templateBtn {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid var(--border-color);
+  transition: all 0.2s;
+  background-size: cover;
+  background-position: center;
+  background-color: #f8f9fa;
+  position: relative;
+}
+
+.templateBtn::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.templateBtn:hover {
+  border-color: #07c160;
+  transform: scale(1.05);
+}
+
+.templateBtnActive {
+  border-color: #07c160;
+  box-shadow: 0 0 0 2px rgba(7, 193, 96, 0.2);
+}
+
 .scaleGroup {
   display: flex;
   align-items: center;

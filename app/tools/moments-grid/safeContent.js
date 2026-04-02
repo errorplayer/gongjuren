@@ -4,6 +4,13 @@ import styles from './page.module.css';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
+// 常量配置（组件外部，避免re-render重复创建）
+const CONFIG = {
+  squareSize: 1080,
+  sliceCount: 3,
+  quality: 0.92
+};
+
 export default function SafeContent() {
 const [isMobile, setIsMobile] = useState(false);
 
@@ -16,13 +23,6 @@ const [isMobile, setIsMobile] = useState(false);
     setIsMobile(checkMobile());
   }, []);
 
-  const CONFIG = {
-    squareSize: 1080,
-    sliceCount: 3,
-    fillColor: '#ffffff',
-    quality: 0.92
-  };
-
   const canvasRef = useRef(null);
   const previewRef = useRef(null);
   const uploadRef = useRef(null);
@@ -30,28 +30,57 @@ const [isMobile, setIsMobile] = useState(false);
   const editWrapperRef = useRef(null);
   const btnGroupRef = useRef(null);
   const scaleRef = useRef(null);
+  const templateCache = useRef({});
+  const selectedTemplateRef = useRef('none');
+  const [templateKey, setTemplateKey] = useState(0);
 
-  let originImg = null;
-  let editCtx;
-  let imagePieces = [];
-  let offsetX = 0, offsetY = 0;
-  let drawWidth, drawHeight;
-  let baseDrawW, baseDrawH;
-  let scale = 1;
-  let rotate = 0;
-  let isDragging = false;
-  let startX, startY;
+  // 所有编辑状态改为ref，避免re-render丢失
+  const fillColorRef = useRef('#ffffff');
+  const originImgRef = useRef(null);
+  const editCtxRef = useRef(null);
+  const imagePiecesRef = useRef([]);
+  const offsetRef = useRef({ x: 0, y: 0 });
+  const drawSizeRef = useRef({ w: 0, h: 0 });
+  const baseSizeRef = useRef({ w: 0, h: 0 });
+  const scaleValRef = useRef(1);
+  const rotateRef = useRef(0);
+  const isDraggingRef = useRef(false);
+  const dragStartRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    editCtx = canvas.getContext('2d');
+    editCtxRef.current = canvas.getContext('2d');
     canvas.width = CONFIG.squareSize;
     canvas.height = CONFIG.squareSize;
 
     initEvents();
-    return () => { isDragging = false; };
+    loadTemplates();
+    return () => { isDraggingRef.current = false; };
   }, []);
+
+  const templates = [
+    { id: 'none', name: '无模板' },
+    { id: 'film', name: '胶片风' },
+    { id: 'rounded-white', name: '圆角白框' },
+    { id: 'rainbowgray', name: '可爱描线' }
+  ];
+
+  async function loadTemplates() {
+    const cache = {};
+    for (const tpl of templates) {
+      const img = new Image();
+      img.src = `/templates/moments-grid/${tpl.id}.svg`;
+      await new Promise(resolve => {
+        img.onload = () => {
+          cache[tpl.id] = img;
+          resolve();
+        };
+        img.onerror = () => resolve();
+      });
+    }
+    templateCache.current = cache;
+  }
 
   function initEvents() {
     const canvas = canvasRef.current;
@@ -81,10 +110,9 @@ const [isMobile, setIsMobile] = useState(false);
       alert('请上传10M以内图片');
       return;
     }
-    originImg = await loadImg(file);
+    originImgRef.current = await loadImg(file);
     calcSize();
-    baseDrawW = drawWidth;
-    baseDrawH = drawHeight;
+    baseSizeRef.current = { w: drawSizeRef.current.w, h: drawSizeRef.current.h };
     resetAll();
     redraw();
     showPanel();
@@ -99,44 +127,54 @@ const [isMobile, setIsMobile] = useState(false);
   }
 
   function calcSize() {
-    const r = originImg.width / originImg.height;
+    const img = originImgRef.current;
+    const r = img.width / img.height;
     const s = CONFIG.squareSize;
     if (r > 1) {
-      drawWidth = s;
-      drawHeight = s / r;
+      drawSizeRef.current = { w: s, h: s / r };
     } else {
-      drawHeight = s;
-      drawWidth = s * r;
+      drawSizeRef.current = { w: s * r, h: s };
     }
   }
 
   function onScale(e) {
-    scale = parseFloat(e.target.value);
-    drawWidth = baseDrawW * scale;
-    drawHeight = baseDrawH * scale;
+    const newScale = parseFloat(e.target.value);
+    scaleValRef.current = newScale;
+    const base = baseSizeRef.current;
+    drawSizeRef.current = { w: base.w * newScale, h: base.h * newScale };
     redraw();
   }
 
   function rotateImg() {
-    rotate = (rotate + 90) % 360;
+    rotateRef.current = (rotateRef.current + 90) % 360;
     redraw();
   }
 
   function resetAll() {
-    offsetX = (CONFIG.squareSize - drawWidth) / 2;
-    offsetY = (CONFIG.squareSize - drawHeight) / 2;
+    const drawSize = drawSizeRef.current;
+    offsetRef.current = {
+      x: (CONFIG.squareSize - drawSize.w) / 2,
+      y: (CONFIG.squareSize - drawSize.h) / 2
+    };
     if (scaleRef.current) scaleRef.current.value = 1;
-    scale = 1;
-    rotate = 0;
+    scaleValRef.current = 1;
+    rotateRef.current = 0;
   }
 
   function redraw() {
+    const originImg = originImgRef.current;
+    const editCtx = editCtxRef.current;
     if (!originImg || !editCtx) return;
     const s = CONFIG.squareSize;
+    const fillColor = fillColorRef.current;
+    const { x: offsetX, y: offsetY } = offsetRef.current;
+    const { w: drawWidth, h: drawHeight } = drawSizeRef.current;
+    const rotate = rotateRef.current;
+
     editCtx.clearRect(0, 0, s, s);
 
-    if (CONFIG.fillColor !== 'transparent') {
-      editCtx.fillStyle = CONFIG.fillColor;
+    if (fillColor !== 'transparent') {
+      editCtx.fillStyle = fillColor;
       editCtx.fillRect(0, 0, s, s);
     }
 
@@ -145,6 +183,12 @@ const [isMobile, setIsMobile] = useState(false);
     editCtx.rotate(rotate * Math.PI / 180);
     editCtx.drawImage(originImg, -drawWidth / 2 + offsetX, -drawHeight / 2 + offsetY, drawWidth, drawHeight);
     editCtx.restore();
+
+    // 叠加模板
+    const tpl = templateCache.current[selectedTemplateRef.current];
+    if (tpl && selectedTemplateRef.current !== 'none') {
+      editCtx.drawImage(tpl, 0, 0, s, s);
+    }
 
     generateGrid();
   }
@@ -155,8 +199,8 @@ const [isMobile, setIsMobile] = useState(false);
     prev.innerHTML = '';
     const s = CONFIG.squareSize;
     const size = s / 3;
-    imagePieces = [];
-    const trans = CONFIG.fillColor === 'transparent';
+    imagePiecesRef.current = [];
+    const trans = fillColorRef.current === 'transparent';
 
     for (let row = 0; row < 3; row++) {
       for (let col = 0; col < 3; col++) {
@@ -165,7 +209,7 @@ const [isMobile, setIsMobile] = useState(false);
         const ctx = c.getContext('2d');
         ctx.drawImage(canvasRef.current, col * size, row * size, size, size, 0, 0, size, size);
         const url = trans ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', CONFIG.quality);
-        imagePieces.push(url);
+        imagePiecesRef.current.push(url);
         const img = new Image();
         img.src = url;
         img.style.width = '100%';
@@ -180,21 +224,19 @@ const [isMobile, setIsMobile] = useState(false);
   // 修复：旋转后拖动方向错乱（核心修正）
   // ==============================================
   function startDrag(e) {
-    isDragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
+    isDraggingRef.current = true;
+    dragStartRef.current = { x: e.clientX, y: e.clientY };
   }
 
   function dragMove(e) {
-    if (!isDragging || !originImg) return;
+    if (!isDraggingRef.current || !originImgRef.current) return;
 
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    startX = e.clientX;
-    startY = e.clientY;
+    const dx = e.clientX - dragStartRef.current.x;
+    const dy = e.clientY - dragStartRef.current.y;
+    dragStartRef.current = { x: e.clientX, y: e.clientY };
 
     // 旋转角度 → 弧度
-    const rad = rotate * Math.PI / 180;
+    const rad = rotateRef.current * Math.PI / 180;
     const cos = Math.cos(rad);
     const sin = Math.sin(rad);
 
@@ -202,19 +244,19 @@ const [isMobile, setIsMobile] = useState(false);
     const fixedDx = dx * cos + dy * sin;
     const fixedDy = -dx * sin + dy * cos;
 
-    offsetX += fixedDx;
-    offsetY += fixedDy;
+    offsetRef.current.x += fixedDx;
+    offsetRef.current.y += fixedDy;
 
     redraw();
   }
   // ==============================================
 
   function endDrag() {
-    isDragging = false;
+    isDraggingRef.current = false;
   }
 
   function setColor(color) {
-    CONFIG.fillColor = color;
+    fillColorRef.current = color;
     redraw();
   }
 
@@ -233,16 +275,16 @@ const [isMobile, setIsMobile] = useState(false);
   // 新增：打包为ZIP下载
   async function downloadAsZip() {
     const zip = new JSZip();
-    const trans = CONFIG.fillColor === 'transparent';
+    const trans = fillColorRef.current === 'transparent';
     const ext = trans ? 'png' : 'jpg';
 
     // 逐个添加图片到ZIP包
-    imagePieces.forEach((url, i) => {
+    imagePiecesRef.current.forEach((url, i) => {
       // 从base64转blob（避免跨域问题）
       const base64Data = url.split(',')[1];
       const contentType = trans ? 'image/png' : 'image/jpeg';
       const blob = b64toBlob(base64Data, contentType);
-      // 添加到zip，命名为“九宫格_1.png”格式
+      // 添加到zip，命名为"九宫格_1.png"格式
       zip.file(`九宫格_${i + 1}.${ext}`, blob);
     });
 
@@ -253,7 +295,7 @@ const [isMobile, setIsMobile] = useState(false);
         compression: 'DEFLATE', // 压缩（可选）
         compressionOptions: { level: 6 }
       });
-      saveAs(zipBlob, `朋友圈九宫格.${ext === 'png' ? 'zip' : 'zip'}`);
+      saveAs(zipBlob, '朋友圈九宫格.zip');
       alert('ZIP包生成成功，即将开始下载～');
     } catch (e) {
       console.error('打包ZIP失败', e);
@@ -281,8 +323,8 @@ const [isMobile, setIsMobile] = useState(false);
 
   // 原有多文件下载（PC端保留）
   function downloadMultipleFiles() {
-    const trans = CONFIG.fillColor === 'transparent';
-    imagePieces.forEach((url, i) => {
+    const trans = fillColorRef.current === 'transparent';
+    imagePiecesRef.current.forEach((url, i) => {
       const a = document.createElement('a');
       a.download = `九宫格_${i + 1}${trans ? '.png' : '.jpg'}`;
       a.href = url;
@@ -292,9 +334,9 @@ const [isMobile, setIsMobile] = useState(false);
 
   // 新增：分批下载（ZIP失败时的降级方案）
   function downloadBatchFiles() {
-    const trans = CONFIG.fillColor === 'transparent';
+    const trans = fillColorRef.current === 'transparent';
     // 每300ms下载1张，避免同时触发
-    imagePieces.forEach((url, i) => {
+    imagePiecesRef.current.forEach((url, i) => {
       setTimeout(() => {
         const a = document.createElement('a');
         a.download = `九宫格_${i + 1}${trans ? '.png' : '.jpg'}`;
@@ -306,9 +348,9 @@ const [isMobile, setIsMobile] = useState(false);
   }
 
   function resetTool() {
-    originImg = null;
-    imagePieces = [];
-    rotate = 0;
+    originImgRef.current = null;
+    imagePiecesRef.current = [];
+    rotateRef.current = 0;
     uploadRef.current.querySelector('input').value = '';
     uploadRef.current.classList.remove(styles.hidden);
     controlRef.current.classList.add(styles.hidden);
@@ -349,6 +391,19 @@ const [isMobile, setIsMobile] = useState(false);
             <div className={`${styles.colorBtn} ${styles.colorWhite} ${styles.colorBtnActive}`} onClick={() => setColor('#ffffff')} />
             <div className={`${styles.colorBtn} ${styles.colorBlack}`} onClick={() => setColor('#000000')} />
             <div className={`${styles.colorBtn} ${styles.colorTransparent}`} onClick={() => setColor('transparent')} />
+          </div>
+
+          <div className={styles.templateGroup}>
+            <span className={styles.templateTitle}>边框模板：</span>
+            {templates.map(tpl => (
+              <div
+                key={tpl.id}
+                className={`${styles.templateBtn} ${selectedTemplateRef.current === tpl.id ? styles.templateBtnActive : ''}`}
+                onClick={() => { selectedTemplateRef.current = tpl.id; setTemplateKey(k => k + 1); redraw(); }}
+                title={tpl.name}
+                style={{ backgroundImage: `url(/templates/moments-grid/${tpl.id}.svg)` }}
+              />
+            ))}
           </div>
 
           <div className={styles.scaleGroup}>

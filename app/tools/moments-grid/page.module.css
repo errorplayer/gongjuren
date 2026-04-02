@@ -100,14 +100,9 @@
   transition: all 0.2s;
 }
 
-.colorBtnActive {
-  border-color: #07c160;
-  transform: scale(1.1);
-}
-
 .colorWhite {
   background: #ffffff;
-  border: 1px solid #eee;
+  border-color: #eee;
 }
 
 .colorBlack {
@@ -120,6 +115,11 @@
     linear-gradient(45deg, transparent 75%, #ddd 75%),
     linear-gradient(-45deg, transparent 75%, #ddd 75%);
   background-size: 8px 8px;
+}
+
+.colorBtnActive {
+  border-color: #07c160;
+  transform: scale(1.1);
 }
 
 .templateGroup {

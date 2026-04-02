@@ -36,6 +36,7 @@ const [isMobile, setIsMobile] = useState(false);
 
   // 所有编辑状态改为ref，避免re-render丢失
   const fillColorRef = useRef('#ffffff');
+  const [activeColor, setActiveColor] = useState('#ffffff');
   const originImgRef = useRef(null);
   const editCtxRef = useRef(null);
   const imagePiecesRef = useRef([]);
@@ -257,6 +258,7 @@ const [isMobile, setIsMobile] = useState(false);
 
   function setColor(color) {
     fillColorRef.current = color;
+    setActiveColor(color);
     redraw();
   }
 
@@ -388,9 +390,9 @@ const [isMobile, setIsMobile] = useState(false);
         <div ref={controlRef} className={`${styles.controlPanel} ${styles.hidden}`}>
           <div className={styles.colorGroup}>
             <span className={styles.colorTitle}>留白颜色：</span>
-            <div className={`${styles.colorBtn} ${styles.colorWhite} ${styles.colorBtnActive}`} onClick={() => setColor('#ffffff')} />
-            <div className={`${styles.colorBtn} ${styles.colorBlack}`} onClick={() => setColor('#000000')} />
-            <div className={`${styles.colorBtn} ${styles.colorTransparent}`} onClick={() => setColor('transparent')} />
+            <div className={`${styles.colorBtn} ${styles.colorWhite} ${activeColor === '#ffffff' ? styles.colorBtnActive : ''}`} onClick={() => setColor('#ffffff')} />
+            <div className={`${styles.colorBtn} ${styles.colorBlack} ${activeColor === '#000000' ? styles.colorBtnActive : ''}`} onClick={() => setColor('#000000')} />
+            <div className={`${styles.colorBtn} ${styles.colorTransparent} ${activeColor === 'transparent' ? styles.colorBtnActive : ''}`} onClick={() => setColor('transparent')} />
           </div>
 
           <div className={styles.templateGroup}>

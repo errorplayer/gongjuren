@@ -27,6 +27,10 @@ export default async function Home() {
   const statsMap = stats ? Object.fromEntries(stats.map(s => [s.id, s.use_count])) : {};
 
   return (
+    <>
+    <head>
+        <meta name="baidu-site-verification" content="codeva-EDoMZkIETx" />
+      </head>
     <div className="container">
       {/* <div className="ad-top">
         <p>【广告位】- 顶部横幅广告</p>
@@ -68,5 +72,6 @@ export default async function Home() {
         <p>【广告位】- 底部广告</p>
       </div> */}
     </div>
+    </>
   );
 }

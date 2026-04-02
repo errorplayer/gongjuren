@@ -43,6 +43,7 @@ export default function SafeContent() {
   const phaseRef = useRef('idle');
   const exitChatRef = useRef(async () => {});
   const leaveWaitingRef = useRef(async () => {});
+  const fullscreenRef = useRef(null);
 
   const clearPoll = useCallback(() => {
     if (pollRef.current) {
@@ -313,6 +314,29 @@ export default function SafeContent() {
     }
   }, [messages, phase]);
 
+  useEffect(() => {
+    if (phase !== 'chat') return;
+    if (typeof window === 'undefined') return;
+    if (!window.visualViewport) return;
+
+    const handleVisualViewportResize = () => {
+      const fullscreenEl = fullscreenRef.current;
+      if (!fullscreenEl) return;
+
+      const viewport = window.visualViewport;
+      const height = viewport.height;
+
+      fullscreenEl.style.height = `${height}px`;
+      fullscreenEl.style.paddingBottom = `${window.innerHeight - height}px`;
+    };
+
+    window.visualViewport.addEventListener('resize', handleVisualViewportResize);
+
+    return () => {
+      window.visualViewport?.removeEventListener('resize', handleVisualViewportResize);
+    };
+  }, [phase]);
+
   const tryJoin = useCallback(async () => {
     const cid = clientIdRef.current;
     if (!cid) return;
@@ -491,9 +515,16 @@ export default function SafeContent() {
       )}
 
       {phase === 'chat' && (
-        <div className={`${styles.content} ${styles.fadeIn}`}>
+        <div className={styles.chatFullscreen} ref={fullscreenRef}>
           <div className={styles.chatContainer}>
             <div className={styles.statusBar}>
+              <button
+                type="button"
+                className={styles.backButton}
+                onClick={() => exitChat(true)}
+              >
+                ← 退出
+              </button>
               <div className={styles.statusDot}></div>
               <span className={styles.statusText}>已连接 · 匿名聊天中</span>
             </div>
@@ -558,60 +589,58 @@ export default function SafeContent() {
               </button>
             </div>
           </div>
-          <div className={styles.actionBar}>
-            <button
-              type="button"
-              className={styles.actionButton}
-              onClick={() => exitChat(true)}
-            >
-              退出聊天
-            </button>
-            <a
-              href="/"
-              className={styles.backLink}
-              data-chat-back-link
-              onClick={handleBackToHome}
-            >
-              ← 返回工具目录
-            </a>
-          </div>
         </div>
       )}
 
       {phase === 'ended' && (
-        <div className={`${styles.content} ${styles.fadeIn}`}>
-          <div className={styles.endedCard}>
-            <div className={styles.endedIcon}>👋</div>
-            <h3 className={styles.endedTitle}>对方已离开</h3>
-            <p className={styles.endedDescription}>
-              本次聊天已结束。你可以继续查看消息，或者开始新的匹配。
-            </p>
-            <div className={styles.actionBar} style={{ marginTop: 0 }}>
+        <div className={styles.chatFullscreen} ref={fullscreenRef}>
+          <div className={styles.chatContainer}>
+            <div className={styles.statusBar}>
               <button
                 type="button"
-                className={`${styles.actionButton} ${styles.primary}`}
+                className={styles.backButton}
+                onClick={() => exitChat(false)}
+              >
+                ← 返回
+              </button>
+              <div className={`${styles.statusDot} ${styles.disconnected}`}></div>
+              <span className={styles.statusText}>聊天已结束</span>
+            </div>
+            <div
+              ref={listRef}
+              onScroll={handleListScroll}
+              className={styles.messagesContainer}
+            >
+              {messages.length === 0 ? (
+                <div className={styles.emptyState}>
+                  <div className={styles.emptyStateIcon}>👋</div>
+                  <span>没有消息记录</span>
+                </div>
+              ) : (
+                messages.map((m) => (
+                  <div
+                    key={m.id}
+                    className={`${styles.messageWrapper} ${m.mine ? styles.mine : styles.peer}`}
+                  >
+                    {!m.mine && <span className={styles.messageAvatar}>👤</span>}
+                    <span className={`${styles.messageBubble} ${m.mine ? styles.mine : styles.peer}`}>
+                      {m.text}
+                    </span>
+                    {m.mine && <span className={styles.myAvatar}>👤</span>}
+                  </div>
+                ))
+              )}
+              <div ref={bottomRef} />
+            </div>
+            <div className={styles.inputContainer} style={{ justifyContent: 'center' }}>
+              <button
+                type="button"
+                className={styles.sendButton}
                 onClick={startChat}
               >
                 重新匹配
               </button>
-              <button
-                type="button"
-                className={styles.actionButton}
-                onClick={() => exitChat(false)}
-              >
-                返回
-              </button>
             </div>
-          </div>
-          <div className={styles.actionBar}>
-            <a
-              href="/"
-              className={styles.backLink}
-              data-chat-back-link
-              onClick={handleBackToHome}
-            >
-              ← 返回工具目录
-            </a>
           </div>
         </div>
       )}

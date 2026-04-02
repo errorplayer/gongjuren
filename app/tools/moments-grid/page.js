@@ -2,6 +2,9 @@
 
 import { useEffect, useRef } from 'react';
 import styles from './page.module.css';
+// 引入zip和文件保存库
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 export default function MomentsGrid() {
   const CONFIG = {
@@ -51,6 +54,11 @@ export default function MomentsGrid() {
     document.addEventListener('touchmove', e => { e.preventDefault(); dragMove(e.touches[0]); });
     document.addEventListener('mouseup', endDrag);
     document.addEventListener('touchend', endDrag);
+
+    // 新增：禁用移动端页面缩放
+    document.addEventListener('touchmove', (e) => {
+      if (e.scale !== 1) e.preventDefault();
+    }, { passive: false });
   }
 
   async function onUpload(e) {
@@ -160,7 +168,7 @@ export default function MomentsGrid() {
   }
 
   // ==============================================
-  // 🔥 修复：旋转后拖动方向错乱（核心修正）
+  // 修复：旋转后拖动方向错乱（核心修正）
   // ==============================================
   function startDrag(e) {
     isDragging = true;
@@ -201,7 +209,69 @@ export default function MomentsGrid() {
     redraw();
   }
 
+  // 替换原有的download函数
   function download() {
+    // 移动端优先打包为ZIP，PC端可保留原多文件下载（也可统一ZIP）
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      downloadAsZip(); // 移动端打包ZIP
+    } else {
+      downloadMultipleFiles(); // PC端保留原多文件下载
+    }
+  }
+
+  // 新增：打包为ZIP下载
+  async function downloadAsZip() {
+    const zip = new JSZip();
+    const trans = CONFIG.fillColor === 'transparent';
+    const ext = trans ? 'png' : 'jpg';
+
+    // 逐个添加图片到ZIP包
+    imagePieces.forEach((url, i) => {
+      // 从base64转blob（避免跨域问题）
+      const base64Data = url.split(',')[1];
+      const contentType = trans ? 'image/png' : 'image/jpeg';
+      const blob = b64toBlob(base64Data, contentType);
+      // 添加到zip，命名为“九宫格_1.png”格式
+      zip.file(`九宫格_${i + 1}.${ext}`, blob);
+    });
+
+    // 生成ZIP并下载
+    try {
+      const zipBlob = await zip.generateAsync({
+        type: 'blob',
+        compression: 'DEFLATE', // 压缩（可选）
+        compressionOptions: { level: 6 }
+      });
+      saveAs(zipBlob, `朋友圈九宫格.${ext === 'png' ? 'zip' : 'zip'}`);
+      alert('ZIP包生成成功，即将开始下载～');
+    } catch (e) {
+      console.error('打包ZIP失败', e);
+      alert('打包失败，可长按预览图单张保存～');
+      // 降级方案：触发单文件分批下载
+      downloadBatchFiles();
+    }
+  }
+
+  // 工具函数：base64转blob
+  function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      const slice = byteCharacters.slice(offset, offset + sliceSize);
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+    return new Blob(byteArrays, { type: contentType });
+  }
+
+  // 原有多文件下载（PC端保留）
+  function downloadMultipleFiles() {
     const trans = CONFIG.fillColor === 'transparent';
     imagePieces.forEach((url, i) => {
       const a = document.createElement('a');
@@ -209,6 +279,21 @@ export default function MomentsGrid() {
       a.href = url;
       a.click();
     });
+  }
+
+  // 新增：分批下载（ZIP失败时的降级方案）
+  function downloadBatchFiles() {
+    const trans = CONFIG.fillColor === 'transparent';
+    // 每300ms下载1张，避免同时触发
+    imagePieces.forEach((url, i) => {
+      setTimeout(() => {
+        const a = document.createElement('a');
+        a.download = `九宫格_${i + 1}${trans ? '.png' : '.jpg'}`;
+        a.href = url;
+        a.click();
+      }, i * 300);
+    });
+    alert('开始分批下载，请允许所有文件下载～');
   }
 
   function resetTool() {
@@ -268,6 +353,20 @@ export default function MomentsGrid() {
         <div ref={previewRef} className={styles.gridPreview}></div>
 
         <div ref={btnGroupRef} className={`${styles.btnGroup} ${styles.hidden}`}>
+          <button className={`${styles.actionBtn} ${styles.btnReset}`} onClick={resetTool}>重新上传</button>
+          <button className={`${styles.actionBtn} ${styles.btnDownload}`} onClick={download}>
+            {/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)
+              ? '下载九宫格(ZIP包)'
+              : '下载九宫格'
+            }
+          </button>
+          {/* 移动端添加长按提示 */}
+          {/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent) && (
+            <p className={styles.mobileTip}>
+              提示：也可长按预览图单张保存
+            </p>
+          )}
+        </div><div ref={btnGroupRef} className={`${styles.btnGroup} ${styles.hidden}`}>
           <button className={`${styles.actionBtn} ${styles.btnReset}`} onClick={resetTool}>重新上传</button>
           <button className={`${styles.actionBtn} ${styles.btnDownload}`} onClick={download}>下载九宫格</button>
         </div>

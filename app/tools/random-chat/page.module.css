@@ -15,7 +15,7 @@
 }
 
 .subtitle {
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 16px;
   font-size: 14px;
   line-height: 1.6;
@@ -41,20 +41,20 @@
 .idleTitle {
   font-size: 28px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 12px;
 }
 
 .idleDescription {
   font-size: 16px;
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 32px;
   max-width: 400px;
   line-height: 1.6;
 }
 
 .startButton {
-  background: linear-gradient(135deg, #3498db 0%, #667eea 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, #667eea 100%);
   color: white;
   border: none;
   padding: 16px 48px;
@@ -102,7 +102,7 @@
 .loadingDot {
   width: 12px;
   height: 12px;
-  background: linear-gradient(135deg, #3498db 0%, #667eea 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, #667eea 100%);
   border-radius: 50%;
   animation: bounce 1.4s ease-in-out infinite;
 }
@@ -121,7 +121,7 @@
 
 .waitingText {
   font-size: 18px;
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 32px;
 }
 
@@ -145,11 +145,11 @@
   display: flex;
   flex-direction: column;
   height: 600px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--border-color);
 }
 
 /* ===== 状态栏 ===== */
@@ -158,8 +158,8 @@
   align-items: center;
   gap: 8px;
   padding: 14px 20px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e8e8e8;
+  background: var(--bg-hover);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .statusDot {
@@ -177,13 +177,13 @@
 
 .statusText {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .hintText {
   margin-bottom: 8px;
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 /* ===== 消息区域 ===== */
@@ -191,7 +191,7 @@
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  background: #fafafa;
+  background: var(--bg-body);
   position: relative;
   scroll-behavior: smooth;
 }
@@ -202,7 +202,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #999;
+  color: var(--text-muted);
   font-size: 16px;
 }
 
@@ -275,15 +275,15 @@
 }
 
 .messageBubble.peer {
-  background: #ffffff;
-  color: #333;
-  border: 1px solid #e8e8e8;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   border-bottom-left-radius: 4px;
 }
 
 .messageBubble.system {
-  background: #f0f0f0;
-  color: #666;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
   font-size: 13px;
   padding: 6px 12px;
   border-radius: 8px;
@@ -299,8 +299,8 @@
   padding: 10px 20px;
   border-radius: 999px;
   border: 1px solid #cfe8fc;
-  background: white;
-  color: #3498db;
+  background: var(--bg-card);
+  color: var(--accent);
   font-size: 14px;
   cursor: pointer;
   box-shadow: 0 2px 10px rgba(52, 152, 219, 0.15);
@@ -328,8 +328,8 @@
 /* ===== 输入区域 ===== */
 .inputContainer {
   padding: 16px 20px;
-  background: white;
-  border-top: 1px solid #e8e8e8;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-color);
   display: flex;
   gap: 12px;
   align-items: center;
@@ -343,22 +343,23 @@
 .messageInput {
   width: 100%;
   padding: 14px 18px;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--border-color);
   border-radius: 50px;
   font-size: 15px;
   outline: none;
   transition: all 0.3s ease;
-  background: #f8f9fa;
+  background: var(--bg-input);
+  color: var(--text-primary);
 }
 
 .messageInput:focus {
-  border-color: #3498db;
-  background: white;
+  border-color: var(--accent);
+  background: var(--bg-card);
   box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
 .sendButton {
-  background: linear-gradient(135deg, #3498db 0%, #667eea 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, #667eea 100%);
   color: white;
   border: none;
   padding: 14px 28px;
@@ -418,7 +419,7 @@
 }
 
 .backLink {
-  color: #666;
+  color: var(--text-secondary);
   text-decoration: none;
   font-size: 14px;
   transition: color 0.3s ease;
@@ -428,7 +429,7 @@
 }
 
 .backLink:hover {
-  color: #3498db;
+  color: var(--accent);
 }
 
 /* ===== 已结束状态卡片 ===== */
@@ -438,7 +439,7 @@
   align-items: center;
   padding: 40px 20px;
   text-align: center;
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   margin-bottom: 16px;
@@ -452,13 +453,13 @@
 .endedTitle {
   font-size: 22px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
 .endedDescription {
   font-size: 15px;
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 24px;
   max-width: 350px;
 }

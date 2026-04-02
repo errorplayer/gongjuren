@@ -1,8 +1,51 @@
 @import "tailwindcss";
 
+/*
+ * ============================================
+ *  520Tool 暗色变量速查表
+ *  新增页面请优先使用以下变量，避免硬编码颜色！
+ * ============================================
+ *
+ *  背景色:
+ *    var(--bg-body)       → 页面大背景
+ *    var(--bg-card)       → 卡片/面板背景
+ *    var(--bg-header)     → 顶栏背景
+ *    var(--bg-input)      → 输入框背景
+ *    var(--bg-hover)      → 悬浮/hover 背景
+ *
+ *  文字色:
+ *    var(--text-primary)  → 主文字
+ *    var(--text-secondary)→ 副文字/描述
+ *    var(--text-muted)    → 弱化文字（时间、计数等）
+ *
+ *  边框/分割线:
+ *    var(--border-color)  → 通用边框
+ *
+ *  强调色:
+ *    var(--accent)        → 主色调（按钮、链接、高亮）
+ *    var(--accent-hover)  → 强调色 hover 态
+ *
+ * ============================================
+ */
+
+/* 亮色模式（默认） */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  
+  --bg-body: #f5f7fa;
+  --bg-card: #ffffff;
+  --bg-header: #ffffff;
+  --bg-input: #ffffff;
+  --bg-hover: #f8f9fa;
+  
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  
+  --border-color: #eeeeee;
+  --accent: #3498db;
+  --accent-hover: #2980b9;
 }
 
 @theme inline {
@@ -12,17 +55,31 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* 暗色模式 */
+[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  --bg-body: #1a1a2e;
+  --bg-card: #16213e;
+  --bg-header: #0f3460;
+  --bg-input: #1a1a2e;
+  --bg-hover: #262647;
+
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --text-muted: #6c6c6c;
+
+  --border-color: #2a2a4a;
+  --accent: #5dade2;
+  --accent-hover: #3498db;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* 全局样式：简洁清爽，适配所有设备 */
@@ -34,14 +91,14 @@ body {
 }
 
 body {
-  background-color: #f5f7fa;
-  color: #333;
+  background-color: var(--bg-body);
+  color: var(--text-primary);
   line-height: 1.6;
 }
 
 /* 顶部导航栏 */
 header {
-  background-color: #fff;
+  background-color: var(--bg-header);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 15px 0;
   position: sticky;
@@ -73,13 +130,13 @@ header {
 .logo {
   font-size: 22px;
   font-weight: bold;
-  color: #2c3e50;
+  color: var(--text-primary);
   text-decoration: none;
 }
 
 .header-tag {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 /* 工具目录容器 */
@@ -91,12 +148,12 @@ header {
 
 /* 广告位1：顶部横幅（点击率最高） */
 .ad-top {
-  background-color: #fff;
+  background-color: var(--bg-card);
   padding: 10px;
   border-radius: 8px;
   text-align: center;
   margin-bottom: 30px;
-  border: 1px solid #eee;
+  border: 1px solid var(--border-color);
 }
 
 /* 工具卡片样式 */
@@ -110,7 +167,7 @@ header {
 .tool-card {
   position: relative;
   /* 新增 */
-  background-color: #fff;
+  background-color: var(--bg-card);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 25px;
@@ -118,7 +175,7 @@ header {
   transition: transform 0.3s ease;
   cursor: pointer;
   text-decoration: none;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .tool-card:hover {
@@ -228,7 +285,7 @@ header {
 
 .tool-icon {
   font-size: 40px;
-  color: #3498db;
+  color: var(--accent);
   margin-bottom: 15px;
 }
 
@@ -239,12 +296,12 @@ header {
 }
 
 .tool-desc {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 .tool-usage-count {
-  color: #999;
+  color: var(--text-muted);
   font-size: 12px;
   margin-top: 12px;
 }
@@ -252,7 +309,7 @@ header {
 
 /* 工具页面样式 */
 .tool-page {
-  background-color: #fff;
+  background-color: var(--bg-card);
   border-radius: 8px;
   padding: 30px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -261,10 +318,10 @@ header {
 }
 
 .tool-page h2 {
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 20px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .tool-content {
@@ -274,16 +331,18 @@ header {
 .input-area {
   width: 100%;
   padding: 15px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 16px;
   margin-bottom: 15px;
   resize: vertical;
   min-height: 120px;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
 }
 
 .btn {
-  background-color: #3498db;
+  background-color: var(--accent);
   color: #fff;
   border: none;
   padding: 10px 20px;
@@ -295,38 +354,38 @@ header {
 }
 
 .btn:hover {
-  background-color: #2980b9;
+  background-color: var(--accent-hover);
 }
 
 .result-area {
   margin-top: 20px;
   padding: 15px;
-  background-color: #f8f9fa;
+  background-color: var(--bg-hover);
   border-radius: 6px;
-  border: 1px solid #eee;
+  border: 1px solid var(--border-color);
 }
 
 .result-title {
   font-weight: 600;
   margin-bottom: 10px;
-  color: #2c3e50;
+  color: var(--text-primary);
 }
 
 /* 广告位2：侧边/底部 */
 .ad-bottom {
-  background-color: #fff;
+  background-color: var(--bg-card);
   padding: 10px;
   border-radius: 8px;
   text-align: center;
   margin-top: 30px;
-  border: 1px solid #eee;
+  border: 1px solid var(--border-color);
 }
 
 /* 返回按钮 */
 .back-btn {
   display: inline-block;
   margin-top: 20px;
-  color: #3498db;
+  color: var(--accent);
   text-decoration: none;
   font-size: 16px;
 }
@@ -804,6 +863,9 @@ header {
   line-height: 1.5;
   cursor: default;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
 }
 
 .daily-hot-link .daily-hot-tag:hover {
@@ -821,6 +883,10 @@ header {
   letter-spacing: 0.5px;
 }
 
+[data-theme="dark"] .daily-hot-tag-label {
+  background: rgba(0, 0, 0, 0.3);
+}
+
 /* 文本治愈排版样式 */
 .text-heal-page {
   max-width: 1000px;
@@ -834,12 +900,12 @@ header {
 
 .text-heal-page .tool-header h1 {
   font-size: 28px;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 10px;
 }
 
 .text-heal-page .tool-header p {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
@@ -871,7 +937,7 @@ header {
   gap: 8px;
   font-size: 15px;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 18px;
 }
 
@@ -896,10 +962,10 @@ header {
 
 .example-box {
   flex: 1;
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 18px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--border-color);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   transition: all 0.3s ease;
 }
@@ -911,7 +977,7 @@ header {
 .example-box.after {
   border-left: 3px solid linear-gradient(135deg, #667eea, #764ba2);
   border-left: 3px solid #667eea;
-  background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+  background: linear-gradient(135deg, var(--bg-hover) 0%, var(--bg-card) 100%);
 }
 
 .example-label {
@@ -930,7 +996,7 @@ header {
 .example-text {
   font-size: 14px;
   line-height: 1.7;
-  color: #555;
+  color: var(--text-secondary);
   min-height: 60px;
   display: flex;
   align-items: center;
@@ -955,7 +1021,7 @@ header {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #d0d3d8;
+  background: var(--border-color);
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -1000,7 +1066,7 @@ header {
 .scene-title {
   font-size: 16px;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 15px;
 }
 
@@ -1013,8 +1079,8 @@ header {
 
 
 .scene-card {
-  background: #fff;
-  border: 2px solid #eee;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
   border-radius: 10px;
   padding: 20px 15px;
   text-align: center;
@@ -1023,14 +1089,14 @@ header {
 }
 
 .scene-card:hover {
-  border-color: #3498db;
+  border-color: var(--accent);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
 }
 
 .scene-card.active {
-  border-color: #3498db;
-  background: #f0f7ff;
+  border-color: var(--accent);
+  background: var(--bg-hover);
 }
 
 .scene-icon {
@@ -1041,23 +1107,23 @@ header {
 .scene-name {
   font-size: 15px;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-bottom: 5px;
 }
 
 .scene-desc {
   font-size: 12px;
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.4;
 }
 
 /* 编辑区 */
 .editor-container {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 10px;
   padding: 20px;
   margin-bottom: 20px;
-  border: 1px solid #eee;
+  border: 1px solid var(--border-color);
 }
 
 .editor-header {
@@ -1070,12 +1136,12 @@ header {
 .editor-label {
   font-size: 14px;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--text-primary);
 }
 
 .char-count {
   font-size: 12px;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .char-count.warning {
@@ -1086,7 +1152,7 @@ header {
 .editor-textarea {
   width: 100%;
   padding: 15px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
   line-height: 1.6;
@@ -1094,15 +1160,17 @@ header {
   min-height: 200px;
   font-family: inherit;
   transition: border-color 0.2s;
+  background: var(--bg-input);
+  color: var(--text-primary);
 }
 
 .editor-textarea:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: var(--accent);
 }
 
 .editor-textarea:disabled {
-  background: #f8f9fa;
+  background: var(--bg-hover);
   cursor: not-allowed;
 }
 
@@ -1123,7 +1191,7 @@ header {
 
 .inline-provider-label {
   font-size: 13px;
-  color: #888;
+  color: var(--text-muted);
   white-space: nowrap;
 }
 
@@ -1132,11 +1200,11 @@ header {
   align-items: center;
   gap: 4px;
   padding: 6px 14px;
-  border: 2px solid #eee;
+  border: 2px solid var(--border-color);
   border-radius: 20px;
-  background: #fff;
+  background: var(--bg-card);
   font-size: 13px;
-  color: #666;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
@@ -1145,7 +1213,7 @@ header {
 .inline-provider-chip:hover:not(:disabled) {
   border-color: #667eea;
   color: #667eea;
-  background: #f8f9ff;
+  background: var(--bg-hover);
 }
 
 .inline-provider-chip.active {
@@ -1248,10 +1316,10 @@ header {
 
 /* 结果展示区 */
 .result-container {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 10px;
   padding: 20px;
-  border: 1px solid #eee;
+  border: 1px solid var(--border-color);
   min-height: 200px;
 }
 
@@ -1284,7 +1352,7 @@ header {
 }
 
 .result-container.loading p {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
@@ -1294,13 +1362,13 @@ header {
   align-items: center;
   margin-bottom: 15px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .result-label {
   font-size: 14px;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--text-primary);
 }
 
 .result-actions {
@@ -1310,9 +1378,9 @@ header {
 
 .btn-copy,
 .btn-apply {
-  background: #f8f9fa;
-  color: #555;
-  border: 1px solid #ddd;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
   padding: 6px 14px;
   border-radius: 6px;
   font-size: 13px;
@@ -1322,8 +1390,7 @@ header {
 
 .btn-copy:hover,
 .btn-apply:hover {
-  background: #e9ecef;
-  border-color: #ccc;
+  background: var(--border-color);
 }
 
 .btn-apply {
@@ -1338,7 +1405,7 @@ header {
 }
 
 .result-content {
-  color: #333;
+  color: var(--text-primary);
   font-size: 14px;
   line-height: 1.8;
   white-space: pre-wrap;

@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';   // ← 加这一行，禁用缓存
 const tools = [
   { id: 'moments-grid', icon: '🖼️', title: '朋友圈9宫格裁剪', desc: '上传图片,一键生成9张朋友圈素材,支持拖拽调整', badge: ['New'] },
   { id: 'text-heal', icon: '✨', title: '文本治愈排版', desc: 'AI智能优化，让工作邮件/社交媒体/文章更有温度', badge: ['AI'] },
-  { id: 'random-chat', icon: '⚧️', title: '随机聊天室', desc: '上班累了吧？来这里遇见陌生的Ta ~' , badge: ['Beta']},
+  { id: 'random-chat', icon: '⚧️', title: '随机聊天室', desc: '上班累了吧？来这里遇见陌生的Ta ~', badge: ['Beta'] },
   { id: 'career', icon: '💼', title: '职场工具箱', desc: 'AI驱动的求职能力诊断与优化平台', badge: ['Beta'] },
   { id: 'drug-calculator', icon: '💊', title: '药品服用次数计算', desc: '临研必备 | 按给药时间/频率精准计算服药次数' },
   { id: 'json-format', icon: '🔧', title: 'JSON格式化', desc: 'JSON美化/压缩/校验，支持高亮显示和元素折叠' },
@@ -27,10 +27,7 @@ export default async function Home() {
   const statsMap = stats ? Object.fromEntries(stats.map(s => [s.id, s.use_count])) : {};
 
   return (
-    <>
-    <head>
-        <meta name="baidu-site-verification" content="codeva-EDoMZkIETx" />
-      </head>
+
     <div className="container">
       {/* <div className="ad-top">
         <p>【广告位】- 顶部横幅广告</p>
@@ -72,6 +69,6 @@ export default async function Home() {
         <p>【广告位】- 底部广告</p>
       </div> */}
     </div>
-    </>
+
   );
 }

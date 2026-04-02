@@ -1,7 +1,8 @@
 import './globals.css';
 import Script from 'next/script';
 import FlipClock from './_components/FlipClock';
-import DailyQuote from './_components/DailyQuote'; 
+import DailyQuote from './_components/DailyQuote';
+import ThemeToggle from './_components/ThemeToggle'; 
 
 export const metadata = {
   // 标题（关键词前置，不超过60字符）
@@ -84,11 +85,28 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="zh-CN">
+    <html lang="zh-CN" suppressHydrationWarning>
       <head>
+        <meta name="baidu-site-verification" content="codeva-EDoMZkIETx" />
+
         <Script
           src="https://hm.baidu.com/hm.js?718b1393e46193d3d0e56f399fc7f266"
           strategy="afterInteractive"
+        />
+        {/* 防闪烁脚本：在页面渲染前读取 localStorage 设置主题 */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const theme = localStorage.getItem('theme');
+                  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  const initialTheme = theme || (prefersDark ? 'dark' : 'light');
+                  document.documentElement.setAttribute('data-theme', initialTheme);
+                } catch (e) {}
+              })();
+            `,
+          }}
         />
       </head>
       <body>
@@ -108,6 +126,7 @@ export default function RootLayout({ children }) {
               🆓 easy to use
             </span> */}
             <DailyQuote />
+            <ThemeToggle />
           </div>
         </header>
         {children}

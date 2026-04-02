@@ -234,7 +234,7 @@ export default function MomentsGrid() {
     <div className={styles.main}>
       <div className={styles.toolContainer}>
         <h2 className={styles.toolTitle}>朋友圈九宫格切图</h2>
-        <p className={styles.toolDesc}>纯前端处理 · 拖拽缩放 · 旋转裁剪</p>
+        <p className={styles.toolDesc}>保护隐私 · 本地处理 · 使用更放心</p>
 
         <label ref={uploadRef} className={styles.uploadBox}>
           <input type="file" accept="image/*" onChange={onUpload} />

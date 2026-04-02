@@ -1,0 +1,548 @@
+/* ===== 布局容器 ===== */
+.page {
+  display: block;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ===== 标题区域 ===== */
+.titleSection {
+  margin-bottom: 24px;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ===== 空闲状态 (idle) ===== */
+.idleContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  min-height: 300px;
+  text-align: center;
+}
+
+.idleIcon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.idleTitle {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.idleDescription {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 32px;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+.startButton {
+  background: linear-gradient(135deg, #3498db 0%, #667eea 100%);
+  color: white;
+  border: none;
+  padding: 16px 48px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.startButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.5);
+}
+
+.startButton:active {
+  transform: translateY(0);
+}
+
+.errorText {
+  margin-top: 12px;
+  color: #c0392b;
+  font-size: 14px;
+}
+
+/* ===== 等待状态 (waiting) ===== */
+.waitingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  min-height: 350px;
+  text-align: center;
+}
+
+.loadingDots {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.loadingDot {
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, #3498db 0%, #667eea 100%);
+  border-radius: 50%;
+  animation: bounce 1.4s ease-in-out infinite;
+}
+
+.loadingDot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loadingDot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loadingDot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.waitingText {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 32px;
+}
+
+.cancelButton {
+  background: #95a5a6;
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  font-size: 16px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancelButton:hover {
+  background: #7f8c8d;
+}
+
+/* ===== 聊天容器 ===== */
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  height: 600px;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
+}
+
+/* ===== 状态栏 ===== */
+.statusBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.statusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #2ecc71;
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+.statusDot.disconnected {
+  background: #95a5a6;
+  animation: none;
+}
+
+.statusText {
+  font-size: 14px;
+  color: #666;
+}
+
+.hintText {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* ===== 消息区域 ===== */
+.messagesContainer {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #fafafa;
+  position: relative;
+  scroll-behavior: smooth;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #999;
+  font-size: 16px;
+}
+
+.emptyStateIcon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.messageWrapper {
+  margin-bottom: 16px;
+}
+
+.messageWrapper.mine {
+  text-align: right;
+}
+
+.messageWrapper.peer {
+  text-align: left;
+}
+
+.messageWrapper.system {
+  text-align: center;
+}
+
+.messageAvatar {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  border-radius: 50%;
+  color: white;
+  font-size: 14px;
+  line-height: 32px;
+  text-align: center;
+  margin-right: 8px;
+  vertical-align: top;
+}
+
+.myAvatar {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  border-radius: 50%;
+  color: white;
+  font-size: 14px;
+  line-height: 32px;
+  text-align: center;
+  margin-left: 8px;
+  vertical-align: top;
+}
+
+.messageBubble {
+  display: inline-block;
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 15px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.messageBubble.mine {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.messageBubble.peer {
+  background: #ffffff;
+  color: #333;
+  border: 1px solid #e8e8e8;
+  border-bottom-left-radius: 4px;
+}
+
+.messageBubble.system {
+  background: #f0f0f0;
+  color: #666;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+/* ===== 有新消息提示 ===== */
+.newMessageHint {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  z-index: 2;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid #cfe8fc;
+  background: white;
+  color: #3498db;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(52, 152, 219, 0.15);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.newMessageHint:hover {
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.25);
+}
+
+.newMessageHint::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: #3498db;
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ===== 输入区域 ===== */
+.inputContainer {
+  padding: 16px 20px;
+  background: white;
+  border-top: 1px solid #e8e8e8;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.inputWrapper {
+  flex: 1;
+  position: relative;
+}
+
+.messageInput {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid #e8e8e8;
+  border-radius: 50px;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+}
+
+.messageInput:focus {
+  border-color: #3498db;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.sendButton {
+  background: linear-gradient(135deg, #3498db 0%, #667eea 100%);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.sendButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.sendButton:active {
+  transform: translateY(0);
+}
+
+.sendButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===== 操作按钮区 ===== */
+.actionBar {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.actionButton {
+  background: #95a5a6;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  font-size: 14px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.actionButton:hover {
+  background: #7f8c8d;
+}
+
+.actionButton.primary {
+  background: linear-gradient(135deg, #3498db 0%, #667eea 100%);
+}
+
+.actionButton.primary:hover {
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.backLink {
+  color: #666;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.backLink:hover {
+  color: #3498db;
+}
+
+/* ===== 已结束状态卡片 ===== */
+.endedCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  text-align: center;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+}
+
+.endedIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.endedTitle {
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.endedDescription {
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 24px;
+  max-width: 350px;
+}
+
+/* ===== 动画 ===== */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+@keyframes bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes statusPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== 过渡效果 ===== */
+.fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ===== 响应式设计 ===== */
+@media (max-width: 640px) {
+  .chatContainer {
+    height: calc(100vh - 200px);
+  }
+
+  .messageBubble {
+    max-width: 80%;
+  }
+
+  .idleTitle {
+    font-size: 24px;
+  }
+
+  .idleDescription {
+    font-size: 14px;
+  }
+
+  .startButton {
+    padding: 14px 36px;
+    font-size: 16px;
+  }
+
+  .inputContainer {
+    padding: 12px 16px;
+  }
+
+  .actionBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actionButton,
+  .backLink {
+    text-align: center;
+  }
+}

@@ -3,6 +3,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import styles from './page.module.css';
 
 const CLIENT_KEY = '520tool-random-chat-client-id';
 const POLL_MS = 2000;
@@ -341,7 +342,7 @@ export default function RandomChatPage() {
     }
 
     if (data.status === 'waiting') {
-      setHint('正在等待另一位用户…');
+      setHint('正在等待你的缘分 ...');
       return;
     }
 
@@ -421,169 +422,199 @@ export default function RandomChatPage() {
 
   return (
     <div className="tool-page" style={{ display: 'block' }}>
-      <h2>随机聊天室</h2>
-      <p style={{ color: '#666', marginBottom: '16px', fontSize: '14px' }}>
-        欢迎来到牛马茶馆，在这里你可以匿名随机匹配一对一文字聊天，无需登录。消息通过实时通道传递、不会写入数据库；关闭、切换、刷新页面会自动退出队列或房间。
-      </p>
+      <div className={styles.titleSection}>
+        <h2>随机聊天室</h2>
+        <p className={styles.subtitle}>
+          欢迎光临 ~ 在这里你可以匿名随机匹配神秘用户文字聊天，无需登录。消息通过实时通道传递、不会写入数据库；离开或刷新本页面会自动退出队列或房间。
+        </p>
+      </div>
 
       {phase === 'idle' && (
-        <div className="tool-content">
-          <button type="button" className="btn" onClick={startChat}>
-            寻找我的缘分
-          </button>
-          {hint ? (
-            <p style={{ marginTop: '12px', color: '#c0392b' }}>{hint}</p>
-          ) : null}
-          <a
-            href="/"
-            className="back-btn"
-            data-chat-back-link
-            onClick={handleBackToHome}
-          >
-            ← 返回工具目录
-          </a>
+        <div className={`${styles.content} ${styles.fadeIn}`}>
+          <div className={styles.idleContainer}>
+            <div className={styles.idleIcon}>💬</div>
+            <h3 className={styles.idleTitle}>开始你的匿名聊天</h3>
+            <p className={styles.idleDescription}>
+              匿名匹配，即时聊天。找到有缘人，畅聊无界限 ~
+            </p>
+            <button type="button" className={styles.startButton} onClick={startChat}>
+              开始匹配
+            </button>
+            {hint ? (
+              <p className={styles.errorText}>{hint}</p>
+            ) : null}
+          </div>
+          <div className={styles.actionBar}>
+            <a
+              href="/"
+              className={styles.backLink}
+              data-chat-back-link
+              onClick={handleBackToHome}
+            >
+              ← 返回工具目录
+            </a>
+          </div>
         </div>
       )}
 
       {phase === 'waiting' && (
-        <div className="tool-content">
-          <p style={{ marginBottom: '12px' }}>{hint}</p>
-          <button
-            type="button"
-            className="btn"
-            style={{ background: '#95a5a6' }}
-            onClick={() => {
-              clearPoll();
-              leaveApi(clientIdRef.current);
-              setPhase('idle');
-              setHint('');
-            }}
-          >
-            取消等待
-          </button>
-          <a
-            href="/"
-            className="back-btn"
-            data-chat-back-link
-            onClick={handleBackToHome}
-          >
-            ← 返回工具目录
-          </a>
+        <div className={`${styles.content} ${styles.fadeIn}`}>
+          <div className={styles.waitingContainer}>
+            <div className={styles.loadingDots}>
+              <div className={styles.loadingDot}></div>
+              <div className={styles.loadingDot}></div>
+              <div className={styles.loadingDot}></div>
+            </div>
+            <p className={styles.waitingText}>{hint}</p>
+            <button
+              type="button"
+              className={styles.cancelButton}
+              onClick={() => {
+                clearPoll();
+                leaveApi(clientIdRef.current);
+                setPhase('idle');
+                setHint('');
+              }}
+            >
+              取消等待
+            </button>
+          </div>
+          <div className={styles.actionBar}>
+            <a
+              href="/"
+              className={styles.backLink}
+              data-chat-back-link
+              onClick={handleBackToHome}
+            >
+              ← 返回工具目录
+            </a>
+          </div>
         </div>
       )}
 
-      {(phase === 'chat' || phase === 'ended') && (
-        <div className="tool-content">
-          <p style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>{hint}</p>
-          <div
-            ref={listRef}
-            onScroll={handleListScroll}
-            style={{
-              position: 'relative',
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-              padding: '12px',
-              paddingBottom: showNewMessageHint && phase === 'chat' ? '44px' : '12px',
-              minHeight: '220px',
-              maxHeight: '360px',
-              overflowY: 'auto',
-              background: '#fafafa',
-              marginBottom: '12px',
-              textAlign: 'left',
-            }}
-          >
-            {messages.length === 0 ? (
-              <span style={{ color: '#999' }}>还没有消息，打个招呼吧</span>
-            ) : (
-              messages.map((m) => (
-                <div
-                  key={m.id}
-                  style={{
-                    marginBottom: '8px',
-                    textAlign: m.mine ? 'right' : 'left',
-                  }}
-                >
-                  <span
-                    style={{
-                      display: 'inline-block',
-                      maxWidth: '85%',
-                      padding: '8px 12px',
-                      borderRadius: '12px',
-                      background: m.mine ? '#3498db' : '#ecf0f1',
-                      color: m.mine ? '#fff' : '#333',
-                      whiteSpace: 'pre-wrap',
-                      wordBreak: 'break-word',
-                    }}
-                  >
-                    {m.text}
-                  </span>
+      {phase === 'chat' && (
+        <div className={`${styles.content} ${styles.fadeIn}`}>
+          <div className={styles.chatContainer}>
+            <div className={styles.statusBar}>
+              <div className={styles.statusDot}></div>
+              <span className={styles.statusText}>已连接 · 匿名聊天中</span>
+            </div>
+            <div
+              ref={listRef}
+              onScroll={handleListScroll}
+              className={styles.messagesContainer}
+            >
+              {messages.length === 0 ? (
+                <div className={styles.emptyState}>
+                  <div className={styles.emptyStateIcon}>👋</div>
+                  <span>还没有消息，打个招呼吧~</span>
                 </div>
-              ))
-            )}
-            <div ref={bottomRef} />
-            {showNewMessageHint && phase === 'chat' ? (
+              ) : (
+                messages.map((m) => (
+                  <div
+                    key={m.id}
+                    className={`${styles.messageWrapper} ${m.mine ? styles.mine : styles.peer}`}
+                  >
+                    {!m.mine && <span className={styles.messageAvatar}>👤</span>}
+                    <span className={`${styles.messageBubble} ${m.mine ? styles.mine : styles.peer}`}>
+                      {m.text}
+                    </span>
+                    {m.mine && <span className={styles.myAvatar}>👤</span>}
+                  </div>
+                ))
+              )}
+              <div ref={bottomRef} />
+              {showNewMessageHint ? (
+                <button
+                  type="button"
+                  onClick={scrollToBottom}
+                  className={styles.newMessageHint}
+                >
+                  有新消息
+                </button>
+              ) : null}
+            </div>
+            <div className={styles.inputContainer}>
+              <div className={styles.inputWrapper}>
+                <input
+                  type="text"
+                  className={styles.messageInput}
+                  value={input}
+                  placeholder="输入消息，按 Enter 发送..."
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      sendMessage();
+                    }
+                  }}
+                />
+              </div>
               <button
                 type="button"
-                onClick={scrollToBottom}
-                style={{
-                  position: 'absolute',
-                  left: '50%',
-                  bottom: '12px',
-                  transform: 'translateX(-50%)',
-                  zIndex: 2,
-                  padding: '8px 16px',
-                  borderRadius: '999px',
-                  border: '1px solid #cfe8fc',
-                  background: '#fff',
-                  color: '#3498db',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 10px rgba(52, 152, 219, 0.15)',
-                  maxWidth: 'calc(100% - 24px)',
-                  whiteSpace: 'nowrap',
-                }}
+                className={styles.sendButton}
+                onClick={sendMessage}
+                disabled={!input.trim()}
               >
-                有新消息
-              </button>
-            ) : null}
-          </div>
-          {phase === 'chat' ? (
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
-              <input
-                type="text"
-                className="input-area"
-                style={{ flex: '1 1 200px', minHeight: '42px' }}
-                value={input}
-                placeholder="输入消息，回车发送"
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                  }
-                }}
-              />
-              <button type="button" className="btn" onClick={sendMessage}>
                 发送
               </button>
             </div>
-          ) : null}
-          <button
-            type="button"
-            className="btn"
-            style={{ background: '#95a5a6' }}
-            onClick={() => (phase === 'chat' ? exitChat(true) : exitChat(false))}
-          >
-            {phase === 'chat' ? '退出聊天' : '返回'}
-          </button>
-          <a
-            href="/"
-            className="back-btn"
-            data-chat-back-link
-            onClick={handleBackToHome}
-          >
-            ← 返回工具目录
-          </a>
+          </div>
+          <div className={styles.actionBar}>
+            <button
+              type="button"
+              className={styles.actionButton}
+              onClick={() => exitChat(true)}
+            >
+              退出聊天
+            </button>
+            <a
+              href="/"
+              className={styles.backLink}
+              data-chat-back-link
+              onClick={handleBackToHome}
+            >
+              ← 返回工具目录
+            </a>
+          </div>
+        </div>
+      )}
+
+      {phase === 'ended' && (
+        <div className={`${styles.content} ${styles.fadeIn}`}>
+          <div className={styles.endedCard}>
+            <div className={styles.endedIcon}>👋</div>
+            <h3 className={styles.endedTitle}>对方已离开</h3>
+            <p className={styles.endedDescription}>
+              本次聊天已结束。你可以继续查看消息，或者开始新的匹配。
+            </p>
+            <div className={styles.actionBar} style={{ marginTop: 0 }}>
+              <button
+                type="button"
+                className={`${styles.actionButton} ${styles.primary}`}
+                onClick={startChat}
+              >
+                重新匹配
+              </button>
+              <button
+                type="button"
+                className={styles.actionButton}
+                onClick={() => exitChat(false)}
+              >
+                返回
+              </button>
+            </div>
+          </div>
+          <div className={styles.actionBar}>
+            <a
+              href="/"
+              className={styles.backLink}
+              data-chat-back-link
+              onClick={handleBackToHome}
+            >
+              ← 返回工具目录
+            </a>
+          </div>
         </div>
       )}
     </div>

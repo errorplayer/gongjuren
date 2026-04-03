@@ -1,6 +1,16 @@
 // app/api/guestbook/submit/route.js
 import { supabase } from '@/lib/supabase';
 
+const NICKNAME_REGEX = /[a-zA-Z0-9\u4e00-\u9fa5]/g;
+
+function sanitizeNickname(name) {
+  if (!name) return '匿名';
+  const trimmed = name.trim();
+  if (trimmed === '') return '匿名';
+  const matched = trimmed.match(NICKNAME_REGEX);
+  return matched ? matched.join('').slice(0, 20) : '匿名';
+}
+
 export async function POST(request) {
     try {
         const { nickname, content } = await request.json();
@@ -16,7 +26,7 @@ export async function POST(request) {
         const { error } = await supabase
             .from('guestbook')
             .insert({
-                nickname: (nickname || '').trim().slice(0, 20) || '匿名',
+                nickname: sanitizeNickname(nickname),
                 content: content.trim(),
             });
 

@@ -8,7 +8,7 @@ import styles from './page.module.css';
  * 常量配置
  */
 // localStorage 中存储客户端 ID 的键名
-const CLIENT_KEY = '520tool-random-chat-client-id';
+const CLIENT_KEY = '520tool-chat-v2-client-id';
 // 轮询匹配间隔（毫秒）
 const POLL_MS = 2000;
 // 距离底部多少像素内视为"接近底部"，用于自动滚动判断
@@ -148,7 +148,7 @@ export default function SafeContent() {
   const leaveApi = useCallback(async (cid) => {
     if (!cid) return;
     try {
-      await fetch('/api/random-chat/leave', {
+      await fetch('/api/chat-v2/leave', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ clientId: cid }),
@@ -259,10 +259,10 @@ export default function SafeContent() {
     if (navigator.sendBeacon) {
       // 优先使用 sendBeacon，它会在页面卸载时可靠发送
       const blob = new Blob([body], { type: 'application/json' });
-      navigator.sendBeacon('/api/random-chat/leave', blob);
+      navigator.sendBeacon('/api/chat-v2/leave', blob);
     } else {
       // 降级方案：使用 fetch + keepalive
-      fetch('/api/random-chat/leave', {
+      fetch('/api/chat-v2/leave', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body,
@@ -308,8 +308,8 @@ export default function SafeContent() {
   useEffect(() => {
     if (phase !== 'chat' && phase !== 'waiting') return;
     if (typeof window === 'undefined') return;
-    if (window.history.state?.randomChatGuard) return;
-    window.history.pushState({ randomChatGuard: true }, '', window.location.href);
+    if (window.history.state?.chatV2Guard) return;
+    window.history.pushState({ chatV2Guard: true }, '', window.location.href);
   }, [phase]);
 
   /**
@@ -329,7 +329,7 @@ export default function SafeContent() {
           });
         } else {
           // 取消离开，重新 push 状态
-          window.history.pushState({ randomChatGuard: true }, '', window.location.href);
+          window.history.pushState({ chatV2Guard: true }, '', window.location.href);
         }
         return;
       }
@@ -338,7 +338,7 @@ export default function SafeContent() {
         if (ok) {
           leaveWaitingRef.current();
         } else {
-          window.history.pushState({ randomChatGuard: true }, '', window.location.href);
+          window.history.pushState({ chatV2Guard: true }, '', window.location.href);
         }
       }
     };
@@ -510,7 +510,7 @@ export default function SafeContent() {
     const cid = clientIdRef.current;
     if (!cid) return;
 
-    const res = await fetch('/api/random-chat/join', {
+    const res = await fetch('/api/chat-v2/join', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ clientId: cid }),
@@ -558,7 +558,7 @@ export default function SafeContent() {
       supabaseRef.current = sb;
       // 订阅 Supabase 实时频道
       const channel = sb
-        .channel(`random-chat:${data.room_id}`, {
+        .channel(`chat-v2:${data.room_id}`, {
           config: { broadcast: { self: true } },
         })
         // 监听聊天消息
@@ -599,7 +599,7 @@ export default function SafeContent() {
     fetch('/api/stats/use', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tool_id: 'random-chat' }),
+      body: JSON.stringify({ tool_id: 'chat-v2' }),
     }).catch(() => { });
 
     setPhase('waiting');
@@ -634,7 +634,7 @@ export default function SafeContent() {
     <div className="tool-page" style={{ display: 'block' }}>
       {/* 页面标题区域 */}
       <div className={styles.titleSection}>
-        <h2>随机聊天室</h2>
+        <h2>随机聊天室 [内测版]</h2>
         <p className={styles.subtitle}>
           欢迎光临 ~ 在这里你可以匿名随机匹配神秘用户文字聊天，无需登录。消息数据随聊天结束清空；离开或刷新本页面会自动退出队列或房间。
         </p>

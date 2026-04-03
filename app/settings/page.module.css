@@ -1,0 +1,352 @@
+.settingsContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.settingsHeader {
+  margin-bottom: 40px;
+}
+
+.settingsHeader h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.settingsHeader p {
+  color: var(--text-secondary);
+}
+
+.settingsSection {
+  background: var(--bg-card, #fff);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+:global([data-theme="dark"]) .settingsSection {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nicknameInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.nicknameInput {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  font-size: 14px;
+  background: var(--bg-input, #fff);
+  color: var(--text-primary, #333);
+}
+
+.nicknameInput:focus {
+  outline: none;
+  border-color: var(--accent, #0070f3);
+}
+
+.nicknameInput::placeholder {
+  color: var(--text-muted, #999);
+}
+
+.charCount {
+  font-size: 12px;
+  color: var(--text-muted);
+  min-width: 45px;
+  text-align: right;
+}
+
+.nicknameSaved {
+  color: #10b981;
+  font-size: 18px;
+  animation: fadeIn 0.3s ease;
+}
+
+.nicknameError {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.nicknameDisplay {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-hover, #f5f5f5);
+  border-radius: 8px;
+}
+
+.currentNickname {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary, #333);
+  padding: 8px 16px;
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 6px;
+}
+
+.nicknameLink {
+  padding: 8px 16px;
+  background: var(--accent, #0070f3);
+  color: white;
+  border-radius: 6px;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.nicknameLink:hover {
+  background: var(--accent-hover, #0050cc);
+}
+
+.themeToggleButtons {
+  display: flex;
+  gap: 12px;
+}
+
+.themeButton {
+  padding: 12px 24px;
+  border: 2px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  background: var(--bg-card, #fff);
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  color: var(--text-primary, #333);
+}
+
+.themeButton:hover {
+  border-color: var(--accent, #0070f3);
+}
+
+.themeButton.active {
+  border-color: var(--accent, #0070f3);
+  background: var(--accent, #0070f3);
+  color: white;
+}
+
+.draggableList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.draggableItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: var(--bg-card, #fff);
+  transition: all 0.2s;
+}
+
+.draggableItem.dragging {
+  opacity: 0.5;
+  border-color: var(--accent, #0070f3);
+}
+
+.draggableItem.dragOver {
+  border-color: var(--accent, #0070f3);
+  background: var(--bg-hover, #f5f5f5);
+}
+
+.dragHandle {
+  cursor: grab;
+  padding: 8px;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+.dragHandle.hidden {
+  visibility: hidden;
+}
+
+.dragHandle.hiddenDesktop {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .dragHandle {
+    visibility: hidden;
+  }
+
+  .dragHandle.hiddenDesktop {
+    visibility: hidden;
+  }
+}
+
+.toolCheckbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.toolInfo {
+  flex: 1;
+}
+
+.toolName {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.toolIcon {
+  margin-right: 6px;
+}
+
+.toolDesc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.controlButtons {
+  display: flex;
+  gap: 4px;
+}
+
+.arrowButton {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 6px;
+  background: var(--bg-card, #fff);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary, #333);
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+.arrowButton:hover:not(:disabled) {
+  background: var(--bg-hover, #f5f5f5);
+}
+
+.arrowButton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color, #e0e0e0);
+}
+
+.actionButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.actionButton.primary {
+  background: var(--accent, #0070f3);
+  color: white;
+}
+
+.actionButton.primary:hover {
+  background: var(--accent-hover, #0050cc);
+}
+
+.actionButton.secondary {
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  color: var(--text-primary, #333);
+}
+
+.actionButton.secondary:hover {
+  background: var(--bg-hover, #f5f5f5);
+}
+
+.actionButton.danger {
+  background: var(--bg-card, #fff);
+  border: 1px solid #dc2626;
+  color: #dc2626;
+}
+
+.actionButton.danger:hover {
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+}
+
+.helpText {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  z-index: 1000;
+  animation: slideUp 0.3s ease;
+}
+
+.toast.success {
+  background: #10b981;
+  color: white;
+}
+
+.toast.error {
+  background: #ef4444;
+  color: white;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}

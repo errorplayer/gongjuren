@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { getPrefs, setPrefs } from '@/lib/user-prefs';
 
 function generateCaptcha() {
     const a = Math.floor(Math.random() * 10) + 1;
@@ -28,7 +29,7 @@ function formatTime(dateStr) {
 }
 
 export default function GuestbookPage() {
-    const [nickname, setNickname] = useState('');
+    const [nickname, setNickname] = useState('游客');
     const [content, setContent] = useState('');
     const [captcha, setCaptcha] = useState(generateCaptcha);
     const [captchaInput, setCaptchaInput] = useState('');
@@ -50,6 +51,13 @@ export default function GuestbookPage() {
         fetchMessages();
     }, [fetchMessages]);
 
+    useEffect(() => {
+        const prefs = getPrefs();
+        if (prefs?.nickname && prefs.nickname.trim() !== '') {
+            setNickname(prefs.nickname);
+        }
+    }, []);
+
     const handleSubmit = async () => {
         if (!content.trim()) {
             setErrorMsg('请输入留言内容');
@@ -69,7 +77,7 @@ export default function GuestbookPage() {
             const res = await fetch('/api/guestbook/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nickname: nickname || '匿名', content }),
+                body: JSON.stringify({ nickname, content }),
             });
 
             const json = await res.json();
@@ -99,11 +107,12 @@ export default function GuestbookPage() {
                         <input
                             type="text"
                             value={nickname}
-                            onChange={(e) => setNickname(e.target.value)}
-                            placeholder="昵称（可不填，默认匿名）"
+                            readOnly
+                            placeholder="昵称（默认显示为：游客）"
                             maxLength={20}
                             className="guestbook-input guestbook-input-nickname"
                         />
+                        <Link href="/settings" className="guestbook-nickname-link">到设置修改昵称</Link>
                     </div>
                     <div className="guestbook-row">
                         <textarea

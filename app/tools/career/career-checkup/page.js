@@ -906,12 +906,12 @@ export default function CareerCheckup() {
         .checkup-title {
           font-size: 2rem;
           font-weight: 700;
-          color: #1a1a1a;
+          color: var(--text-primary);
           margin-bottom: 0.5rem;
         }
 
         .checkup-subtitle {
-          color: #666;
+          color: var(--text-secondary);
           font-size: 1.1rem;
         }
 

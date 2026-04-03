@@ -82,13 +82,13 @@ export default function CareerHub() {
         .career-title {
           font-size: 2.5rem;
           font-weight: 700;
-          color: #1a1a1a;
+          color: var(--text-primary);
           margin-bottom: 0.5rem;
         }
 
         .career-subtitle {
           font-size: 1.1rem;
-          color: #666;
+          color: var(--text-secondary);
         }
 
         .career-tools-grid {
@@ -98,8 +98,8 @@ export default function CareerHub() {
         }
 
         .career-tool-card {
-          background: white;
-          border: 2px solid #e0e0e0;
+          background: var(--bg-card);
+          border: 2px solid var(--border-color);
           border-radius: 12px;
           padding: 2rem 1.5rem;
           text-decoration: none;
@@ -108,7 +108,7 @@ export default function CareerHub() {
         }
 
         .career-tool-card:not(.career-tool-disabled):hover {
-          border-color: #3498db;
+          border-color: var(--accent);
           transform: translateY(-4px);
           box-shadow: 0 8px 20px rgba(52, 152, 219, 0.15);
         }
@@ -126,13 +126,13 @@ export default function CareerHub() {
         .career-tool-name {
           font-size: 1.25rem;
           font-weight: 600;
-          color: #1a1a1a;
+          color: var(--text-primary);
           margin-bottom: 0.75rem;
         }
 
         .career-tool-desc {
           font-size: 0.95rem;
-          color: #666;
+          color: var(--text-secondary);
           line-height: 1.6;
           margin-bottom: 1.5rem;
         }
@@ -151,8 +151,9 @@ export default function CareerHub() {
         }
 
         .status-locked {
-          background: #f5f5f5;
-          color: #999;
+          background: var(--bg-hover);
+          color: var(--text-muted);
+          border: 1px solid var(--border-color);
         }
 
         @media (max-width: 768px) {
@@ -163,6 +164,13 @@ export default function CareerHub() {
           .career-tools-grid {
             grid-template-columns: 1fr;
           }
+        }
+      `}</style>
+
+      <style jsx global>{`
+        [data-theme="dark"] .status-available {
+          background: rgba(76, 175, 80, 0.2);
+          color: #81c784;
         }
       `}</style>
     </div>

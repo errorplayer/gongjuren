@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function FlipClock() {
   const intervalRef = useRef(null);
+  const router = useRouter();
 
   useEffect(() => {
     const updateClock = () => {
@@ -34,7 +36,12 @@ export default function FlipClock() {
   }, []);
 
   return (
-    <div className="flip-clock">
+    <div
+      className="flip-clock"
+      onClick={() => router.push('/settings')}
+      title="点击进入设置页面"
+      style={{ cursor: 'pointer' }}
+    >
       <div className="flip-digit" data-digit="0">
         <div className="top">0</div>
         <div className="bottom">0</div>

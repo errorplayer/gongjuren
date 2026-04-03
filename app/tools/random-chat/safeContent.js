@@ -41,8 +41,8 @@ export default function SafeContent() {
   const bottomRef = useRef(null);
   const shouldAutoScrollRef = useRef(true);
   const phaseRef = useRef('idle');
-  const exitChatRef = useRef(async () => {});
-  const leaveWaitingRef = useRef(async () => {});
+  const exitChatRef = useRef(async () => { });
+  const leaveWaitingRef = useRef(async () => { });
   const fullscreenRef = useRef(null);
 
   const clearPoll = useCallback(() => {
@@ -148,7 +148,7 @@ export default function SafeContent() {
         headers: { 'Content-Type': 'application/json' },
         body,
         keepalive: true,
-      }).catch(() => {});
+      }).catch(() => { });
     }
   }, []);
 
@@ -417,7 +417,7 @@ export default function SafeContent() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ tool_id: 'random-chat' }),
-    }).catch(() => {});
+    }).catch(() => { });
 
     setPhase('waiting');
     setHint('正在为你排队…');
@@ -447,7 +447,7 @@ export default function SafeContent() {
       <div className={styles.titleSection}>
         <h2>随机聊天室</h2>
         <p className={styles.subtitle}>
-          欢迎光临 ~ 在这里你可以匿名随机匹配神秘用户文字聊天，无需登录。消息通过实时通道传递、不会写入数据库；离开或刷新本页面会自动退出队列或房间。
+          欢迎光临 ~ 在这里你可以匿名随机匹配神秘用户文字聊天，无需登录。消息数据随聊天结束清空；离开或刷新本页面会自动退出队列或房间。
         </p>
       </div>
 
@@ -521,12 +521,12 @@ export default function SafeContent() {
               <button
                 type="button"
                 className={styles.backButton}
-                onClick={() => exitChat(true)}
+                onClick={() => { if (!window.confirm('离开将结束当前聊天，对方会收到退出提示。确定要离开吗？')) return; exitChat(true) }}
               >
                 ← 退出
               </button>
               <div className={styles.statusDot}></div>
-              <span className={styles.statusText}>已连接 · 匿名聊天中</span>
+              <span className={styles.statusText}>已连接 · 匿名聊天中 · 请勿泄露个人隐私信息！</span>
             </div>
             <div
               ref={listRef}

@@ -85,19 +85,39 @@ const [isMobile, setIsMobile] = useState(false);
 
   function initEvents() {
     const canvas = canvasRef.current;
+
+    // canvas 级别事件
     canvas?.addEventListener('mousedown', startDrag);
-    canvas?.addEventListener('touchstart', e => { e.preventDefault(); startDrag(e.touches[0]); });
+    const onTouchStart = (e) => { e.preventDefault(); startDrag(e.touches[0]); };
+    canvas?.addEventListener('touchstart', onTouchStart);
     canvas?.addEventListener('dblclick', () => { resetAll(); redraw(); });
 
+    // document 级别事件（需要 cleanup）
+    const onTouchMove = (e) => {
+      if (isDraggingRef.current) e.preventDefault();
+      dragMove(e.touches[0]);
+    };
+    const onPinchZoom = (e) => {
+      if (e.scale !== 1) e.preventDefault();
+    };
+
     document.addEventListener('mousemove', dragMove);
-    document.addEventListener('touchmove', e => { e.preventDefault(); dragMove(e.touches[0]); });
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
     document.addEventListener('mouseup', endDrag);
     document.addEventListener('touchend', endDrag);
+    document.addEventListener('touchmove', onPinchZoom, { passive: false });
 
-    // 新增：禁用移动端页面缩放
-    document.addEventListener('touchmove', (e) => {
-      if (e.scale !== 1) e.preventDefault();
-    }, { passive: false });
+    // 返回 cleanup 函数
+    return () => {
+      canvas?.removeEventListener('mousedown', startDrag);
+      canvas?.removeEventListener('touchstart', onTouchStart);
+      document.removeEventListener('mousemove', dragMove);
+      document.removeEventListener('touchmove', onTouchMove);
+      document.removeEventListener('mouseup', endDrag);
+      document.removeEventListener('touchend', endDrag);
+      document.removeEventListener('touchmove', onPinchZoom);
+      isDraggingRef.current = false;
+    };
   }
 
   async function onUpload(e) {
@@ -382,7 +402,7 @@ const [isMobile, setIsMobile] = useState(false);
         ) : (
           <label ref={uploadRef} className={styles.uploadBox}>
             <input type="file" accept="image/*" onChange={onUpload} />
-            <div className={styles.uploadText}>点击或拖拽上传图片</div>
+            <div className={styles.uploadText}>点击上传图片</div>
             <div className={styles.uploadTip}>支持 10M 以内 JPG / PNG 图片</div>
           </label>
         )}

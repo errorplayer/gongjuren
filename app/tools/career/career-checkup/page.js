@@ -329,7 +329,10 @@ export default function CareerCheckup() {
           <div className="notice-content">
             <span className="notice-icon">💡</span>
             <span className="notice-text">
-              建议使用PC端浏览器访问，体验更佳。所有数据仅保存于浏览器本地，仅在需要时发送至大模型处理。
+              建议使用PC端浏览器访问，体验更佳。
+            
+             
+              完成下方4个模块润色后，可生成您的专属求职体检报告！
             </span>
           </div>
           <button className="notice-close" onClick={handleDismissNotice}>
@@ -881,9 +884,9 @@ export default function CareerCheckup() {
         }
 
         .reset-data-btn {
-          background: #f8f9fa;
-          border: 2px solid #e9ecef;
-          color: #6c757d;
+          background: var(--bg-hover);
+          border: 2px solid var(--border-color);
+          color: var(--text-secondary);
           font-size: 0.85rem;
           padding: 8px 16px;
           border-radius: 20px;
@@ -898,8 +901,8 @@ export default function CareerCheckup() {
         .reset-data-btn:hover {
           color: #e74c3c;
           border-color: #e74c3c;
-          background: rgba(231, 76, 60, 0.08);
-          box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
+          background: rgba(231, 76, 60, 0.15);
+          box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
         }
 
 
@@ -916,7 +919,7 @@ export default function CareerCheckup() {
         }
 
         .checkup-section {
-          background: white;
+          background: var(--bg-card);
           border-radius: 12px;
           padding: 2rem;
           margin-bottom: 2rem;
@@ -930,7 +933,7 @@ export default function CareerCheckup() {
           font-size: 1.5rem;
           font-weight: 600;
           margin-bottom: 1.5rem;
-          color: #1a1a1a;
+          color: var(--text-primary);
         }
 
         .step-number {
@@ -948,7 +951,7 @@ export default function CareerCheckup() {
 
         .project-count {
           font-size: 0.9rem;
-          color: #666;
+          color: var(--text-secondary);
           margin-left: 0.5rem;
           font-weight: 400;
         }
@@ -962,8 +965,8 @@ export default function CareerCheckup() {
         }
 
         .project-item-card {
-          background: #f8f9fa;
-          border: 1px solid #e0e0e0;
+          background: var(--bg-hover);
+          border: 1px solid var(--border-color);
           border-radius: 8px;
           padding: 1rem;
         }
@@ -976,7 +979,7 @@ export default function CareerCheckup() {
 
         .project-item-title {
           font-weight: 500;
-          color: #333;
+          color: var(--text-primary);
           flex: 1;
         }
 
@@ -1038,8 +1041,8 @@ export default function CareerCheckup() {
 
         /* 项目查看详情 */
         .project-view-detail {
-          background: #f0f7ff;
-          border: 2px solid #3498db;
+          background: var(--bg-hover);
+          border: 2px solid var(--accent);
           border-radius: 10px;
           padding: 1.5rem;
           margin-top: 1rem;
@@ -1052,13 +1055,13 @@ export default function CareerCheckup() {
           align-items: center;
           margin-bottom: 1rem;
           padding-bottom: 0.75rem;
-          border-bottom: 1px solid #d0e3ff;
+          border-bottom: 1px solid var(--border-color);
         }
 
         .view-detail-header h3 {
           font-size: 1.1rem;
           font-weight: 600;
-          color: #1a1a1a;
+          color: var(--text-primary);
           margin: 0;
         }
 
@@ -1088,7 +1091,7 @@ export default function CareerCheckup() {
         }
 
         .view-section {
-          background: white;
+          background: var(--bg-card);
           border-radius: 8px;
           padding: 1rem;
         }
@@ -1096,18 +1099,18 @@ export default function CareerCheckup() {
         .view-section h4 {
           font-size: 0.95rem;
           font-weight: 600;
-          color: #555;
+          color: var(--text-secondary);
           margin: 0 0 0.75rem 0;
         }
 
         .view-section.insight-section {
-          background: #fff8e1;
-          border: 1px solid #ffc107;
+          background: rgba(255, 193, 7, 0.15);
+          border: 1px solid rgba(255, 193, 7, 0.4);
         }
 
         .view-text {
           line-height: 1.8;
-          color: #333;
+          color: var(--text-primary);
           white-space: pre-wrap;
           word-wrap: break-word;
         }
@@ -1133,23 +1136,25 @@ export default function CareerCheckup() {
 
         .form-group label {
           font-weight: 500;
-          color: #333;
+          color: var(--text-primary);
           font-size: 0.95rem;
         }
 
         .form-group select,
         .form-group input {
           padding: 0.75rem;
-          border: 1px solid #ddd;
+          border: 1px solid var(--border-color);
           border-radius: 8px;
           font-size: 1rem;
           transition: border-color 0.2s;
+          color: var(--text-primary);
+          background: var(--bg-input);
         }
 
         .form-group select:focus,
         .form-group input:focus {
           outline: none;
-          border-color: #3498db;
+          border-color: var(--accent);
         }
 
         /* 场景卡片 */
@@ -1160,7 +1165,7 @@ export default function CareerCheckup() {
         }
 
         .scene-card {
-          background: #f8f9fa;
+          background: var(--bg-hover);
           border: 2px solid transparent;
           border-radius: 10px;
           padding: 1.5rem;
@@ -1170,13 +1175,13 @@ export default function CareerCheckup() {
         }
 
         .scene-card:hover {
-          border-color: #3498db;
+          border-color: var(--accent);
           transform: translateY(-2px);
         }
 
         .scene-card.active {
-          border-color: #3498db;
-          background: #e3f2fd;
+          border-color: var(--accent);
+          background: var(--bg-card);
         }
 
         .scene-card.completed {
@@ -1203,12 +1208,12 @@ export default function CareerCheckup() {
           font-size: 1.1rem;
           font-weight: 600;
           margin-bottom: 0.5rem;
-          color: #1a1a1a;
+          color: var(--text-primary);
         }
 
         .scene-desc {
           font-size: 0.9rem;
-          color: #666;
+          color: var(--text-secondary);
           margin-bottom: 0.75rem;
         }
 
@@ -1220,7 +1225,7 @@ export default function CareerCheckup() {
 
         /* 示例对比 */
         .example-section {
-          background: #fafafa;
+          background: var(--bg-hover);
           border-radius: 10px;
           padding: 1.5rem;
           margin-bottom: 1.5rem;
@@ -1232,11 +1237,11 @@ export default function CareerCheckup() {
           align-items: center;
           margin-bottom: 1rem;
           font-weight: 600;
-          color: #555;
+          color: var(--text-secondary);
         }
 
         .rotate-btn {
-          background: #3498db;
+          background: var(--accent);
           color: white;
           border: none;
           padding: 0.5rem 1rem;
@@ -1258,7 +1263,7 @@ export default function CareerCheckup() {
 
         .example-box {
           flex: 1;
-          background: white;
+          background: var(--bg-card);
           border-radius: 8px;
           padding: 1rem;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -1266,25 +1271,25 @@ export default function CareerCheckup() {
 
         .example-box h4 {
           font-size: 0.9rem;
-          color: #666;
+          color: var(--text-secondary);
           margin-bottom: 0.75rem;
         }
 
         .example-box p {
           font-size: 0.9rem;
-          color: #333;
+          color: var(--text-primary);
           line-height: 1.6;
         }
 
         .example-box.after {
-          background: #f0f7ff;
+          background: rgba(52, 152, 219, 0.15);
         }
 
         .example-arrow {
           display: flex;
           align-items: center;
           font-size: 1.5rem;
-          color: #3498db;
+          color: var(--accent);
         }
 
         /* 编辑器容器 */
@@ -1302,17 +1307,19 @@ export default function CareerCheckup() {
           width: 100%;
           min-height: 200px;
           padding: 1rem;
-          border: 1px solid #ddd;
+          border: 1px solid var(--border-color);
           border-radius: 8px;
           font-size: 1rem;
           font-family: inherit;
           resize: vertical;
           transition: border-color 0.2s;
+          background: var(--bg-input);
+          color: var(--text-primary);
         }
 
         .input-textarea:focus {
           outline: none;
-          border-color: #3498db;
+          border-color: var(--accent);
         }
 
         .char-count {
@@ -1320,7 +1327,7 @@ export default function CareerCheckup() {
           bottom: 10px;
           right: 10px;
           font-size: 0.85rem;
-          color: #999;
+          color: var(--text-muted);
           background: rgba(255, 255, 255, 0.9);
           padding: 0.25rem 0.5rem;
           border-radius: 4px;
@@ -1354,15 +1361,15 @@ export default function CareerCheckup() {
         }
 
         .result-section {
-          background: #f8f9fa;
+          background: var(--bg-hover);
           border-radius: 10px;
           padding: 1.5rem;
           margin-bottom: 1rem;
         }
 
         .result-section.insight-section {
-          background: #fff8e1;
-          border: 1px solid #ffc107;
+          background: rgba(255, 193, 7, 0.15);
+          border: 1px solid rgba(255, 193, 7, 0.4);
         }
 
         .result-header {
@@ -1375,11 +1382,11 @@ export default function CareerCheckup() {
         .result-header h3 {
           font-size: 1.1rem;
           font-weight: 600;
-          color: #1a1a1a;
+          color: var(--text-primary);
         }
 
         .copy-btn {
-          background: #3498db;
+          background: var(--accent);
           color: white;
           border: none;
           padding: 0.4rem 1rem;
@@ -1395,7 +1402,7 @@ export default function CareerCheckup() {
 
         .result-content {
           line-height: 1.8;
-          color: #333;
+          color: var(--text-primary);
           white-space: pre-wrap;
         }
 
@@ -1411,18 +1418,19 @@ export default function CareerCheckup() {
           width: 100%;
           min-height: 200px;
           padding: 1rem;
-          border: 1px solid #ddd;
+          border: 1px solid var(--border-color);
           border-radius: 8px;
           font-size: 1rem;
           font-family: inherit;
           resize: vertical;
           line-height: 1.6;
-          background: white;
+          background: var(--bg-input);
+          color: var(--text-primary);
         }
 
         .result-textarea:focus {
           outline: none;
-          border-color: #3498db;
+          border-color: var(--accent);
         }
 
         .result-actions {
@@ -1450,9 +1458,9 @@ export default function CareerCheckup() {
         }
 
         .clear-button {
-          background: #f8f9fa;
-          border: 2px solid #e9ecef;
-          color: #6c757d;
+          background: var(--bg-hover);
+          border: 2px solid var(--border-color);
+          color: var(--text-secondary);
           font-size: 0.95rem;
           padding: 0.75rem 1.5rem;
           border-radius: 8px;
@@ -1464,32 +1472,32 @@ export default function CareerCheckup() {
         .clear-button:hover {
           color: #e74c3c;
           border-color: #e74c3c;
-          background: rgba(231, 76, 60, 0.08);
-          box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
+          background: rgba(231, 76, 60, 0.15);
+          box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
         }
 
         /* 进度条 */
         .progress-bar {
-          background: white;
+          background: var(--bg-card);
           border-radius: 12px;
           padding: 1.5rem;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .progress-bar.completed {
-          background: #f0f9ff;
+          background: rgba(76, 175, 80, 0.1);
           border: 2px solid #4caf50;
         }
 
         .progress-label {
           font-weight: 600;
-          color: #333;
+          color: var(--text-primary);
           margin-bottom: 0.75rem;
         }
 
         .progress-track {
           height: 10px;
-          background: #e0e0e0;
+          background: var(--border-color);
           border-radius: 5px;
           overflow: hidden;
         }

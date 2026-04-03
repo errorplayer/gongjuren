@@ -251,6 +251,11 @@ export default function CareerReport() {
           max-width: 900px;
           margin: 0 auto;
           padding: 2rem 1rem;
+          color: #333;
+        }
+
+        [data-theme="dark"] .report-page {
+          color: #e5e5e5;
         }
 
         .loading-container {
@@ -265,10 +270,15 @@ export default function CareerReport() {
         .loading-spinner {
           width: 60px;
           height: 60px;
-          border: 4px solid #e0e0e0;
-          border-top-color: #667eea;
+          border: 4px solid rgba(255, 255, 255, 0.2);
+          border-top-color: #8B5CF6;
           border-radius: 50%;
           animation: spin 1s linear infinite;
+        }
+
+        [data-theme="light"] .loading-spinner {
+          border-color: #e0e0e0;
+          border-top-color: #667eea;
         }
 
         @keyframes spin {
@@ -279,6 +289,10 @@ export default function CareerReport() {
 
         .loading-container p {
           font-size: 1.1rem;
+          color: #999;
+        }
+
+        [data-theme="light"] .loading-container p {
           color: #666;
         }
 
@@ -294,14 +308,22 @@ export default function CareerReport() {
 
         .error-container h2 {
           font-size: 1.8rem;
-          color: #1a1a1a;
+          color: #e5e5e5;
           margin-bottom: 1rem;
         }
 
+        [data-theme="light"] .error-container h2 {
+          color: #1a1a1a;
+        }
+
         .error-message {
-          color: #666;
+          color: #999;
           font-size: 1.1rem;
           margin-bottom: 2rem;
+        }
+
+        [data-theme="light"] .error-message {
+          color: #666;
         }
 
         .error-actions {
@@ -314,16 +336,23 @@ export default function CareerReport() {
         .back-button {
           display: inline-block;
           padding: 0.75rem 2rem;
-          background: #f0f0f0;
-          color: #333;
+          background: rgba(255, 255, 255, 0.1);
+          color: #e5e5e5;
           text-decoration: none;
           border-radius: 8px;
           font-weight: 600;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        [data-theme="light"] .back-button {
+          background: #f0f0f0;
+          color: #333;
+          border-color: transparent;
         }
 
         .retry-button {
           padding: 0.75rem 2rem;
-          background: #667eea;
+          background: #8B5CF6;
           color: white;
           border: none;
           border-radius: 8px;
@@ -332,6 +361,14 @@ export default function CareerReport() {
         }
 
         .retry-button:hover {
+          background: #7C3AED;
+        }
+
+        [data-theme="light"] .retry-button {
+          background: #667eea;
+        }
+
+        [data-theme="light"] .retry-button:hover {
           background: #5568d3;
         }
 
@@ -354,13 +391,21 @@ export default function CareerReport() {
         .report-title {
           font-size: 2.2rem;
           font-weight: 700;
-          color: #1a1a1a;
+          color: #e5e5e5;
           margin-bottom: 0.5rem;
         }
 
+        [data-theme="light"] .report-title {
+          color: #1a1a1a;
+        }
+
         .report-subtitle {
-          color: #666;
+          color: #999;
           font-size: 1.1rem;
+        }
+
+        [data-theme="light"] .report-subtitle {
+          color: #666;
         }
 
         .report-actions {
@@ -383,13 +428,22 @@ export default function CareerReport() {
         }
 
         .copy-button {
-          background: #3498db;
+          background: #3B82F6;
           color: white;
         }
 
         .copy-button:hover {
-          background: #2980b9;
+          background: #2563EB;
           transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        [data-theme="light"] .copy-button {
+          background: #3498db;
+        }
+
+        [data-theme="light"] .copy-button:hover {
+          background: #2980b9;
           box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
         }
 
@@ -411,11 +465,19 @@ export default function CareerReport() {
         }
 
         .report-section {
-          background: white;
+          background: rgba(255, 255, 255, 0.05);
           border-radius: 12px;
           padding: 2rem;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          border-left: 4px solid #8B5CF6;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="light"] .report-section {
+          background: white;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-          border-left: 4px solid #667eea;
+          border-left-color: #667eea;
+          border-color: transparent;
         }
 
         .section-title {
@@ -425,6 +487,10 @@ export default function CareerReport() {
           font-size: 1.4rem;
           font-weight: 600;
           margin-bottom: 1.5rem;
+          color: #e5e5e5;
+        }
+
+        [data-theme="light"] .section-title {
           color: #1a1a1a;
         }
 
@@ -434,15 +500,23 @@ export default function CareerReport() {
           justify-content: center;
           width: 36px;
           height: 36px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
           color: white;
           border-radius: 50%;
           font-weight: 700;
           font-size: 1rem;
         }
 
+        [data-theme="light"] .section-number {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
         .section-content {
           line-height: 1.8;
+          color: #d1d5db;
+        }
+
+        [data-theme="light"] .section-content {
           color: #333;
         }
 
@@ -455,6 +529,15 @@ export default function CareerReport() {
           font-weight: 600;
           margin-top: 1.5rem;
           margin-bottom: 0.75rem;
+          color: #e5e5e5;
+        }
+
+        [data-theme="light"] .report-text :global(h1),
+        [data-theme="light"] .report-text :global(h2),
+        [data-theme="light"] .report-text :global(h3),
+        [data-theme="light"] .report-text :global(h4),
+        [data-theme="light"] .report-text :global(h5),
+        [data-theme="light"] .report-text :global(h6) {
           color: #1a1a1a;
         }
 
@@ -492,6 +575,10 @@ export default function CareerReport() {
 
         .report-text :global(strong) {
           font-weight: 700;
+          color: #e5e5e5;
+        }
+
+        [data-theme="light"] .report-text :global(strong) {
           color: #1a1a1a;
         }
 
@@ -502,17 +589,29 @@ export default function CareerReport() {
         .report-text :global(blockquote) {
           margin: 1rem 0;
           padding: 0.5rem 1rem;
-          border-left: 4px solid #667eea;
+          border-left: 4px solid #8B5CF6;
+          background: rgba(139, 92, 246, 0.1);
+          color: #aaa;
+        }
+
+        [data-theme="light"] .report-text :global(blockquote) {
+          border-left-color: #667eea;
           background: #f8f9fa;
           color: #555;
         }
 
         .report-text :global(code) {
-          background: #f4f4f4;
+          background: rgba(255, 255, 255, 0.1);
           padding: 0.2rem 0.4rem;
           border-radius: 4px;
           font-size: 0.9em;
           font-family: 'Courier New', monospace;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        [data-theme="light"] .report-text :global(code) {
+          background: #f4f4f4;
+          border-color: transparent;
         }
 
         .report-text :global(pre) {
@@ -531,8 +630,12 @@ export default function CareerReport() {
         }
 
         .report-text :global(a) {
-          color: #667eea;
+          color: #8B5CF6;
           text-decoration: none;
+        }
+
+        [data-theme="light"] .report-text :global(a) {
+          color: #667eea;
         }
 
         .report-text :global(a:hover) {
@@ -547,6 +650,10 @@ export default function CareerReport() {
         }
 
         .report-text :global(thead) {
+          background: rgba(139, 92, 246, 0.15);
+        }
+
+        [data-theme="light"] .report-text :global(thead) {
           background: #f0f2ff;
         }
 
@@ -554,32 +661,57 @@ export default function CareerReport() {
           padding: 0.75rem 1rem;
           text-align: left;
           font-weight: 600;
+          color: #e5e5e5;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="light"] .report-text :global(th) {
           color: #1a1a1a;
-          border: 1px solid #e0e0e0;
+          border-color: #e0e0e0;
         }
 
         .report-text :global(td) {
           padding: 0.75rem 1rem;
-          border: 1px solid #e0e0e0;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: #d1d5db;
+        }
+
+        [data-theme="light"] .report-text :global(td) {
+          border-color: #e0e0e0;
           color: #333;
         }
 
         .report-text :global(tbody tr:nth-child(even)) {
+          background: rgba(255, 255, 255, 0.02);
+        }
+
+        [data-theme="light"] .report-text :global(tbody tr:nth-child(even)) {
           background: #fafbfe;
         }
 
         .report-text :global(tbody tr:hover) {
+          background: rgba(139, 92, 246, 0.1);
+        }
+
+        [data-theme="light"] .report-text :global(tbody tr:hover) {
           background: #f0f2ff;
         }
 
         .report-footer {
           margin-top: 3rem;
           padding: 1.5rem;
-          background: #f8f9fa;
+          background: rgba(255, 255, 255, 0.05);
           border-radius: 8px;
           text-align: center;
-          color: #666;
+          color: #999;
           font-size: 0.9rem;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="light"] .report-footer {
+          background: #f8f9fa;
+          color: #666;
+          border-color: transparent;
         }
 
         .report-footer p {

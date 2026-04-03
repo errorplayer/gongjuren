@@ -252,6 +252,11 @@ export default function ReportPreview() {
           max-width: 1000px;
           margin: 0 auto;
           padding: 2rem 1rem;
+          color: #333;
+        }
+
+        [data-theme="dark"] .report-preview {
+          color: #e5e5e5;
         }
 
         .loading-container {
@@ -266,8 +271,8 @@ export default function ReportPreview() {
         .loading-spinner {
           width: 40px;
           height: 40px;
-          border: 4px solid #e0e0e0;
-          border-top-color: #3498db;
+          border: 4px solid rgba(255, 255, 255, 0.2);
+          border-top-color: #8B5CF6;
           border-radius: 50%;
           animation: spin 1s linear infinite;
         }
@@ -278,13 +283,18 @@ export default function ReportPreview() {
           }
         }
 
+        [data-theme="light"] .loading-spinner {
+          border-color: #e0e0e0;
+          border-top-color: #3498db;
+        }
+
         .preview-header {
           margin-bottom: 2rem;
         }
 
         .back-link {
           display: inline-block;
-          color: #3498db;
+          color: #8B5CF6;
           text-decoration: none;
           margin-bottom: 1rem;
           font-weight: 500;
@@ -294,24 +304,43 @@ export default function ReportPreview() {
           text-decoration: underline;
         }
 
+        [data-theme="light"] .back-link {
+          color: #3498db;
+        }
+
         .preview-title {
           font-size: 2rem;
           font-weight: 700;
-          color: #1a1a1a;
+          color: #e5e5e5;
           margin-bottom: 0.5rem;
         }
 
+        [data-theme="light"] .preview-title {
+          color: #1a1a1a;
+        }
+
         .preview-subtitle {
-          color: #666;
+          color: #999;
           font-size: 1.1rem;
         }
 
+        [data-theme="light"] .preview-subtitle {
+          color: #666;
+        }
+
         .preview-section {
-          background: white;
+          background: rgba(255, 255, 255, 0.05);
           border-radius: 12px;
           padding: 2rem;
           margin-bottom: 2rem;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="light"] .preview-section {
+          background: white;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+          border-color: transparent;
         }
 
         .section-title {
@@ -321,6 +350,10 @@ export default function ReportPreview() {
           font-size: 1.3rem;
           font-weight: 600;
           margin-bottom: 1.5rem;
+          color: #e5e5e5;
+        }
+
+        [data-theme="light"] .section-title {
           color: #1a1a1a;
         }
 
@@ -336,19 +369,33 @@ export default function ReportPreview() {
 
         .profile-item {
           padding: 0.75rem 1rem;
-          background: #f8f9fa;
+          background: rgba(255, 255, 255, 0.05);
           border-radius: 8px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="light"] .profile-item {
+          background: #f8f9fa;
+          border-color: transparent;
         }
 
         .profile-label {
           font-weight: 500;
-          color: #666;
+          color: #999;
           margin-right: 0.5rem;
         }
 
+        [data-theme="light"] .profile-label {
+          color: #666;
+        }
+
         .profile-value {
-          color: #1a1a1a;
+          color: #e5e5e5;
           font-weight: 600;
+        }
+
+        [data-theme="light"] .profile-value {
+          color: #1a1a1a;
         }
 
         .module-content {
@@ -359,31 +406,53 @@ export default function ReportPreview() {
           color: #999;
           text-align: center;
           padding: 2rem;
-          background: #f8f9fa;
+          background: rgba(255, 255, 255, 0.05);
           border-radius: 8px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="light"] .empty-hint {
+          background: #f8f9fa;
+          border-color: transparent;
         }
 
         .module-textarea {
           width: 100%;
           padding: 1rem;
-          border: 2px solid #e0e0e0;
+          border: 2px solid rgba(255, 255, 255, 0.2);
           border-radius: 8px;
           font-size: 1rem;
           font-family: inherit;
           line-height: 1.6;
           resize: vertical;
-          background: #fafafa;
+          background: rgba(255, 255, 255, 0.02);
+          color: #e5e5e5;
         }
 
         .module-textarea:focus {
           outline: none;
+          border-color: #8B5CF6;
+          background: rgba(255, 255, 255, 0.05);
+        }
+
+        .module-textarea[readonly] {
+          background: rgba(255, 255, 255, 0.02);
+          cursor: default;
+        }
+
+        [data-theme="light"] .module-textarea {
+          border-color: #e0e0e0;
+          background: #fafafa;
+          color: #333;
+        }
+
+        [data-theme="light"] .module-textarea:focus {
           border-color: #3498db;
           background: white;
         }
 
-        .module-textarea[readonly] {
+        [data-theme="light"] .module-textarea[readonly] {
           background: #f0f0f0;
-          cursor: default;
         }
 
         .project-list {
@@ -393,15 +462,25 @@ export default function ReportPreview() {
         }
 
         .project-item {
-          background: #f8f9fa;
+          background: rgba(255, 255, 255, 0.05);
           border-radius: 8px;
           padding: 1.5rem;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="light"] .project-item {
+          background: #f8f9fa;
+          border-color: transparent;
         }
 
         .project-number {
           font-weight: 600;
-          color: #3498db;
+          color: #8B5CF6;
           margin-bottom: 1rem;
+        }
+
+        [data-theme="light"] .project-number {
+          color: #3498db;
         }
 
         .project-hint {
@@ -412,12 +491,13 @@ export default function ReportPreview() {
         }
 
         .action-section {
-          background: white;
+          background: rgba(255, 255, 255, 0.05);
           border-radius: 12px;
           padding: 2rem;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
           text-align: center;
           position: relative;
+          border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .action-section::before {
@@ -428,13 +508,23 @@ export default function ReportPreview() {
           transform: translateX(-50%);
           width: 120px;
           height: 3px;
-          background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(90deg, #8B5CF6 0%, #EC4899 100%);
           border-radius: 0 0 3px 3px;
         }
 
+        [data-theme="light"] .action-section {
+          background: white;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+          border-color: transparent;
+        }
+
+        [data-theme="light"] .action-section::before {
+          background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
         .cache-hint {
-          background: linear-gradient(135deg, #f8f9ff 0%, #faf5ff 100%);
-          border: 1px solid #e0d4fc;
+          background: rgba(139, 92, 246, 0.1);
+          border: 1px solid rgba(139, 92, 246, 0.3);
           border-radius: 12px;
           padding: 1.25rem 1.5rem;
           margin-bottom: 1.5rem;
@@ -448,7 +538,7 @@ export default function ReportPreview() {
           flex-shrink: 0;
           width: 40px;
           height: 40px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -458,21 +548,34 @@ export default function ReportPreview() {
           font-weight: bold;
         }
 
-        .cache-content {
-          flex: 1;
-        }
-
         .cache-title {
           font-size: 1rem;
           font-weight: 600;
-          color: #5a4fcf;
+          color: #a78bfa;
           margin-bottom: 0.25rem;
         }
 
         .cache-desc {
           font-size: 0.9rem;
-          color: #6b7280;
+          color: #9ca3af;
           line-height: 1.5;
+        }
+
+        [data-theme="light"] .cache-hint {
+          background: linear-gradient(135deg, #f8f9ff 0%, #faf5ff 100%);
+          border-color: #e0d4fc;
+        }
+
+        [data-theme="light"] .cache-icon {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        [data-theme="light"] .cache-title {
+          color: #5a4fcf;
+        }
+
+        [data-theme="light"] .cache-desc {
+          color: #6b7280;
         }
 
         .confirm-button {
@@ -486,22 +589,31 @@ export default function ReportPreview() {
           cursor: pointer;
           transition: all 0.3s ease;
           white-space: nowrap;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
           color: white;
-          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.25);
+          box-shadow: 0 4px 15px rgba(139, 92, 246, 0.35);
           min-width: 220px;
           width: auto;
         }
 
         .confirm-button:hover:not(:disabled) {
           transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+          box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
         }
 
         .confirm-button:disabled {
           opacity: 0.6;
           cursor: not-allowed;
           transform: none;
+        }
+
+        [data-theme="light"] .confirm-button {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.25);
+        }
+
+        [data-theme="light"] .confirm-button:hover:not(:disabled) {
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
         @media (max-width: 768px) {

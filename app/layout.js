@@ -113,7 +113,10 @@ export default function RootLayout({ children }) {
         <header>
           <div className="header-container">
             <div className="header-main">
-              <a href="/" className="logo">520tool.cc</a>
+              <a href="/" className="logo">
+                <span className="logo-brand">520</span>
+                <span className="logo-text">tool.cc</span>
+              </a>
               <FlipClock />
             </div>
             {/* <span 

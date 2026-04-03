@@ -12,16 +12,11 @@ const CONFIG = {
 };
 
 export default function SafeContent() {
-const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      ) || window.innerWidth <= 768;
-    };
-    setIsMobile(checkMobile());
-  }, []);
+  // 同步检测移动端，不依赖 useEffect 异步更新
+  const isMobile = typeof window !== 'undefined' && (
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    || window.innerWidth <= 768
+  );
 
   const canvasRef = useRef(null);
   const previewRef = useRef(null);
@@ -49,16 +44,22 @@ const [isMobile, setIsMobile] = useState(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
+    // 移动端完全不初始化 canvas 和事件，避免影响全局滚动
+    if (isMobile) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     editCtxRef.current = canvas.getContext('2d');
     canvas.width = CONFIG.squareSize;
     canvas.height = CONFIG.squareSize;
 
-    initEvents();
+    const cleanupEvents = initEvents();
     loadTemplates();
-    return () => { isDraggingRef.current = false; };
-  }, []);
+    return () => {
+      cleanupEvents();
+      isDraggingRef.current = false;
+    };
+  }, [isMobile]);
 
   const templates = [
     { id: 'none', name: '无模板' },
@@ -97,15 +98,11 @@ const [isMobile, setIsMobile] = useState(false);
       if (isDraggingRef.current) e.preventDefault();
       dragMove(e.touches[0]);
     };
-    const onPinchZoom = (e) => {
-      if (e.scale !== 1) e.preventDefault();
-    };
 
     document.addEventListener('mousemove', dragMove);
     document.addEventListener('touchmove', onTouchMove, { passive: false });
     document.addEventListener('mouseup', endDrag);
     document.addEventListener('touchend', endDrag);
-    document.addEventListener('touchmove', onPinchZoom, { passive: false });
 
     // 返回 cleanup 函数
     return () => {
@@ -115,7 +112,6 @@ const [isMobile, setIsMobile] = useState(false);
       document.removeEventListener('touchmove', onTouchMove);
       document.removeEventListener('mouseup', endDrag);
       document.removeEventListener('touchend', endDrag);
-      document.removeEventListener('touchmove', onPinchZoom);
       isDraggingRef.current = false;
     };
   }

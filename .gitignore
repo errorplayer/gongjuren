@@ -42,3 +42,5 @@ next-env.d.ts
 
 # supabase migrations
 supabase/migrations
+
+next.config.*

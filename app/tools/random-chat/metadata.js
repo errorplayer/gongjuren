@@ -1,3 +1,7 @@
+/**
+ * 随机聊天室页面元数据
+ * 用于 SEO 优化和社交分享卡片展示
+ */
 export const metadata = {
   title: "摸鱼聊天室 - 匿名随机聊天 | 520Tool 在线工具",
   description: "520Tool 免费在线摸鱼聊天室，支持匿名随机聊天、无广告、无需登录，一键进入轻松摸鱼互动，上班摸鱼、休闲交友必备工具。",
@@ -10,9 +14,11 @@ export const metadata = {
     "免费聊天工具",
     "无需登录聊天"
   ],
+  // SEO 规范链接，防止重复内容
   alternates: {
     canonical: "https://www.520tool.cc/tools/random-chat",
   },
+  // OpenGraph 社交分享卡片配置
   openGraph: {
     title: "摸鱼聊天室 - 匿名随机聊天 | 520Tool",
     description: "免费无广告在线摸鱼聊天室，匿名随机聊天，无需登录一键进入",

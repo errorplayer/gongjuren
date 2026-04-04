@@ -11,6 +11,10 @@ import styles from './page.module.css';
 const CLIENT_KEY = '520tool-random-chat-client-id';
 // 轮询匹配间隔（毫秒）
 const POLL_MS = 2000;
+// 心跳检查间隔（毫秒）- 用于检测对方是否已离开
+const HEARTBEAT_MS = 8000;
+// 心跳上报间隔（毫秒）- 定期告诉服务器"我还在"
+const HEARTBEAT_SEND_MS = 15000;
 // 距离底部多少像素内视为"接近底部"，用于自动滚动判断
 const NEAR_BOTTOM_PX = 80;
 
@@ -99,12 +103,23 @@ export default function SafeContent() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [showNewMessageHint, setShowNewMessageHint] = useState(false);
+  const historyGuardCountRef = useRef(0);
+
+  // 自定义确认对话框状态
+  const [confirmDialog, setConfirmDialog] = useState({
+    show: false,
+    title: '',
+    message: '',
+    onConfirm: null,
+    onCancel: null,
+  });
 
   /**
    * Ref 定义（用于在回调函数中访问最新值或跨生命周期保存状态）
    */
   const clientIdRef = useRef('');           // 客户端唯一 ID
   const pollRef = useRef(null);             // 轮询定时器引用
+  const heartbeatRef = useRef(null);        // 心跳上报定时器引用
   const channelRef = useRef(null);          // Supabase 实时频道引用
   const supabaseRef = useRef(null);         // Supabase 客户端引用
   const listRef = useRef(null);             // 消息列表 DOM 引用
@@ -124,6 +139,15 @@ export default function SafeContent() {
       clearInterval(pollRef.current);
       pollRef.current = null;
     }
+  }, []);
+
+  // 添加历史守卫（缓冲多个状态）
+  const addHistoryGuards = useCallback(() => {
+    const GUARD_STATES = 3;
+    for (let i = 0; i < GUARD_STATES; i++) {
+      window.history.pushState({ randomChatGuard: true }, '', window.location.href);
+    }
+    historyGuardCountRef.current = GUARD_STATES;
   }, []);
 
   /**
@@ -159,16 +183,66 @@ export default function SafeContent() {
   }, []);
 
   /**
+   * 心跳检查房间状态
+   * 用于检测对方是否已离开（通过检查房间的 ended_at 状态）
+   * @param {string} cid - 客户端 ID
+   * @returns {Promise<boolean>} 返回 true 表示房间仍活跃，false 表示已结束或不存在
+   */
+  const checkRoomAlive = useCallback(async (cid) => {
+    if (!cid) return false;
+    try {
+      const res = await fetch('/api/random-chat/check-room', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientId: cid }),
+      });
+      const data = await res.json();
+      // API 返回 { active: boolean }
+      return data?.active === true;
+    } catch {
+      return false;
+    }
+  }, []);
+
+  /**
+   * 清除心跳上报定时器
+   */
+  const clearHeartbeat = useCallback(() => {
+    if (heartbeatRef.current) {
+      clearInterval(heartbeatRef.current);
+      heartbeatRef.current = null;
+    }
+  }, []);
+
+  /**
+   * 向服务器发送心跳，表明自己仍然在线
+   * @param {string} cid - 客户端 ID
+   */
+  const sendHeartbeat = useCallback(async (cid) => {
+    if (!cid) return;
+    try {
+      await fetch('/api/random-chat/heartbeat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientId: cid }),
+      });
+    } catch {
+      /* 心跳失败不影响用户体验 */
+    }
+  }, []);
+
+  /**
    * 退出等待状态并返回首页
    * 用于取消排队时清理状态
    */
   const leaveWaitingAndHome = useCallback(async () => {
     clearPoll();
+    clearHeartbeat();
     await leaveApi(clientIdRef.current);
     setPhase('idle');
     setHint('');
     router.push('/');
-  }, [clearPoll, leaveApi, router]);
+  }, [clearPoll, clearHeartbeat, leaveApi, router]);
 
   /**
    * 退出聊天
@@ -186,6 +260,7 @@ export default function SafeContent() {
         });
       }
       teardownChannel();
+      clearHeartbeat();
       await leaveApi(cid);
       clearPoll();
       // 重置所有聊天相关状态
@@ -195,7 +270,7 @@ export default function SafeContent() {
       setPhase('idle');
       setHint('');
     },
-    [clearPoll, leaveApi, teardownChannel]
+    [clearPoll, clearHeartbeat, leaveApi, teardownChannel]
   );
 
   // 将回调保存到 ref 中，以便在事件监听器中调用
@@ -205,6 +280,16 @@ export default function SafeContent() {
   // 同步 phase 状态到 ref，方便在闭包中获取最新值
   useEffect(() => {
     phaseRef.current = phase;
+  }, [phase]);
+
+  // 管理 body 类名：聊天激活时隐藏标题并阻止页面滚动
+  useEffect(() => {
+    if (phase === 'chat' || phase === 'ended') {
+      document.body.classList.add('chat-active');
+    } else {
+      document.body.classList.remove('chat-active');
+    }
+    return () => document.body.classList.remove('chat-active');
   }, [phase]);
 
   /**
@@ -303,48 +388,74 @@ export default function SafeContent() {
 
   /**
    * 历史 URL 守卫：在进入聊天或等待状态时添加历史记录
-   * 这样用户点击浏览器后退按钮时可以拦截并显示确认框
+   * 使用多守卫缓冲机制，解决iOS左滑延迟问题
    */
   useEffect(() => {
-    if (phase !== 'chat' && phase !== 'waiting') return;
-    if (typeof window === 'undefined') return;
-    if (window.history.state?.randomChatGuard) return;
-    window.history.pushState({ randomChatGuard: true }, '', window.location.href);
-  }, [phase]);
+    if (phase === 'chat' || phase === 'waiting') {
+      if (historyGuardCountRef.current === 0) {
+        addHistoryGuards();
+      }
+    } else {
+      historyGuardCountRef.current = 0;
+    }
+  }, [phase, addHistoryGuards]);
 
   /**
    * 处理浏览器后退事件
-   * 在聊天或等待状态时，拦截后退并显示确认框
+   * 使用多守卫缓冲机制，每次消耗一个守卫，守卫耗尽后才弹确认框
    */
   useEffect(() => {
-    const onPopState = () => {
+    const onPopState = (e) => {
       const p = phaseRef.current;
-      if (p === 'chat') {
-        const ok = window.confirm(
-          '离开将结束当前聊天，对方会收到退出提示。确定要离开吗？'
-        );
-        if (ok) {
-          exitChatRef.current(true).then(() => {
-            router.push('/');
-          });
-        } else {
-          // 取消离开，重新 push 状态
+      if (p !== 'chat' && p !== 'waiting') return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (window.history.state?.randomChatGuard) {
+        historyGuardCountRef.current -= 1;
+
+        if (historyGuardCountRef.current > 0) {
           window.history.pushState({ randomChatGuard: true }, '', window.location.href);
+          return;
         }
-        return;
-      }
-      if (p === 'waiting') {
-        const ok = window.confirm('将退出排队，确定要离开吗？');
-        if (ok) {
-          leaveWaitingRef.current();
-        } else {
-          window.history.pushState({ randomChatGuard: true }, '', window.location.href);
+
+        if (p === 'chat') {
+          setConfirmDialog({
+            show: true,
+            title: '确认离开',
+            message: '离开将结束当前聊天，对方会收到退出提示。确定要离开吗？',
+            onConfirm: async () => {
+              setConfirmDialog({ show: false, title: '', message: '', onConfirm: null, onCancel: null });
+              historyGuardCountRef.current = 0;
+              await exitChatRef.current(true);
+              router.push('/');
+            },
+            onCancel: () => {
+              setConfirmDialog({ show: false, title: '', message: '', onConfirm: null, onCancel: null });
+              addHistoryGuards();
+            },
+          });
+        } else if (p === 'waiting') {
+          setConfirmDialog({
+            show: true,
+            title: '确认离开',
+            message: '将退出排队，确定要离开吗？',
+            onConfirm: () => {
+              setConfirmDialog({ show: false, title: '', message: '', onConfirm: null, onCancel: null });
+              historyGuardCountRef.current = 0;
+              leaveWaitingRef.current();
+            },
+            onCancel: () => {
+              setConfirmDialog({ show: false, title: '', message: '', onConfirm: null, onCancel: null });
+              addHistoryGuards();
+            },
+          });
         }
       }
     };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
-  }, [router]);
+  }, [router, addHistoryGuards]);
 
   /**
    * 聊天中拦截站内链接点击
@@ -387,12 +498,21 @@ export default function SafeContent() {
       }
 
       e.preventDefault();
-      const ok = window.confirm(
-        '离开将结束当前聊天，对方会收到退出提示。确定要离开吗？'
-      );
-      if (!ok) return;
-      exitChatRef.current(true).then(() => {
-        router.push(url.pathname + url.search + url.hash);
+      setConfirmDialog({
+        show: true,
+        title: '确认离开',
+        message: '离开将结束当前聊天，对方会收到退出提示。确定要离开吗？',
+          onConfirm: async () => {
+            setConfirmDialog({ show: false, title: '', message: '', onConfirm: null, onCancel: null });
+            historyGuardCountRef.current = 0;
+            await exitChatRef.current(true);
+            router.push(url.pathname + url.search + url.hash);
+          },
+          onCancel: () => {
+            setConfirmDialog({ show: false, title: '', message: '', onConfirm: null, onCancel: null });
+            // 重新添加历史守卫
+            addHistoryGuards();
+          },
       });
     };
 
@@ -409,27 +529,45 @@ export default function SafeContent() {
     async (e) => {
       e.preventDefault();
       if (phase === 'chat') {
-        if (
-          !window.confirm(
-            '离开将结束当前聊天，对方会收到退出提示。确定返回工具目录吗？'
-          )
-        ) {
-          return;
-        }
-        await exitChat(true);
-        router.push('/');
+        setConfirmDialog({
+          show: true,
+          title: '确认返回',
+          message: '离开将结束当前聊天，对方会收到退出提示。确定返回工具目录吗？',
+          onConfirm: async () => {
+            setConfirmDialog({ show: false, title: '', message: '', onConfirm: null, onCancel: null });
+            historyGuardCountRef.current = 0;
+            await exitChat(true);
+            router.push('/');
+          },
+          onCancel: () => {
+            setConfirmDialog({ show: false, title: '', message: '', onConfirm: null, onCancel: null });
+            // 重新添加历史守卫
+            addHistoryGuards();
+          },
+        });
         return;
       }
       if (phase === 'waiting') {
-        if (!window.confirm('将退出排队，确定返回工具目录吗？')) {
-          return;
-        }
-        await leaveWaitingAndHome();
+        setConfirmDialog({
+          show: true,
+          title: '确认返回',
+          message: '将退出排队，确定返回工具目录吗？',
+          onConfirm: async () => {
+            setConfirmDialog({ show: false, title: '', message: '', onConfirm: null, onCancel: null });
+            historyGuardCountRef.current = 0;
+            await leaveWaitingAndHome();
+          },
+          onCancel: () => {
+            setConfirmDialog({ show: false, title: '', message: '', onConfirm: null, onCancel: null });
+            // 重新添加历史守卫
+            addHistoryGuards();
+          },
+        });
         return;
       }
       router.push('/');
     },
-    [phase, exitChat, router, leaveWaitingAndHome]
+    [phase, exitChat, router, leaveWaitingAndHome, addHistoryGuards]
   );
 
   /**
@@ -439,10 +577,11 @@ export default function SafeContent() {
   useEffect(() => {
     return () => {
       clearPoll();
+      clearHeartbeat();
       teardownChannel();
       leaveApi(clientIdRef.current);
     };
-  }, [clearPoll, leaveApi, teardownChannel]);
+  }, [clearPoll, clearHeartbeat, leaveApi, teardownChannel]);
 
   /**
    * 消息列表自动滚动逻辑
@@ -474,33 +613,299 @@ export default function SafeContent() {
   }, [messages, phase]);
 
   /**
-   * 处理移动端虚拟键盘弹出
-   * 使用 visualViewport API 调整容器高度，避免键盘遮挡
-   */
+ * 处理移动端虚拟键盘弹出（强化版）
+ * 使用 visualViewport API + 手动滚动 + 防抖 + 回退方案
+ */
   useEffect(() => {
     if (phase !== 'chat') return;
     if (typeof window === 'undefined') return;
-    if (!window.visualViewport) return;
 
+    // 防抖函数，避免频繁触发
+    const debounce = (fn, delay) => {
+      let timer = null;
+      return (...args) => {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+      };
+    };
+
+    // 强化版滚动函数：确保输入框可见
+    const ensureInputVisible = () => {
+      const input = document.querySelector(`.${styles.messageInput}`);
+      const messagesContainer = document.querySelector(`.${styles.messagesContainer}`);
+      const fullscreenEl = fullscreenRef.current;
+
+      if (!input || !messagesContainer || !fullscreenEl) return;
+
+      // 方法1：使用 scrollIntoView（首选），确保输入框在视口中部
+      try {
+        input.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest'
+        });
+
+        // 额外保险：延迟检查并手动调整（针对iOS键盘弹出延迟）
+        setTimeout(() => {
+          const inputRect = input.getBoundingClientRect();
+          const viewportHeight = window.innerHeight;
+
+          // 如果输入框仍然在底部1/3区域（被键盘遮挡）
+          if (inputRect.bottom > viewportHeight * 0.65) {
+            const scrollAmount = inputRect.bottom - viewportHeight * 0.65 + 50;
+            messagesContainer.scrollTop += scrollAmount;
+          }
+        }, 100);
+      } catch (e) {
+        // 方法2：手动计算滚动位置（回退方案）
+        const inputRect = input.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+
+        // 如果输入框底部接近视口底部（被键盘遮挡）
+        if (inputRect.bottom > viewportHeight * 0.65) {
+          const scrollAmount = inputRect.bottom - viewportHeight * 0.65 + 50;
+          messagesContainer.scrollTop += scrollAmount;
+        }
+      }
+    };
+
+    // 处理 visualViewport 变化（强化版）
     const handleVisualViewportResize = () => {
       const fullscreenEl = fullscreenRef.current;
       if (!fullscreenEl) return;
 
-      const viewport = window.visualViewport;
-      const height = viewport.height;
+      // 如果有 visualViewport API 则使用
+      if (window.visualViewport) {
+        const viewport = window.visualViewport;
+        const height = viewport.height;
+        const keyboardHeight = window.innerHeight - height;
 
-      // 设置容器高度为可视视口高度
-      fullscreenEl.style.height = `${height}px`;
-      // 设置底部 padding 避免内容被键盘遮挡
-      fullscreenEl.style.paddingBottom = `${window.innerHeight - height}px`;
+        // 关键修改：通过 bottom 而非 height + paddingBottom 调整
+        fullscreenEl.style.bottom = `${keyboardHeight}px`;
+        fullscreenEl.style.top = '0';
+
+        // 确保输入框可见
+        ensureInputVisible();
+      } else {
+        // 回退方案：基于窗口大小变化
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+          // 移动设备：假设键盘高度为视口高度的40%
+          const assumedKeyboardHeight = window.innerHeight * 0.4;
+          fullscreenEl.style.bottom = `${assumedKeyboardHeight}px`;
+          ensureInputVisible();
+        }
+      }
     };
 
-    window.visualViewport.addEventListener('resize', handleVisualViewportResize);
+    // 防抖处理（减少延迟以更快响应键盘弹出）
+    const debouncedResizeHandler = debounce(handleVisualViewportResize, 30);
 
+    // 监听多种事件以确保触发
+    const events = ['resize', 'orientationchange', 'focusin', 'focus'];
+
+    // 添加 visualViewport 事件监听（如果可用）
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', debouncedResizeHandler);
+    }
+
+    // 添加传统事件监听作为备份
+    events.forEach(event => {
+      window.addEventListener(event, debouncedResizeHandler);
+    });
+
+    // 初始执行一次（更快触发）
+    setTimeout(handleVisualViewportResize, 50);
+
+    // 清理函数
     return () => {
-      window.visualViewport?.removeEventListener('resize', handleVisualViewportResize);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', debouncedResizeHandler);
+      }
+      events.forEach(event => {
+        window.removeEventListener(event, debouncedResizeHandler);
+      });
     };
   }, [phase]);
+
+
+  /**
+ * 处理输入框获得焦点（强化版）
+ * 多事件监听 + 重试机制 + 超时处理
+ */
+  useEffect(() => {
+    if (phase !== 'chat') return;
+
+    const ensureInputVisibleWithRetry = (retryCount = 0) => {
+      const input = document.querySelector(`.${styles.messageInput}`);
+      const messagesContainer = document.querySelector(`.${styles.messagesContainer}`);
+
+      if (!input || !messagesContainer) {
+        // 如果元素不存在，重试最多3次
+        if (retryCount < 3) {
+          setTimeout(() => ensureInputVisibleWithRetry(retryCount + 1), 100 * (retryCount + 1));
+        }
+        return;
+      }
+
+      // 方法1：使用 scrollIntoView 确保输入框在视口中部（最可靠）
+      try {
+        input.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest'
+        });
+
+        // 额外保险：延迟检查并手动调整（针对iOS键盘弹出延迟）
+        setTimeout(() => {
+          const inputRect = input.getBoundingClientRect();
+          const viewportHeight = window.innerHeight;
+
+          // 如果输入框仍然在底部1/3区域（被键盘遮挡）
+          if (inputRect.bottom > viewportHeight * 0.65) {
+            const safeAreaTop = viewportHeight * 0.5;
+            const distance = inputRect.bottom - safeAreaTop + 50;
+
+            // 滚动消息容器，使输入框可见
+            messagesContainer.scrollTop = messagesContainer.scrollTop + distance;
+          }
+        }, 150);
+      } catch (e) {
+        console.warn('滚动失败:', e);
+
+        // 回退方案：手动计算滚动
+        const inputRect = input.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+
+        if (inputRect.bottom > viewportHeight * 0.65) {
+          const scrollAmount = inputRect.bottom - viewportHeight * 0.65 + 50;
+          messagesContainer.scrollTop += scrollAmount;
+        }
+      }
+    };
+
+    const handleInputFocus = (event) => {
+      // 不阻止默认行为，允许输入框正常获得焦点
+
+      // 使用requestAnimationFrame确保在下一帧执行
+      requestAnimationFrame(() => {
+        // 立即尝试一次
+        ensureInputVisibleWithRetry(0);
+
+        // 延迟再次尝试（应对键盘动画，但减少延迟）
+        setTimeout(() => ensureInputVisibleWithRetry(0), 200);
+        setTimeout(() => ensureInputVisibleWithRetry(0), 400);
+      });
+    };
+
+    // 监听输入框焦点事件
+    const inputs = document.querySelectorAll(`.${styles.messageInput}`);
+    inputs.forEach(input => {
+      // 移除可能存在的旧监听器
+      input.removeEventListener('focus', handleInputFocus);
+      // 添加新监听器，使用capture阶段确保触发
+      input.addEventListener('focus', handleInputFocus, { capture: true });
+    });
+
+    // 同时监听focusin事件（bubble版本）
+    document.addEventListener('focusin', handleInputFocus);
+
+    return () => {
+      inputs.forEach(input => {
+        input.removeEventListener('focus', handleInputFocus, { capture: true });
+      });
+      document.removeEventListener('focusin', handleInputFocus);
+    };
+  }, [phase]);
+
+  /**
+ * iOS特定修复：防止双击缩放和输入框问题
+ */
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (!isIOS) return;
+
+    // 防止双击缩放
+    let lastTouchEnd = 0;
+    const preventDoubleTapZoom = (e) => {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    };
+
+    // 防止iOS输入框自动放大
+    const preventZoomOnFocus = (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        // 查找现有的viewport meta标签
+        let viewportMeta = document.querySelector('meta[name="viewport"]');
+        if (!viewportMeta) {
+          // 如果不存在，创建一个
+          viewportMeta = document.createElement('meta');
+          viewportMeta.name = 'viewport';
+          document.head.appendChild(viewportMeta);
+        }
+
+        // 读取当前content
+        let currentContent = viewportMeta.getAttribute('content') || '';
+        
+        // 确保包含关键属性，同时保留其他属性
+        const requiredAttrs = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
+        
+        // 如果缺少任何必需属性，则更新
+        const hasRequired = requiredAttrs.split(', ').every(attr => currentContent.includes(attr.split('=')[0]));
+        if (!hasRequired) {
+          viewportMeta.setAttribute('content', requiredAttrs);
+        }
+      }
+    };
+
+    // 恢复视口设置
+    const restoreViewport = () => {
+      setTimeout(() => {
+        document.querySelector('meta[name="viewport"]')?.setAttribute(
+          'content',
+          'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover'
+        );
+      }, 1000);
+    };
+
+    document.addEventListener('touchend', preventDoubleTapZoom);
+    document.addEventListener('focusin', preventZoomOnFocus);
+    document.addEventListener('focusout', restoreViewport);
+
+    // 确保退出按钮在键盘弹出时仍可点击
+    const ensureExitButtonClickable = () => {
+      const backButtons = document.querySelectorAll(`.${styles.backButton}`);
+      backButtons.forEach(btn => {
+        if (btn) {
+          btn.style.touchAction = 'manipulation';
+          btn.style.cursor = 'pointer';
+          btn.style.zIndex = '100'; // 确保按钮在键盘上方
+        }
+      });
+    };
+
+    // 在键盘相关事件后调用
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', ensureExitButtonClickable);
+    }
+
+    return () => {
+      document.removeEventListener('touchend', preventDoubleTapZoom);
+      document.removeEventListener('focusin', preventZoomOnFocus);
+      document.removeEventListener('focusout', restoreViewport);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', ensureExitButtonClickable);
+      }
+    };
+  }, []);
+
+
+
 
   /**
    * 尝试加入匹配队列或检查配对结果
@@ -587,8 +992,38 @@ export default function SafeContent() {
         .subscribe();
 
       channelRef.current = channel;
+
+      // 立即发送一次心跳，然后每 15 秒上报一次
+      sendHeartbeat(cid);
+      heartbeatRef.current = setInterval(() => sendHeartbeat(cid), HEARTBEAT_SEND_MS);
+
+      // 启动心跳检查，定期检测对方是否已离开
+      let failCount = 0;
+      const MAX_FAIL = 3; // 连续失败 3 次才判定对方离开（容错网络抖动）
+      pollRef.current = setInterval(async () => {
+        const p = phaseRef.current;
+        // 只有在聊天状态下才检查
+        if (p !== 'chat') {
+          clearPoll();
+          return;
+        }
+        const isAlive = await checkRoomAlive(cid);
+        if (isAlive) {
+          failCount = 0; // 房间正常，重置失败计数
+        } else {
+          failCount += 1;
+          if (failCount >= MAX_FAIL) {
+            // 连续多次检查房间不活跃，判定对方已离开
+            clearPoll();
+            setHint('对方已离开');
+            setPhase('ended');
+            teardownChannel();
+            await leaveApi(cid);
+          }
+        }
+      }, HEARTBEAT_MS);
     }
-  }, [clearPoll, leaveApi, teardownChannel]);
+  }, [clearPoll, leaveApi, teardownChannel, checkRoomAlive]);
 
   /**
    * 开始匹配聊天
@@ -713,7 +1148,7 @@ export default function SafeContent() {
               <button
                 type="button"
                 className={styles.backButton}
-                onClick={() => { if (!window.confirm('离开将结束当前聊天，对方会收到退出提示。确定要离开吗？')) return; exitChat(true) }}
+                onClick={handleBackToHome}
               >
                 ← 退出
               </button>
@@ -804,12 +1239,12 @@ export default function SafeContent() {
               <button
                 type="button"
                 className={styles.backButton}
-                onClick={() => exitChat(false)}
+                onClick={handleBackToHome}
               >
                 ← 返回
               </button>
               <div className={`${styles.statusDot} ${styles.disconnected}`}></div>
-              <span className={styles.statusText}>聊天已结束</span>
+              <span className={styles.statusText}>对方已离开 | 聊天结束</span>
             </div>
             <div
               ref={listRef}
@@ -856,6 +1291,32 @@ export default function SafeContent() {
                 onClick={startChat}
               >
                 重新匹配
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 自定义确认对话框 */}
+      {confirmDialog.show && (
+        <div className={styles.confirmOverlay}>
+          <div className={styles.confirmModal}>
+            <div className={styles.confirmTitle}>{confirmDialog.title}</div>
+            <div className={styles.confirmMessage}>{confirmDialog.message}</div>
+            <div className={styles.confirmActions}>
+              <button
+                type="button"
+                className={styles.confirmCancel}
+                onClick={confirmDialog.onCancel}
+              >
+                取消
+              </button>
+              <button
+                type="button"
+                className={styles.confirmOk}
+                onClick={confirmDialog.onConfirm}
+              >
+                确定
               </button>
             </div>
           </div>

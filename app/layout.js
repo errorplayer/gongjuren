@@ -2,7 +2,7 @@ import './globals.css';
 import Script from 'next/script';
 import FlipClock from './_components/FlipClock';
 import DailyQuote from './_components/DailyQuote';
-import ThemeToggle from './_components/ThemeToggle'; 
+import ThemeToggle from './_components/ThemeToggle';
 
 export const metadata = {
   // 标题（关键词前置，不超过60字符）
@@ -81,6 +81,9 @@ export const metadata = {
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 1,          // 禁止用户手动缩放
+  userScalable: 'no',       // 明确禁止缩放（iOS Safari）
+  viewportFit: 'cover',     // 覆盖整个屏幕，改善全面屏设备
 };
 
 export default function RootLayout({ children }) {
@@ -129,7 +132,7 @@ export default function RootLayout({ children }) {
               🆓 easy to use
             </span> */}
             <DailyQuote />
-            
+
           </div>
         </header>
         {children}

@@ -189,13 +189,17 @@
 /* ===== 消息区域 ===== */
 .messagesContainer {
   flex: 1;
+  height: 100%;
   padding: 20px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   background: var(--bg-body);
   position: relative;
   scroll-behavior: smooth;
+  will-change: transform; /* 优化滚动性能 */
+  /* 为输入框预留滚动空间 */
+  scroll-padding-bottom: 120px;
 }
-
 .emptyState {
   display: flex;
   flex-direction: column;
@@ -374,22 +378,29 @@
   position: relative;
 }
 
+/* 确保输入框在iOS上始终可见 */
 .messageInput {
   width: 100%;
   padding: 14px 18px;
   border: 1px solid var(--border-color);
   border-radius: 50px;
-  font-size: 15px;
+  font-size: 16px !important; /* iOS要求至少16px防止缩放 */
   outline: none;
   transition: all 0.3s ease;
   background: var(--bg-input);
   color: var(--text-primary);
+  /* 关键修复：确保输入框可被滚动到 */
+  position: relative;
+  z-index: 1;
 }
 
 .messageInput:focus {
   border-color: var(--accent);
   background: var(--bg-card);
   box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  /* 确保输入框在iOS上不被键盘遮挡 */
+  scroll-margin-top: 120px;
+  scroll-margin-bottom: 120px;
 }
 
 .sendButton {
@@ -547,11 +558,18 @@
 /* ===== 全屏聊天模式 ===== */
 .chatFullscreen {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 999;
   display: flex;
   flex-direction: column;
   background: var(--bg-body);
+  /* iOS平滑滚动 */
+  -webkit-overflow-scrolling: touch;
+  /* 防止自动滚动干扰 */
+  overflow-anchor: none;
 }
 
 .chatFullscreen .chatContainer {
@@ -629,5 +647,184 @@
   .actionButton,
   .backLink {
     text-align: center;
+  }
+}
+
+/* 移动端键盘适配 */
+@media screen and (max-width: 768px) {
+  .chatFullscreen {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .messagesContainer {
+    scroll-padding-bottom: 150px; /* iOS键盘弹出时更大的预留空间 */
+  }
+
+  .inputContainer {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0) + 10px);
+    position: relative;
+    z-index: 100;
+  }
+}
+
+/* 强制iOS不缩放输入框 */
+@media screen and (max-width: 768px) {
+  .messageInput {
+    font-size: 16px !important;
+    transform: translateZ(0); /* 强制硬件加速 */
+    -webkit-appearance: none; /* 移除iOS默认样式 */
+    touch-action: manipulation; /* 优化触摸响应 */
+    -webkit-transform: translateZ(0); /* 强制硬件加速（iOS） */
+  }
+
+  /* iOS键盘适配：输入框焦点时保持可见 */
+  .messageInput:focus {
+    position: relative;
+    z-index: 10;
+  }
+
+  /* iOS输入框容器 */
+  .inputWrapper {
+    position: relative;
+    z-index: 5;
+  }
+}
+
+/* 聊天激活时隐藏标题区域 */
+body.chat-active .titleSection {
+  display: none !important;
+}
+
+/* 聊天激活时阻止页面滚动（优化iOS兼容性） */
+body.chat-active {
+  overflow: hidden !important;
+  /* 移除 position: fixed，改用更安全的滚动锁定 */
+  /* 移除 touch-action: none，避免阻止按钮点击 */
+  overscroll-behavior: none;    /* 防止弹性滚动 */
+}
+
+/* 消息容器单独阻止触摸滚动 */
+body.chat-active .messagesContainer {
+  touch-action: pan-y; /* 允许纵向滚动，防止误触导致后退 */
+  overscroll-behavior: contain; /* 防止滚动传播到父元素 */
+}
+
+/* 自定义确认对话框样式 */
+.confirmOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.confirmModal {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 320px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.confirmTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+}
+
+.confirmMessage {
+  font-size: 15px;
+  color: #4a4a4a;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.confirmCancel,
+.confirmOk {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+}
+
+.confirmCancel {
+  background: #f5f5f5;
+  color: #4a4a4a;
+}
+
+.confirmCancel:hover {
+  background: #ebebeb;
+}
+
+.confirmCancel:active {
+  background: #e0e0e0;
+  transform: scale(0.98);
+}
+
+.confirmOk {
+  background: #ff4757;
+  color: white;
+}
+
+.confirmOk:hover {
+  background: #ff3344;
+}
+
+.confirmOk:active {
+  background: #ff2028;
+  transform: scale(0.98);
+}
+
+/* iOS 特定优化 */
+@supports (-webkit-touch-callout: none) {
+  .confirmModal {
+    max-width: 280px;
+    padding: 20px;
+  }
+
+  .confirmCancel,
+  .confirmOk {
+    padding: 14px 20px;
+    font-size: 16px; /* iOS 最小可点击字号 */
   }
 }

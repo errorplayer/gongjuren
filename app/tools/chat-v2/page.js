@@ -1,6 +1,6 @@
 'use client';
 
-import SafeContent from './safeContent'
+// import SafeContent from './safeContent'
 
 /**
  * 随机聊天室页面组件
@@ -10,7 +10,7 @@ export default function ChatV2Page() {
 
   return (
     <div>
-      <SafeContent />
+      {/* <SafeContent /> */}
     </div>
   );
 }

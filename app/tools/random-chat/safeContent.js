@@ -915,6 +915,10 @@ export default function SafeContent() {
     const cid = clientIdRef.current;
     if (!cid) return;
 
+    // 相位守卫：如果已经不在等待状态了，忽略返回结果
+    // 解决取消等待后，已发送的请求返回导致的竞态条件
+    if (phaseRef.current !== 'waiting') return;
+
     const res = await fetch('/api/random-chat/join', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -922,6 +926,9 @@ export default function SafeContent() {
     });
 
     const data = await res.json().catch(() => ({}));
+
+    // 再次检查相位：请求过程中可能已经取消了
+    if (phaseRef.current !== 'waiting') return;
 
     // 请求失败
     if (!res.ok) {

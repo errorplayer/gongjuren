@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getPrefs, DEFAULT_TOOL_ORDER } from '@/lib/user-prefs';
+import { getPrefs } from '@/lib/user-prefs';
 
 export default function ToolGrid({ tools, statsMap }) {
   const [sortedTools, setSortedTools] = useState(tools);

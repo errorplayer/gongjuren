@@ -488,6 +488,10 @@ header {
 
 /* 响应式适配：手机端 */
 @media (max-width: 768px) {
+  header {
+    padding: 10px 0;
+  }
+
   .tools-grid {
     grid-template-columns: 1fr;
   }
@@ -499,11 +503,18 @@ header {
 
   .header-main {
     flex-direction: column;
-    gap: 5px;
+    gap: 2px;
+    margin-bottom: 0;
   }
 
   .flip-clock {
-    transform: scale(0.8);
+    transform: scale(0.7);
+  }
+
+  .daily-quote {
+    font-size: 14px;
+    margin: 4px auto;
+    padding: 6px 8px;
   }
 
   .tool-page {

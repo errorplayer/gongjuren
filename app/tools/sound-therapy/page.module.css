@@ -1,0 +1,191 @@
+.pageContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--bg-body);
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 顶部栏：UP主信息 + 分类卡片 */
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* UP主信息 */
+.authorInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+.authorAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-color);
+  flex-shrink: 0;
+}
+.authorMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.authorNickname {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+.authorBio {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* 分类卡片（靠右） */
+.categoryBar {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex: 1;
+  justify-content: flex-start;
+}
+.catCard {
+  padding: 0.5rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.26s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  white-space: nowrap;
+}
+.catCard:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+.catActive {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* 主体布局 */
+.contentLayout {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  /* 移动端改为纵向排列 */
+  flex-direction: column;
+}
+
+/* 播放器 */
+.playerWrap {
+  flex: 1;
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  /* 移动端宽度100% */
+  width: 100%;
+}
+.playerFrame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 14px;
+  display: block;
+  /* 修复移动端iframe高度塌陷 */
+  min-height: 200px;
+}
+
+/* 右侧列表 */
+.listSide {
+  /* 移动端宽度100%，取消固定宽度 */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.listItem:hover {
+  background: var(--bg-hover);
+}
+.itemActive {
+  background: var(--bg-hover);
+  border-color: var(--accent);
+}
+.itemActive .num,
+.itemActive .itemTitle {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.itemTextWrap {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
+  overflow: hidden;
+}
+.num {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.itemTitle {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 大屏适配（还原PC端布局） */
+@media (min-width: 768px) {
+  .contentLayout {
+    flex-direction: row;
+  }
+  .listSide {
+    width: 260px;
+  }
+  .playerFrame {
+    min-height: unset;
+  }
+}
+
+/* 小屏优化 */
+@media (max-width: 480px) {
+  .pageContainer {
+    padding: 1rem;
+  }
+  .topBar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .categoryBar {
+    justify-content: flex-start;
+  }
+}

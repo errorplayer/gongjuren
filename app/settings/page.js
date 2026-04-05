@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getPrefs, setPrefs, exportPrefs, importPrefs, resetPrefs, sanitizeNickname } from '@/lib/user-prefs';
+import { getPrefs, setPrefs, resetPrefs, sanitizeNickname } from '@/lib/user-prefs';
 import { TOOLS, DEFAULT_TOOL_ORDER } from '@/lib/tools';
 import styles from './page.module.css';
 
@@ -95,35 +95,6 @@ export default function SettingsPage() {
     setDragOverIndex(null);
   };
 
-  const handleExport = () => {
-    exportPrefs();
-    showToast('设置已导出');
-  };
-
-  const handleImport = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const result = importPrefs(event.target.result);
-        if (result.success) {
-          const prefs = result.prefs;
-          setToolOrder(prefs.tool_order);
-          setToolHidden(prefs.tool_hidden);
-          showToast('设置已导入');
-        } else {
-          showToast('导入失败：' + result.error, 'error');
-        }
-      };
-      reader.readAsText(file);
-    };
-    input.click();
-  };
 
   const handleReset = () => {
     if (!confirm('确定要恢复默认设置吗？')) return;
@@ -268,12 +239,7 @@ export default function SettingsPage() {
           <button className={`${styles.actionButton} ${styles.danger}`} onClick={handleReset}>
             恢复默认
           </button>
-          <button className={`${styles.actionButton} ${styles.secondary}`} onClick={handleExport}>
-            导出设置
-          </button>
-          <button className={`${styles.actionButton} ${styles.secondary}`} onClick={handleImport}>
-            导入设置
-          </button>
+
         </div>
       </section>
 

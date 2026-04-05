@@ -291,15 +291,7 @@
   background: var(--accent-hover, #0050cc);
 }
 
-.actionButton.secondary {
-  background: var(--bg-card, #fff);
-  border: 1px solid var(--border-color, #e0e0e0);
-  color: var(--text-primary, #333);
-}
 
-.actionButton.secondary:hover {
-  background: var(--bg-hover, #f5f5f5);
-}
 
 .actionButton.danger {
   background: var(--bg-card, #fff);

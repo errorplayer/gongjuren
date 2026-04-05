@@ -64,8 +64,8 @@ export default function SafeContent() {
   const templates = [
     { id: 'none', name: '无模板' },
     { id: 'film', name: '胶片风' },
-    { id: 'rounded-white', name: '圆角白框' },
-    { id: 'rainbowgray', name: '可爱描线' }
+    { id: 'cyberframe', name: '赛博朋克框' },
+    { id: 'rainbowgray', name: '可爱描线' },
   ];
 
   async function loadTemplates() {

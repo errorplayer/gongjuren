@@ -9,6 +9,8 @@ import styles from './page.module.css';
  */
 // localStorage 中存储客户端 ID 的键名
 const CLIENT_KEY = '520tool-random-chat-client-id';
+// localStorage 中存储当前房间 ID 的键名（用于判断断线重连）
+const ROOM_KEY = '520tool-random-chat-room-id';
 // 轮询匹配间隔（毫秒）
 const POLL_MS = 2000;
 // 心跳检查间隔（毫秒）- 用于检测对方是否已离开
@@ -162,6 +164,10 @@ export default function SafeContent() {
     }
     channelRef.current = null;
     supabaseRef.current = null;
+    // 清除当前房间 ID，标识用户已离开聊天
+    try {
+      localStorage.removeItem(ROOM_KEY);
+    } catch { /* ignore */ }
   }, []);
 
   /**
@@ -957,8 +963,34 @@ export default function SafeContent() {
       clearPoll();
       shouldAutoScrollRef.current = true;
       setShowNewMessageHint(false);
+
+      // 用 localStorage 判断是否真正断线重连：
+      // - 真正重连：localStorage 中有 roomId（新匹配：没有）
+      // - API 返回的 reconnected 字段不可靠（SQL 查询时机问题会导致误判）
+      let isTrueReconnect = false;
+      try {
+        const savedRoomId = localStorage.getItem(ROOM_KEY);
+        isTrueReconnect = data.reconnected && savedRoomId === String(data.room_id);
+      } catch { /* ignore */ }
+
+      // 进入聊天前先保存 roomId，表明用户已进入聊天状态
+      try {
+        localStorage.setItem(ROOM_KEY, String(data.room_id));
+      } catch { /* ignore */ }
+
       setPhase('chat');
       setHint('已匹配，开始聊天（消息不会保存到服务器）');
+
+      // 真正重连时，给 A 显示系统提示
+      if (isTrueReconnect) {
+        setMessages([{
+          id: `sys-${Date.now()}`,
+          text: '你已重新回到对话，之前的聊天记录已不可见',
+          system: true,
+        }]);
+      } else {
+        setMessages([]);
+      }
 
       const sb = createBrowserSupabase();
       if (!sb) {
@@ -996,7 +1028,23 @@ export default function SafeContent() {
           teardownChannel();
           leaveApi(cid);
         })
-        .subscribe();
+        // 监听对方重新连接事件
+        .on('broadcast', { event: 'peer_reconnected' }, () => {
+          setMessages((m) => [
+            ...m,
+            {
+              id: `sys-${Date.now()}`,
+              text: '对方已重新连接',
+              system: true,
+            },
+          ]);
+        })
+        .subscribe((status) => {
+          // 频道订阅成功后，如果是真正重连，通知对方
+          if (status === 'SUBSCRIBED' && isTrueReconnect) {
+            channel.send({ type: 'broadcast', event: 'peer_reconnected', payload: {} });
+          }
+        });
 
       channelRef.current = channel;
 
@@ -1078,7 +1126,7 @@ export default function SafeContent() {
       <div className={styles.titleSection}>
         <h2>随机聊天室</h2>
         <p className={styles.subtitle}>
-          欢迎光临 ~ 在这里你可以匿名随机匹配神秘用户文字聊天，无需登录。消息数据随聊天结束清空；离开或刷新本页面会自动退出队列或房间。
+          欢迎光临 ~ 在这里你可以匿名随机匹配神秘用户文字聊天，无需登录。消息数据随聊天结束清空；离开本页面可能会丢失聊天数据。
         </p>
       </div>
 
@@ -1174,28 +1222,36 @@ export default function SafeContent() {
                 </div>
               ) : (
                 messages.map((m) => (
-                  <div
-                    key={m.id}
-                    className={`${styles.messageWrapper} ${m.mine ? styles.mine : styles.peer}`}
-                  >
-                    {!m.mine && (
-                      <span className={styles.messageAvatar}>
-                        {m.nickname !== '游客' ? (
-                          <span className={styles.nicknameLabel}>{m.nickname}</span>
-                        ) : '👤'}
+                  m.system ? (
+                    <div key={m.id} className={`${styles.messageWrapper} ${styles.system}`}>
+                      <span className={`${styles.messageBubble} ${styles.system}`}>
+                        {m.text}
                       </span>
-                    )}
-                    <span className={`${styles.messageBubble} ${m.mine ? styles.mine : styles.peer}`}>
-                      {m.text}
-                    </span>
-                    {m.mine && (
-                      <span className={styles.myAvatar}>
-                        {m.nickname !== '游客' ? (
-                          <span className={styles.nicknameLabel}>{m.nickname}</span>
-                        ) : '👤'}
+                    </div>
+                  ) : (
+                    <div
+                      key={m.id}
+                      className={`${styles.messageWrapper} ${m.mine ? styles.mine : styles.peer}`}
+                    >
+                      {!m.mine && (
+                        <span className={styles.messageAvatar}>
+                          {m.nickname !== '游客' ? (
+                            <span className={styles.nicknameLabel}>{m.nickname}</span>
+                          ) : '👤'}
+                        </span>
+                      )}
+                      <span className={`${styles.messageBubble} ${m.mine ? styles.mine : styles.peer}`}>
+                        {m.text}
                       </span>
-                    )}
-                  </div>
+                      {m.mine && (
+                        <span className={styles.myAvatar}>
+                          {m.nickname !== '游客' ? (
+                            <span className={styles.nicknameLabel}>{m.nickname}</span>
+                          ) : '👤'}
+                        </span>
+                      )}
+                    </div>
+                  )
                 ))
               )}
               <div ref={bottomRef} />
@@ -1265,28 +1321,36 @@ export default function SafeContent() {
                 </div>
               ) : (
                 messages.map((m) => (
-                  <div
-                    key={m.id}
-                    className={`${styles.messageWrapper} ${m.mine ? styles.mine : styles.peer}`}
-                  >
-                    {!m.mine && (
-                      <span className={styles.messageAvatar}>
-                        {m.nickname !== '游客' ? (
-                          <span className={styles.nicknameLabel}>{m.nickname}</span>
-                        ) : '👤'}
+                  m.system ? (
+                    <div key={m.id} className={`${styles.messageWrapper} ${styles.system}`}>
+                      <span className={`${styles.messageBubble} ${styles.system}`}>
+                        {m.text}
                       </span>
-                    )}
-                    <span className={`${styles.messageBubble} ${m.mine ? styles.mine : styles.peer}`}>
-                      {m.text}
-                    </span>
-                    {m.mine && (
-                      <span className={styles.myAvatar}>
-                        {m.nickname !== '游客' ? (
-                          <span className={styles.nicknameLabel}>{m.nickname}</span>
-                        ) : '👤'}
+                    </div>
+                  ) : (
+                    <div
+                      key={m.id}
+                      className={`${styles.messageWrapper} ${m.mine ? styles.mine : styles.peer}`}
+                    >
+                      {!m.mine && (
+                        <span className={styles.messageAvatar}>
+                          {m.nickname !== '游客' ? (
+                            <span className={styles.nicknameLabel}>{m.nickname}</span>
+                          ) : '👤'}
+                        </span>
+                      )}
+                      <span className={`${styles.messageBubble} ${m.mine ? styles.mine : styles.peer}`}>
+                        {m.text}
                       </span>
-                    )}
-                  </div>
+                      {m.mine && (
+                        <span className={styles.myAvatar}>
+                          {m.nickname !== '游客' ? (
+                            <span className={styles.nicknameLabel}>{m.nickname}</span>
+                          ) : '👤'}
+                        </span>
+                      )}
+                    </div>
+                  )
                 ))
               )}
               <div ref={bottomRef} />

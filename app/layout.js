@@ -2,7 +2,6 @@ import './globals.css';
 import Script from 'next/script';
 import FlipClock from './_components/FlipClock';
 import DailyQuote from './_components/DailyQuote';
-import ThemeToggle from './_components/ThemeToggle';
 
 export const metadata = {
   // 标题（关键词前置，不超过60字符）

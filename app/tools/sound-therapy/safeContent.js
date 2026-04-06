@@ -1,8 +1,13 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { SiBilibili, SiXiaohongshu } from 'react-icons/si';
+import { FiStar, FiHelpCircle } from 'react-icons/fi';
+import { FaStar } from 'react-icons/fa';
+
 import styles from './page.module.css';
+
+const FAV_KEY = '520tool-sound-therapy-favorites';
+const FAV_CAT = '收藏夹';
 
 const author = {
     avatar: "https://i1.hdslb.com/bfs/face/ff9b668e2d3a1cfbb9469440b8fa3e3af72379fb.jpg@128w_128h_1c_1s.webp",
@@ -88,6 +93,9 @@ export default function SafeContent() {
     const [avatarSrc, setAvatarSrc] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [showXhsTooltip, setShowXhsTooltip] = useState(false);
+    const [favorites, setFavorites] = useState([]);
+    const [toast, setToast] = useState('');
+    const initDone = useRef(false);
 
     // 从数据库加载视频数据
     useEffect(() => {
@@ -141,17 +149,89 @@ export default function SafeContent() {
         setShowXhsTooltip(!showXhsTooltip);
     };
 
+    // 从 localStorage 加载收藏
+    useEffect(() => {
+        try {
+            const stored = localStorage.getItem(FAV_KEY);
+            if (stored) {
+                setFavorites(JSON.parse(stored));
+            }
+        } catch { /* ignore */ }
+    }, []);
+
+    // 收藏加载后，优先播放收藏夹（仅首次初始化时）
+    useEffect(() => {
+        if (categories.length === 0) return;
+        if (!initDone.current) {
+            initDone.current = true;
+            if (favorites.length > 0) {
+                setActiveCat(FAV_CAT);
+                const firstFavItem = favorites.map(bv => findItemByBv(bv)).filter(Boolean)[0];
+                if (firstFavItem) setCurrentItem(firstFavItem);
+            }
+        }
+    }, [favorites, categories, videoData]);
+
+
+    // toast 自动消失
+    useEffect(() => {
+        if (toast) {
+            const timer = setTimeout(() => setToast(''), 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [toast]);
+
+    // 切换收藏/取消收藏
+    const toggleFavorite = (bv, e) => {
+        e.stopPropagation();
+        setFavorites(prev => {
+            const isFav = prev.includes(bv);
+            const next = isFav
+                ? prev.filter(v => v !== bv)
+                : [bv, ...prev];
+            try {
+                localStorage.setItem(FAV_KEY, JSON.stringify(next));
+            } catch { /* ignore */ }
+            if (isFav) setToast('已取消收藏');
+            return next;
+        });
+    };
+
+    // 根据 bv 在全量数据中查找 item
+    const findItemByBv = (bv) => {
+        for (const items of Object.values(videoData)) {
+            const found = items.find(i => i.bv === bv);
+            if (found) return found;
+        }
+        return null;
+    };
+
+    // 构造展示用 categories（收藏夹在最前）
+    const displayCategories = [
+        ...(favorites.length > 0 ? [FAV_CAT] : []),
+        ...categories,
+    ];
+
+    // 构造展示用 items
+    const displayItems = activeCat === FAV_CAT
+        ? favorites.map(bv => findItemByBv(bv)).filter(Boolean)
+        : (videoData[activeCat] || []);
+
+    const switchCategory = (cat) => {
+        setActiveCat(cat);
+        if (cat === FAV_CAT) {
+            // 收藏夹不自动切换播放
+        } else {
+            setCurrentItem(videoData[cat]?.[0] || { bv: '', title: '' });
+        }
+    };
+
     // 视频切换时更新地址
     useEffect(() => {
         if (isReady && currentItem.bv) {
             setEmbedUrl(getEmbedUrl(currentItem.bv, isPc));
         }
     }, [currentItem, isPc, isReady]);
-
-    const switchCategory = (cat) => {
-        setActiveCat(cat);
-        setCurrentItem(videoData[cat][0]);
-    };
 
     if (isLoading) {
         return (
@@ -205,18 +285,26 @@ export default function SafeContent() {
                                     </button>
                                 )
                             ))}
+                            {/* 帮助说明 */}
+                            <div className={styles.helpTip}>
+                                <button className={styles.helpBtn} title="帮助说明">
+                                    <FiHelpCircle size={18} color="var(--text-muted)" />
+                                </button>
+                                <div className={styles.helpTipText}>本站使用视频平台官方链接播放，<br/>作品版权归作者所有。</div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* 分类卡片（靠右） */}
                 <div className={styles.categoryBar}>
-                    {categories.map(cat => (
+                    {displayCategories.map(cat => (
                         <div
                             key={cat}
-                            className={`${styles.catCard} ${activeCat === cat ? styles.catActive : ''}`}
+                            className={`${styles.catCard} ${activeCat === cat ? styles.catActive : ''} ${cat === FAV_CAT ? styles.favCard : ''}`}
                             onClick={() => switchCategory(cat)}
                         >
+                            {cat === FAV_CAT && <FiStar size={13} style={{ marginRight: 4, verticalAlign: 'middle' }} />}
                             {cat}
                         </div>
                     ))}
@@ -240,18 +328,32 @@ export default function SafeContent() {
                     </div>
 
                     <div className={styles.listSide}>
-                        {videoData[activeCat]?.map((item, i) => (
-                            <div
-                                key={item.bv}
-                                className={`${styles.listItem} ${currentItem.bv === item.bv ? styles.itemActive : ''}`}
-                                onClick={() => setCurrentItem(item)}
-                            >
-                                <div className={styles.itemTextWrap}>
-                                    <span className={styles.num}>#{i + 1}</span>
-                                    <span className={styles.itemTitle}>{item.title}</span>
-                                </div>
-                            </div>
-                        ))}
+                        {displayItems.length === 0 ? (
+                            <div className={styles.emptyFavorites}>暂无收藏内容</div>
+                        ) : (
+                            displayItems.map((item, i) => {
+                                const isFav = favorites.includes(item.bv);
+                                return (
+                                    <div
+                                        key={item.bv}
+                                        className={`${styles.listItem} ${currentItem.bv === item.bv ? styles.itemActive : ''}`}
+                                        onClick={() => setCurrentItem(item)}
+                                    >
+                                        <div className={styles.itemTextWrap}>
+                                            <span className={styles.num}>#{i + 1}</span>
+                                            <span className={styles.itemTitle}>{item.title}</span>
+                                        </div>
+                                        <button
+                                            className={`${styles.favBtn} ${isFav ? styles.favBtnFilled : ''}`}
+                                            onClick={(e) => toggleFavorite(item.bv, e)}
+                                            title={isFav ? '取消收藏' : '收藏'}
+                                        >
+                                            {isFav ? <FaStar size={18} /> : <FiStar size={18} />}
+                                        </button>
+                                    </div>
+                                );
+                            })
+                        )}
                     </div>
                 </div>
             )}
@@ -270,6 +372,11 @@ export default function SafeContent() {
                     <div className={styles.xhsOverlayHint}>点击任意处关闭</div>
                 </div>
             )}
+
+            {/* 收藏 toast */}
+            <div className={`${styles.favToast} ${toast ? styles.favToastVisible : ''}`}>
+                {toast}
+            </div>
         </div>
     );
 }

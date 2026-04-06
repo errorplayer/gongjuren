@@ -1,7 +1,7 @@
 .pageContainer {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0.5rem 2rem 2rem;
   background: var(--bg-body);
   min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -73,6 +73,53 @@
   transform: scale(0.95);
 }
 
+/* 帮助说明 tooltip */
+.helpTip {
+  position: relative;
+  display: inline-flex;
+}
+.helpBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.helpBtn:hover {
+  background: var(--bg-hover);
+  transform: scale(1.1);
+}
+.helpTipText {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  white-space: normal;
+  width: 208px;
+  text-align: left;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+.helpTip:hover .helpTipText,
+.helpBtn:focus + .helpTipText {
+  visibility: visible;
+  opacity: 1;
+}
+
 /* 小红书全屏 overlay */
 .xhsOverlay {
   position: fixed;
@@ -136,6 +183,8 @@
   transition: all 0.26s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   white-space: nowrap;
+  display: flex; 
+  align-items: center;
 }
 .catCard:hover {
   background: var(--bg-hover);
@@ -256,4 +305,60 @@
   .categoryBar {
     justify-content: flex-start;
   }
+}
+
+/* 收藏按钮 */
+.favBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.favBtn:hover {
+  color: #F59E0B;
+  transform: scale(1.2);
+}
+.favBtnFilled {
+  color: #F59E0B;
+}
+.favBtnFilled:hover {
+  color: #D97706;
+}
+
+/* 空收藏夹提示 */
+.emptyFavorites {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* 收藏 toast */
+.favToast {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s ease;
+  pointer-events: none;
+  z-index: 999;
+}
+.favToastVisible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }

@@ -1,0 +1,307 @@
+/* HeroSection - 热点工具展示区 */
+
+.hero {
+  background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 50%, #faf5ff 100%);
+  min-height: 520px;
+}
+
+.heroInner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 48px 40px;
+  display: flex;
+  gap: 48px;
+  align-items: stretch;
+}
+
+/* 左侧竖排列表 */
+.sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 20px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e6e6e6;
+  font-size: 18px;
+  font-weight: 700;
+  color: #333333;
+}
+
+.sidebarIcon {
+  width: 24px;
+  height: 24px;
+  color: #2496ED;
+}
+
+.toolList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.toolItem {
+  position: relative;
+  padding: 14px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.toolItem:hover {
+  background: #f5f7fa;
+}
+
+.toolItem.active {
+  background: linear-gradient(135deg, rgba(36, 150, 237, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+}
+
+.toolItemMain {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.toolItemIcon {
+  font-size: 24px;
+}
+
+.toolItemTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.toolItem.active .toolItemTitle {
+  color: #2496ED;
+}
+
+.toolItemTags {
+  display: flex;
+  gap: 8px;
+  padding-left: 36px;
+}
+
+.tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.tagHot {
+  background: linear-gradient(135deg, rgba(255, 95, 95, 0.15) 0%, rgba(255, 159, 26, 0.15) 100%);
+  color: #ff5a5f;
+}
+
+.tagAi {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+  color: #667eea;
+}
+
+.activeBar {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: linear-gradient(135deg, #2496ED 0%, #764ba2 100%);
+  border-radius: 0 4px 4px 0;
+}
+
+/* 右侧内容区 */
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.contentInner {
+  height: 100%;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.toolDisplay {
+  position: relative;
+  z-index: 2;
+  max-width: 480px;
+}
+
+.toolEmoji {
+  font-size: 72px;
+  margin-bottom: 24px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.toolName {
+  font-size: 36px;
+  font-weight: 800;
+  color: #333333;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.toolDesc {
+  font-size: 18px;
+  color: #666666;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #2496ED 0%, #1a7cc8 100%);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(36, 150, 237, 0.3);
+}
+
+.ctaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(36, 150, 237, 0.4);
+}
+
+.ctaButton svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.2s ease;
+}
+
+.ctaButton:hover svg {
+  transform: translateX(4px);
+}
+
+.stats {
+  margin-top: 24px;
+  display: flex;
+  gap: 24px;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #999999;
+}
+
+.statItem svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* 装饰插图 */
+.illustration {
+  position: absolute;
+  right: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 320px;
+  height: 320px;
+  z-index: 1;
+}
+
+.decorCircle1 {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(36, 150, 237, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.decorCircle2 {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(36, 150, 237, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+  animation: pulse 4s ease-in-out infinite 0.5s;
+}
+
+.decorCircle3 {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  right: 80px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(36, 150, 237, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+  animation: pulse 4s ease-in-out infinite 1s;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translateY(-50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-50%) scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+.floatingEmoji {
+  position: absolute;
+  right: 100px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 80px;
+  animation: floatEmoji 3s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes floatEmoji {
+  0%, 100% {
+    transform: translateY(-50%) rotate(-5deg);
+  }
+  50% {
+    transform: translateY(-60%) rotate(5deg);
+  }
+}

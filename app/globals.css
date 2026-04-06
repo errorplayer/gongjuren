@@ -32,17 +32,17 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  
+
   --bg-body: #f5f7fa;
   --bg-card: #ffffff;
   --bg-header: #ffffff;
   --bg-input: #ffffff;
   --bg-hover: #f8f9fa;
-  
+
   --text-primary: #333333;
   --text-secondary: #666666;
   --text-muted: #999999;
-  
+
   --border-color: #eeeeee;
   --accent: #3498db;
   --accent-hover: #2980b9;
@@ -74,12 +74,15 @@
   --accent: #5dade2;
   --accent-hover: #3498db;
 }
+
 /* 防止iOS文本自动调整和缩放 */
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  touch-action: manipulation; /* 防止双击缩放 */
+  touch-action: manipulation;
+  /* 防止双击缩放 */
 }
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -87,10 +90,14 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
   overscroll-behavior-y: none;
 }
+
 /* 针对输入框的防缩放规则 */
-input, textarea {
-  font-size: 16px !important; /* iOS Safari要求至少16px防止自动缩放 */
+input,
+textarea {
+  font-size: 16px !important;
+  /* iOS Safari要求至少16px防止自动缩放 */
 }
+
 /* 全局样式：简洁清爽，适配所有设备 */
 * {
   margin: 0;
@@ -98,9 +105,13 @@ input, textarea {
   box-sizing: border-box;
   font-family: "Microsoft YaHei", Arial, sans-serif;
 }
+
 /* 确保移动端输入框不被自动放大 */
 @media screen and (max-width: 768px) {
-  input, textarea, select {
+
+  input,
+  textarea,
+  select {
     font-size: 16px;
   }
 }
@@ -162,7 +173,7 @@ header {
 
 /* "520" 品牌渐变字 */
 .logo-brand {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2496ED 0%, #764ba2 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -192,35 +203,37 @@ header {
   position: absolute;
   top: 0;
   left: -100%;
-  width: 80%;  /* 从60%增加到80%让光泽更明显 */
+  width: 80%;
+  /* 从60%增加到80%让光泽更明显 */
   height: 100%;
   /* 明色模式：使用深色光泽（0,0,0,0.12）在浅色背景下更可见 */
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(0, 0, 0, 0.12),
-    transparent
-  );
-  animation: logo-shimmer 3.5s ease-in-out infinite; /* 加快一点：3.5秒 */
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(0, 0, 0, 0.12),
+      transparent);
+  animation: logo-shimmer 3.5s ease-in-out infinite;
+  /* 加快一点：3.5秒 */
   z-index: 2;
   pointer-events: none;
 }
 
 /* 暗色模式下光泽更亮 */
 [data-theme="dark"] .logo::after {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.18),  /* 从0.08增加到0.18 */
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.18),
+      /* 从0.08增加到0.18 */
+      transparent);
 }
 
 
 @keyframes logo-shimmer {
-  0%, 100% {
+
+  0%,
+  100% {
     left: -100%;
   }
+
   50% {
     left: 140%;
   }
@@ -295,7 +308,7 @@ header {
   color: #fff;
   letter-spacing: 0.5px;
   z-index: 1;
-  
+
 }
 
 
@@ -322,6 +335,7 @@ header {
   background: linear-gradient(100deg, #3253e6, #687bd1);
   animation: badge-breathe 0.8s ease-in-out infinite;
 }
+
 @keyframes badge-breathe {
 
   0%,
@@ -1069,6 +1083,7 @@ header {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

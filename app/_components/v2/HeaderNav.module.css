@@ -7,12 +7,13 @@
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   border-bottom: 1px solid #e6e6e6;
+  padding: 0;
 }
 
 .headerInner {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 60px;
   height: 64px;
   display: flex;
   align-items: center;
@@ -25,7 +26,7 @@
 .nav {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 24px;
   flex: 1;
 }
 
@@ -37,7 +38,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 8px 16px;
+  padding: 8px 22px;
   font-size: 15px;
   font-weight: 500;
   color: #333333;
@@ -91,14 +92,14 @@
 .megaMenuInner {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 24px 40px;
+  padding: 32px 40px;
   display: flex;
-  gap: 40px;
+  gap: 48px;
 }
 
 /* L2 竖排侧边栏 */
 .l2Sidebar {
-  width: 200px;
+  width: 220px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -165,7 +166,7 @@
 .toolsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
+  gap: 20px;
 }
 
 .toolCard {

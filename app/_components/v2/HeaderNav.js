@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { TOOL_CATEGORIES, getToolsByCategory } from '@/lib/tool-categories';
 import styles from './HeaderNav.module.css';
+import Logo from '../Logo';
 
 export default function HeaderNav() {
   const [activeMenu, setActiveMenu] = useState(null);
@@ -58,11 +59,8 @@ export default function HeaderNav() {
   return (
     <header className={styles.header}>
       <div className={styles.headerInner}>
-        {/* Logo */}
-        <Link href="/v2/pc" className={styles.logo}>
-          <span className={styles.logoBrand}>520</span>
-          <span className={styles.logoText}>.tool</span>
-        </Link>
+
+        <Logo />
 
         {/* 一级菜单 */}
         <nav className={styles.nav}>

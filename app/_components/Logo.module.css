@@ -1,0 +1,114 @@
+/* ============================================
+ *  Logo 样式 - 渐变 + 光泽动画
+ * ============================================ */
+
+/* 基础容器 */
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  line-height: 1.2;
+}
+
+.logo:hover {
+  transform: translateY(-2px);
+}
+
+/* "520" 品牌渐变字 */
+.brand {
+  background: linear-gradient(135deg, #2496ED 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+/* 暗色模式下渐变更亮 */
+:global([data-theme="dark"]) .brand {
+  background: linear-gradient(135deg, #8b9cf7 0%, #c084fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ".tool.cc" 普通文字 */
+.text {
+  color: var(--text-primary, #333);
+  transition: color 0.3s ease;
+}
+
+/* 暗色模式下文字色 */
+:global([data-theme="dark"]) .text {
+  color: var(--text-primary, #e0e0e0);
+}
+
+/* 光泽扫过动画 - 伪元素实现 */
+.logo::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 0, 0, 0.12),
+    transparent
+  );
+  animation: shimmer 3.5s ease-in-out infinite;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* 暗色模式下光泽更亮 */
+:global([data-theme="dark"]) .logo::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.18),
+    transparent
+  );
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    left: -100%;
+  }
+  50% {
+    left: 140%;
+  }
+}
+
+/* ===== 尺寸变体 ===== */
+
+/* 小尺寸 */
+.sm {
+  font-size: 16px;
+}
+
+/* 中尺寸（默认） */
+.md {
+  font-size: 22px;
+}
+
+/* 大尺寸 */
+.lg {
+  font-size: 28px;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .logo {
+    font-size: 18px;
+  }
+  
+  .lg {
+    font-size: 22px;
+  }
+}

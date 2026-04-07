@@ -1,7 +1,6 @@
 import './globals.css';
 import Script from 'next/script';
-import FlipClock from './_components/FlipClock';
-import DailyQuote from './_components/DailyQuote';
+import ConditionalHeader from './_components/ConditionalHeader';
 
 export const metadata = {
   // 标题（关键词前置，不超过60字符）
@@ -112,28 +111,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        <header>
-          <div className="header-container">
-            <div className="header-main">
-              <a href="/" className="logo">
-                <span className="logo-brand">520</span>
-                <span className="logo-text">tool.cc</span>
-              </a>
-              <FlipClock />
-            </div>
-            {/* <span 
-              className="header-tag" 
-              style={{ 
-                fontFamily: "system-ui, -apple-system, sans-serif, emoji",
-                fontVariantEmoji: "emoji"
-              }}
-            >
-              🆓 easy to use
-            </span> */}
-            <DailyQuote />
-
-          </div>
-        </header>
+        <ConditionalHeader />
         {children}
       </body>
     </html>

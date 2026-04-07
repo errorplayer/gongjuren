@@ -19,29 +19,7 @@
   gap: 60px;
 }
 
-/* Logo */
-.logo {
-  display: flex;
-  align-items: baseline;
-  text-decoration: none;
-  flex-shrink: 0;
-}
 
-.logoBrand {
-  font-size: 26px;
-  font-weight: 800;
-  background: linear-gradient(135deg, #2496ED 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: -0.5px;
-}
-
-.logoText {
-  font-size: 20px;
-  font-weight: 500;
-  color: #333333;
-}
 
 /* 导航菜单 */
 .nav {

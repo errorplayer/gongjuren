@@ -1,141 +1,157 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
+import Logo from '@/app/_components/Logo';
 import { TOOL_CATEGORIES, getToolsByCategory } from '@/lib/tool-categories';
 import styles from './HeaderNav.module.css';
-import Logo from '../Logo';
+
+const { menus, subCategories } = TOOL_CATEGORIES;
+
+// 获取 L1 菜单对应的 L2 分类
+const getSubCategoriesByL1 = (l1Id) => {
+  return subCategories.filter((sub) => sub.l1Id === l1Id);
+};
 
 export default function HeaderNav() {
-  const [activeMenu, setActiveMenu] = useState(null);
-  const [activeL2, setActiveL2] = useState('hot');
-  const [tools, setTools] = useState([]);
-  const menuRef = useRef(null);
-  const timeoutRef = useRef(null);
+  const [activeL1Id, setActiveL1Id] = useState(null);
+  const [activeL2Id, setActiveL2Id] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const closingRef = useRef(false);
 
-  const handleMenuEnter = (menuId) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+  // 处理 L1 鼠标进入
+  const handleL1MouseEnter = (l1Id) => {
+    closingRef.current = false;
+    setIsClosing(false);
+    setActiveL1Id(l1Id);
+    
+    // 获取该 L1 对应的 L2 分类
+    const l2Categories = getSubCategoriesByL1(l1Id);
+    if (l2Categories.length > 0) {
+      // 默认选中第二个 L2（如果有的话）
+      setActiveL2Id(l2Categories[1]?.id || l2Categories[0].id);
     }
-    setActiveMenu(menuId);
-    // 默认显示该菜单下的第一个L2分类
-    const firstL2 = TOOL_CATEGORIES.subCategories.find(
-      (l2) => l2.l1Id === menuId
-    );
-    if (firstL2) {
-      setActiveL2(firstL2.id);
-      setTools(getToolsByCategory(firstL2.id));
-    }
+    setIsMenuOpen(true);
   };
 
-  const handleMenuLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setActiveMenu(null);
+  // 处理 L1 鼠标离开，开始关闭流程
+  const handleL1MouseLeave = () => {
+    closingRef.current = true;
+    setIsClosing(true);
+    setTimeout(() => {
+      if (closingRef.current) {
+        setActiveL1Id(null);
+        setIsMenuOpen(false);
+        setIsClosing(false);
+        closingRef.current = false;
+      }
     }, 150);
   };
 
-  const handleMegaMenuEnter = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
+  // 保持 MegaMenu 打开
+  const handleMegaMenuMouseEnter = () => {
+    closingRef.current = false;
+    setIsClosing(false);
+    setActiveL1Id(activeL1Id);
+    setIsMenuOpen(true);
   };
 
-  const handleMegaMenuLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setActiveMenu(null);
+  // MegaMenu 鼠标离开，关闭
+  const handleMegaMenuMouseLeave = () => {
+    closingRef.current = true;
+    setIsClosing(true);
+    setTimeout(() => {
+      if (closingRef.current) {
+        setActiveL1Id(null);
+        setIsMenuOpen(false);
+        setIsClosing(false);
+        closingRef.current = false;
+      }
     }, 150);
   };
 
-  const handleL2Click = (l2Id) => {
-    setActiveL2(l2Id);
-    setTools(getToolsByCategory(l2Id));
+  // 获取当前 L1 对应的 L2 分类
+  const currentL2Categories = activeL1Id ? getSubCategoriesByL1(activeL1Id) : [];
+  
+  // 获取当前 L2 分类对应的工具
+  const currentTools = activeL2Id ? getToolsByCategory(activeL2Id) : [];
+
+  // 构建 MegaMenu 左侧分类列表（推荐始终第一位）
+  const getMegaMenuL2List = () => {
+    const l2List = [...subCategories.filter((sub) => sub.l1Id === activeL1Id)];
+    // 将 "推荐" 插入到第一个位置
+    const hotCategory = subCategories.find((sub) => sub.id === 'hot');
+    if (hotCategory && !l2List.find((sub) => sub.id === 'hot')) {
+      l2List.unshift(hotCategory);
+    }
+    return l2List;
   };
 
-  // 初始化显示推荐
-  useEffect(() => {
-    setTools(getToolsByCategory('hot'));
-  }, []);
+  const megaMenuL2List = activeL1Id ? getMegaMenuL2List() : [];
 
   return (
     <header className={styles.header}>
-      <div className={styles.headerInner}>
-
-        <Logo />
-
-        {/* 一级菜单 */}
-        <nav className={styles.nav}>
-          {TOOL_CATEGORIES.menus.map((menu) => (
+      {/* 顶部导航栏 */}
+      <nav className={styles.nav}>
+        <div className={styles.navLeft}>
+          <Logo size="dm" showText href="/v2/pc" />
+        </div>
+        
+        <div className={styles.navRight}>
+          {menus.map((menu) => (
             <div
               key={menu.id}
-              className={styles.menuItem}
-              onMouseEnter={() => handleMenuEnter(menu.id)}
-              onMouseLeave={handleMenuLeave}
+              className={`${styles.menuItem} ${activeL1Id === menu.id ? styles.menuItemActive : ''}`}
+              onMouseEnter={() => handleL1MouseEnter(menu.id)}
+              onMouseLeave={handleL1MouseLeave}
             >
-              <span
-                className={`${styles.menuLink} ${
-                  activeMenu === menu.id ? styles.active : ''
-                }`}
+              <span className={styles.menuLabel}>{menu.label}</span>
+              <svg 
+                className={`${styles.arrowIcon} ${isMenuOpen && activeL1Id === menu.id ? styles.arrowUp : ''}`}
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2"
               >
-                {menu.label}
-                <svg
-                  className={styles.arrowIcon}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </span>
+                <path d="M6 9l6 6 6-6" />
+              </svg>
             </div>
           ))}
-        </nav>
-      </div>
+        </div>
+      </nav>
 
-      {/* MegaMenu 下拉大画布 */}
-      {activeMenu && (
-        <div
-          ref={menuRef}
+      {/* Mega Menu 全幅下拉 */}
+      {isMenuOpen && activeL1Id && (
+        <div 
           className={styles.megaMenu}
-          onMouseEnter={handleMegaMenuEnter}
-          onMouseLeave={handleMegaMenuLeave}
+          onMouseEnter={handleMegaMenuMouseEnter}
+          onMouseLeave={handleMegaMenuMouseLeave}
         >
           <div className={styles.megaMenuInner}>
-            {/* L2 二级菜单竖排 */}
-            <div className={styles.l2Sidebar}>
-              {TOOL_CATEGORIES.subCategories.map((l2) => {
-                // 过滤：只显示与当前L1相关的，或者hot（推荐）
-                if (
-                  l2.id !== 'hot' &&
-                  l2.l1Id !== activeMenu
-                ) {
-                  return null;
-                }
-                return (
-                  <button
-                    key={l2.id}
-                    className={`${styles.l2Item} ${
-                      activeL2 === l2.id ? styles.l2Active : ''
-                    }`}
-                    onClick={() => handleL2Click(l2.id)}
-                    onMouseEnter={() => handleL2Click(l2.id)}
-                  >
-                    <span className={styles.l2Icon}>{l2.icon}</span>
-                    <span className={styles.l2Label}>{l2.label}</span>
-                    {l2.badge && (
-                      <span className={styles.l2Badge}>{l2.badge}</span>
-                    )}
-                  </button>
-                );
-              })}
+            {/* 左侧：L2 分类列表 */}
+            <div className={styles.l2List}>
+              {megaMenuL2List.map((sub) => (
+                <div
+                  key={sub.id}
+                  className={`${styles.l2Item} ${activeL2Id === sub.id ? styles.l2ItemActive : ''}`}
+                  onClick={() => setActiveL2Id(sub.id)}
+                >
+                  <span className={styles.l2Icon}>{sub.icon}</span>
+                  <span className={styles.l2Label}>{sub.label}</span>
+                  {sub.badge && (
+                    <span className={styles.l2Badge}>{sub.badge}</span>
+                  )}
+                </div>
+              ))}
             </div>
 
-            {/* 工具卡片区域 */}
-            <div className={styles.toolsArea}>
-              <div className={styles.toolsGrid}>
-                {tools.map((tool) => (
-                  <Link
-                    key={tool.id}
+            {/* 右侧：工具卡片 */}
+            <div className={styles.toolCards}>
+              {currentTools.length > 0 ? (
+                currentTools.map((tool) => (
+                  <Link 
+                    key={tool.id} 
                     href={tool.path}
                     className={styles.toolCard}
                   >
@@ -144,12 +160,23 @@ export default function HeaderNav() {
                       <div className={styles.toolCardTitle}>{tool.title}</div>
                       <div className={styles.toolCardDesc}>{tool.desc}</div>
                     </div>
-                    {tool.tags.includes('HOT') && (
-                      <span className={styles.toolHotTag}>HOT</span>
+                    {tool.tags.length > 0 && (
+                      <div className={styles.toolCardTags}>
+                        {tool.tags.map((tag) => (
+                          <span 
+                            key={tag} 
+                            className={`${styles.toolTag} ${tag === 'HOT' ? styles.tagHot : styles.tagAi}`}
+                          >
+                            {tag === 'HOT' ? '🔥' : '🤖'} {tag}
+                          </span>
+                        ))}
+                      </div>
                     )}
                   </Link>
-                ))}
-              </div>
+                ))
+              ) : (
+                <div className={styles.noTools}>暂无工具</div>
+              )}
             </div>
           </div>
         </div>

@@ -161,6 +161,7 @@
   position: relative;
   z-index: 2;
   max-width: 480px;
+  margin: 60px 80px;
 }
 
 .toolEmoji {

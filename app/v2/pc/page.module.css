@@ -1,10 +1,10 @@
 /* V2 PC 页面样式 */
 
 .page {
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - 60px);
   background: #f5f7fa;
 }
 
 .main {
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - 60px);
 }

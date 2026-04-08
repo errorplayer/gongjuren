@@ -1,31 +1,31 @@
 /* ===== V2 路由组：完全隔离样式 ===== */
-/* 目的：从根部彻底隔离 globals.css 和 Tailwind preflight 的影响 */
+/* 目的：从根部彻底隔离 globals.css 的影响，只影响 .v2-root 内部 */
 
 /* ══════════════════════════════════════
-   第一层：html / body 根部重置（最高优先级）
+   第一层：html / body 根部重置
    ══════════════════════════════════════ */
 
-/* 确保 html 占满视口，不收缩 */
-html {
+.v2-root html {
   width: 100% !important;
   max-width: 100% !important;
   min-width: 100% !important;
-  overflow-x: hidden !important;
+  overflow-x: hidden;
 }
 
-/* body 必须占满宽度，覆盖 globals.css 的设置 */
-body {
+.v2-root body {
   width: 100% !important;
   max-width: 100% !important;
   min-width: 100% !important;
   background: #f5f7fa !important;
   color: #333333 !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-  overflow-x: hidden !important;
+  overflow-x: hidden;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* ══════════════════════════════════════
-   第二层：V2 根容器（核心隔离）
+   第二层：V2 根容器
    ══════════════════════════════════════ */
 
 .v2-root {
@@ -47,18 +47,17 @@ body {
 }
 
 /* ══════════════════════════════════════
-   第三层：V2 内所有元素的通用重置
-   （覆盖 globals.css 的全局 * 选择器和 Tailwind preflight）
+   第三层：V2 内元素通用重置
    ══════════════════════════════════════ */
 
 .v2-root * {
   margin: 0;
-  padding: 0;
+  /* padding: 0; */
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
 }
 
-/* 确保 V2 内所有块级元素和全宽容器不被压缩 */
+/* V2 内所有块级元素不被压缩 */
 .v2-root > *,
 .v2-root div,
 .v2-root section,
@@ -67,23 +66,15 @@ body {
 .v2-root main,
 .v2-root article,
 .v2-root aside,
-.v2-root footer,
-.v2-root .header,
-.v2-root .hero {
+.v2-root footer {
   max-width: none !important;
   width: auto;
   min-width: 0;
-}
-
-/* 特殊处理：header 和 hero 确保全宽 */
-.v2-root .header,
-.v2-root .hero {
-  width: 100% !important;
-  max-width: 100vw !important;
+  overflow: visible !important;
 }
 
 /* ══════════════════════════════════════
-   第四层：链接和通用样式
+   第四层：链接与按钮（对抗 Tailwind Preflight）
    ══════════════════════════════════════ */
 
 .v2-root a {
@@ -91,44 +82,34 @@ body {
   text-decoration: none;
 }
 
-/* ══════════════════════════════════════
-   第五层：响应式断点
-   ══════════════════════════════════════ */
-
-@media (max-width: 1200px) {
-  .heroInner {
-    padding: 32px 24px;
-    gap: 24px;
-  }
-  .sidebar {
-    width: 340px;
-    padding: 20px;
-  }
-  .contentInner {
-    padding: 32px;
-  }
-  .toolName {
-    font-size: 30px;
-  }
-  .illustration {
-    width: 200px;
-    height: 200px;
-    right: 24px;
-  }
+.v2-root button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
 }
 
-@media (max-width: 900px) {
-  .heroInner {
-    flex-direction: column;
-    padding: 24px 16px;
-  }
-  .sidebar {
-    width: 100%;
-  }
-  .contentInner {
-    padding: 24px;
-  }
-  .illustration {
-    display: none;
-  }
+/* ══════════════════════════════════════
+   第五层：重置全局 header/nav 对 V2 组件的影响
+   ══════════════════════════════════════ */
+
+/* 覆盖 globals.css 第 126-133 行的全局 header 样式 */
+.v2-root header,
+header.v2-root,
+.v2-root > header {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 6px 8px !important;
+  position: relative !important;
+  top: auto !important;
+  z-index: auto !important;
+  display: block !important;
+}
+
+/* 覆盖 .header-container 类 */
+.v2-root .header-container,
+.v2-root header ~ .header-container {
+  display: none !important;
 }

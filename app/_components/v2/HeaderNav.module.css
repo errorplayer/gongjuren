@@ -13,11 +13,12 @@
 .headerInner {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 60px;
+  padding: 0 40px;
   height: 64px;
   display: flex;
   align-items: center;
-  gap: 60px;
+  justify-content: space-between;
+  gap: 40px;
 }
 
 

@@ -25,4 +25,44 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
+}
+
+/* HeroSection 响应式断点 */
+@media (max-width: 1200px) {
+  .heroInner {
+    padding: 32px 24px;
+    gap: 32px;
+  }
+  .sidebar {
+    width: 280px;
+    padding: 20px;
+  }
+  .contentInner {
+    padding: 32px;
+  }
+  .toolName {
+    font-size: 30px;
+  }
+  .illustration {
+    width: 240px;
+    height: 240px;
+    right: 32px;
+  }
+}
+
+@media (max-width: 900px) {
+  .heroInner {
+    flex-direction: column;
+    padding: 24px 16px;
+  }
+  .sidebar {
+    width: 100%;
+  }
+  .contentInner {
+    padding: 24px;
+  }
+  .illustration {
+    display: none;
+  }
 }

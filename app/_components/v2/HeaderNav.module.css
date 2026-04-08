@@ -37,11 +37,11 @@
 .nav {
   display: flex !important;
   align-items: center !important;
-  justify-content: space-between !important;
+  justify-content: left;
   height: 60px !important;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 120px;
 }
 
 /* 左侧 Logo */
@@ -54,7 +54,8 @@
 .navRight {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 18px;
+  margin: 0 100px !important;
 }
 
 /* 一级菜单项 */
@@ -134,7 +135,7 @@
   gap: 60px;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 24px 40px;
+  padding: 24px 200px;
 }
 
 /* L2 分类列表 - 左侧 */
@@ -205,7 +206,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 14px;
+  gap: 30px;
   padding: 14px 16px;
   background: var(--bg-light);
   border: 1px solid var(--border-light);

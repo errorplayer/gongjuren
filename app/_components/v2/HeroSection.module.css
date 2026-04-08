@@ -4,21 +4,28 @@
   background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 50%, #faf5ff 100%);
   min-height: 520px;
   width: 100%;
+  padding-left: 6%;
+  padding-right: 6%;
+  box-sizing: border-box;
 }
 
 .heroInner {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 48px 40px;
-  display: flex;
-  gap: 48px;
-  align-items: stretch;
   width: 100%;
+  max-width: 1090px;
+  min-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 28px;
+  padding-bottom: 40px;
+  display: flex;
+  gap: 32px;
+  align-items: stretch;
+  box-sizing: border-box;
 }
 
 /* 左侧竖排列表 */
 .sidebar {
-  width: 320px;
+  width: 458px;
   flex-shrink: 0;
   background: #ffffff;
   border-radius: 16px;
@@ -130,8 +137,12 @@
 
 /* 右侧内容区 */
 .content {
+  
+
   flex: 1;
   min-width: 0;
+  max-width: 588px;
+
 }
 
 .contentInner {
@@ -139,7 +150,7 @@
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-  padding: 48px;
+  padding: 36px;
   display: flex;
   flex-direction: column;
   position: relative;

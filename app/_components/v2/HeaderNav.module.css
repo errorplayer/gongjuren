@@ -12,14 +12,15 @@
 }
 
 .headerInner {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 40px;
+  max-width: 1200px;
+  margin-left: 16%;
+  margin-right: 6%;
+  padding: 0 32px;
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 40px;
+  gap: 32px;
   width: 100%;
 }
 
@@ -94,11 +95,12 @@
 }
 
 .megaMenuInner {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 32px 40px;
+  max-width: 1200px;
+  margin-left: 18%;
+  margin-right: 2%;
+  padding: 28px 32px;
   display: flex;
-  gap: 48px;
+  gap: 32px;
 }
 
 /* L2 竖排侧边栏 */

@@ -91,7 +91,7 @@ export default function HeroSection() {
             <div className={styles.toolDisplay}>
               <div className={styles.toolEmoji}>{currentTool.icon}</div>
               <h1 className={styles.toolName}>{currentTool.title}</h1>
-              <p className={styles.toolDesc}>{currentTool.desc}</p>
+              <p className={styles.toolDesc}>{currentTool.brochure}</p>
 
               <Link href={currentTool.path} className={styles.ctaButton}>
                 立即体验

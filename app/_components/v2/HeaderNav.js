@@ -81,10 +81,10 @@ export default function HeaderNav() {
   const getMegaMenuL2List = () => {
     const l2List = [...subCategories.filter((sub) => sub.l1Id === activeL1Id)];
     // 将 "推荐" 插入到第一个位置
-    const hotCategory = subCategories.find((sub) => sub.id === 'hot');
-    if (hotCategory && !l2List.find((sub) => sub.id === 'hot')) {
-      l2List.unshift(hotCategory);
-    }
+    // const hotCategory = subCategories.find((sub) => sub.id === 'hot');
+    // if (hotCategory && !l2List.find((sub) => sub.id === 'hot')) {
+    //   l2List.unshift(hotCategory);
+    // }
     return l2List;
   };
 
@@ -102,7 +102,7 @@ export default function HeaderNav() {
           {menus.map((menu) => (
             <div
               key={menu.id}
-              className={`${styles.menuItem} ${activeL1Id === menu.id ? styles.menuItemActive : ''}`}
+              className={`${styles.menuItem} ${activeL1Id === menu.id ? styles.menuItemActive : ''} ${menu.id === 'hot_list' ? styles.menuItemHot : ''}`}
               onMouseEnter={() => handleL1MouseEnter(menu.id)}
               onMouseLeave={handleL1MouseLeave}
             >
@@ -118,6 +118,13 @@ export default function HeaderNav() {
               </svg>
             </div>
           ))}
+          
+          <Link href="/guestbook" className={styles.guestbookEntry}>
+            <svg className={styles.guestbookIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+            </svg>
+            <span className={styles.guestbookText}>留言板</span>
+          </Link>
         </div>
       </nav>
 

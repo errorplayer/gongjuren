@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase';
 import DailyHot from './_components/DailyHot';
 import ToolGrid from './_components/ToolGrid';
 import { TOOLS } from '@/lib/tools';
+import DeviceRedirect from './_components/DeviceRedirect';
 
 export const dynamic = 'force-dynamic';   // ← 加这一行，禁用缓存
 
@@ -13,8 +14,9 @@ export default async function Home() {
   const statsMap = stats ? Object.fromEntries(stats.map(s => [s.id, s.use_count])) : {};
 
   return (
-
-    <div className="container">
+    <>
+      <DeviceRedirect />
+      <div className="container">
       {/* <div className="ad-top">
         <p>【广告位】- 顶部横幅广告</p>
       </div> */}
@@ -28,6 +30,6 @@ export default async function Home() {
         <p>【广告位】- 底部广告</p>
       </div> */}
     </div>
-
+    </>
   );
 }

@@ -166,6 +166,10 @@ export default function SettingsPage() {
             🌙 暗色
           </button>
         </div>
+        <div className={styles.themeTip}>
+          <span className={styles.tipIcon}>💡</span>
+          <span>PC端v2版桌面暂不支持暗色模式，其他页面不受影响。敬请谅解~</span>
+        </div>
       </section>
 
       <section className={styles.settingsSection}>

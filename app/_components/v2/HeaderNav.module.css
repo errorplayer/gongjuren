@@ -26,11 +26,14 @@
 
 /* 顶部导航栏容器 */
 .header {
-  position: relative !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
   width: 100%;
   background: var(--bg-white) !important;
   border-bottom: 1px solid var(--border-light) !important;
-  z-index: 100 !important;
+  z-index: 1000 !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 /* 导航栏 */
@@ -38,10 +41,11 @@
   display: flex !important;
   align-items: center !important;
   justify-content: left;
-  height: 60px !important;
+  height: 30px !important;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 120px;
+  padding: 0 120px 0 130px;
+  gap: 30px;
 }
 
 /* 左侧 Logo */
@@ -55,7 +59,7 @@
   display: flex;
   align-items: center;
   gap: 18px;
-  margin: 0 100px !important;
+  margin: 0 20px !important;
 }
 
 /* 一级菜单项 */
@@ -68,9 +72,10 @@
   border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
   position: relative;
-  font-size: 15px;
   font-weight: 500;
   color: var(--text-primary);
+
+  font-size: 16px;
 }
 
 .menuItem:hover {
@@ -79,6 +84,64 @@
 
 .menuItemActive {
   color: var(--primary-blue);
+}
+
+.menuItemHot {
+  color: #df4f19 !important;
+}
+
+/* 留言板入口 - 轻奢胶囊按钮 */
+.guestbookEntry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  margin-left: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #8b6914;
+  background: linear-gradient(135deg, rgba(184, 134, 11, 0.06), rgba(212, 165, 116, 0.08));
+  border: 1px solid rgba(184, 134, 11, 0.2);
+  border-radius: 20px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.guestbookEntry::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #b8860b, #d4a574);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.guestbookEntry:hover {
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(184, 134, 11, 0.25);
+  transform: translateY(-1px);
+}
+
+.guestbookEntry:hover::before {
+  opacity: 1;
+}
+
+.guestbookEntry>* {
+  position: relative;
+  z-index: 1;
+}
+
+.guestbookIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.guestbookText {
+  white-space: nowrap;
 }
 
 .menuItemActive::after {
@@ -115,7 +178,8 @@
   border-top: 1px solid var(--border-light) !important;
   box-shadow: var(--shadow-lg) !important;
   z-index: 999 !important;
-  animation: slideDown 0.2s ease;
+  animation: slideDown 0.8s ease;
+  height: auto;
 }
 
 @keyframes slideDown {
@@ -123,6 +187,7 @@
     opacity: 0;
     transform: translateY(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -132,20 +197,20 @@
 .megaMenuInner {
   display: flex;
   justify-content: center;
-  gap: 60px;
+  gap: 30px;
   max-width: 1400px;
-  margin: 0 auto;
-  padding: 24px 200px;
+  padding: 12px 30px;
+  margin: 20px 110px 120px !important;
 }
 
 /* L2 分类列表 - 左侧 */
 .l2List {
-  display: flex;
   flex-direction: column;
-  gap: 4px;
-  width: 180px;
   flex-shrink: 0;
+  gap: 4px;
+  width: 190px !important;
   padding-top: 8px;
+  display: flex;
 }
 
 /* L2 分类项 */
@@ -194,11 +259,11 @@
 
 /* 工具卡片区域 - 右侧 */
 .toolCards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
   flex: 1;
-  min-width: 0;
+  grid-template-columns: repeat(3, 240px);
+  gap: 12px;
+  display: grid;
+  justify-content: start;
 }
 
 /* 工具卡片 - 横向紧凑布局 */
@@ -211,8 +276,10 @@
   background: var(--bg-light);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-md);
-  text-decoration: none;
   transition: all var(--transition-normal);
+  gap: 20px;
+  padding: 10px 10px;
+  height: 80px;
 }
 
 .toolCard:hover {

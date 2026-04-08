@@ -3,6 +3,7 @@
 .hero {
   background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 50%, #faf5ff 100%);
   min-height: 520px;
+  width: 100%;
 }
 
 .heroInner {
@@ -12,6 +13,7 @@
   display: flex;
   gap: 48px;
   align-items: stretch;
+  width: 100%;
 }
 
 /* 左侧竖排列表 */

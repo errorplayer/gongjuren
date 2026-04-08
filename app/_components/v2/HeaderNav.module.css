@@ -8,6 +8,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   border-bottom: 1px solid #e6e6e6;
   padding: 0;
+  width: 100%;
 }
 
 .headerInner {
@@ -19,6 +20,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 40px;
+  width: 100%;
 }
 
 
@@ -73,6 +75,7 @@
   top: 100%;
   left: 0;
   right: 0;
+  width: 100vw;
   background: #ffffff;
   border-top: 1px solid #e6e6e6;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);

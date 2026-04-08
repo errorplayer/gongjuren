@@ -1,11 +1,30 @@
 /* ===== V2 路由组：完全隔离样式 ===== */
-/* 目的：覆盖根布局 globals.css 的影响，实现视觉隔离 */
+/* 目的：覆盖根布局 globals.css 和 Tailwind preflight 的影响 */
 
-/* 1. 隐藏根布局中的旧组件（通过其特有类名定位，不影响 V2 自身组件） */
+/* 1. 隐藏根布局中的旧组件 */
 .v2-root ~ header,
 .v2-root ~ .flip-clock,
 .v2-root ~ .daily-quote {
   display: none !important;
+}
+
+/* ===== 关键修复：V2 根容器隔离 ===== */
+.v2-root {
+  width: 100%;
+  min-width: 0;
+}
+
+.v2-root * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
+}
+
+/* 确保 V2 内所有全宽容器正确居中 */
+.v2-root .header,
+.v2-root .hero {
+  width: 100%;
 }
 
 /* 2. 重置 body 为腾讯云风格 */
@@ -19,13 +38,6 @@ body {
 .v2-root a {
   color: #2496ED;
   text-decoration: none;
-}
-
-.v2-root * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
 }
 
 /* HeroSection 响应式断点 */

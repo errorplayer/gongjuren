@@ -1,20 +1,22 @@
 import './globals.css';
 import Script from 'next/script';
 import ConditionalHeader from './_components/ConditionalHeader';
+import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/config';
+
 
 export const metadata = {
   // 标题（关键词前置，不超过60字符）
-  title: "520Tool - 免费在线实用工具大全 | 在线工具集合",
+  title: SITE_NAME,
 
   // 描述（120-150字符，包含核心关键词，吸引点击）
-  description: "520Tool 提供免费无广告在线实用工具，包含文本润色、简历辅助、二维码生成、格式转换、计算查询、开发辅助等，还有摸鱼聊天室，一键使用，无需下载，持续更新。",
+  description: SITE_DESCRIPTION,
 
   // 关键词（百度友好，5-8个最核心）
   keywords: [
     "在线工具",
     "免费在线工具",
     "实用工具",
-    "工具大全",
+    "520工具",
     "在线工具集合",
     "无广告工具",
     "摸鱼聊天室"
@@ -47,8 +49,8 @@ export const metadata = {
 
   // 开放图谱（社交分享预览，SEO 加分项）
   openGraph: {
-    title: "520Tool - 免费在线实用工具大全",
-    description: "多种免费在线工具，无广告，无需登录，一键使用，无需下载",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
     url: "https://www.520tool.cc/",
     siteName: "520Tool",
     locale: "zh_CN",
@@ -57,10 +59,10 @@ export const metadata = {
 
   // Twitter 卡片
   twitter: {
-    title: "520Tool - 免费在线实用工具大全",
+    title: SITE_NAME,
     description: "多种免费在线工具，无广告，一键使用",
     card: "summary_large_image",
-    site: "@520tool"
+    site: "@520tool.cc"
   },
 
   //  canonical 主域名（防止重复收录）

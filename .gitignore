@@ -39,9 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+next.config.ts
 
 # supabase migrations
 supabase/migrations
 
 
-next.config.ts
+

@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // 允许开发环境跨域访问的域名
-  allowedDevOrigins: ['127.0.0.1', 'localhost', '192.168.199.199'],
+  allowedDevOrigins: ['127.0.0.1', 'localhost', '192.168.199.199','192.168.180.106'],
   // 兼容内联样式中的Webkit前缀（如-webkit-appearance）
   compiler: {
     styledComponents: true,

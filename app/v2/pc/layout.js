@@ -1,9 +1,10 @@
 import HeaderNav from '@/app/_components/v2/HeaderNav';
 import styles from './page.module.css';
+import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/config';
 
 export const metadata = {
-  title: '520Tool - 520.tool',
-  description: '精选好用的免费在线工具箱',
+  title: SITE_NAME,
+  description: SITE_DESCRIPTION,
 };
 
 export default function VPCLayout({ children }) {

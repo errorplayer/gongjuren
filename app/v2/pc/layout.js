@@ -2,6 +2,7 @@ import HeaderNav from '@/app/_components/v2/HeaderNav';
 import styles from './page.module.css';
 import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/config';
 import { fetchToolStatsMap } from '@/lib/tool-categories';
+export const dynamic = 'force-dynamic';   // ← 新增这行
 
 export const metadata = {
   title: SITE_NAME,

@@ -34,17 +34,19 @@
   border-bottom: 1px solid var(--border-light) !important;
   z-index: 1000 !important;
   box-shadow: var(--shadow-sm) !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 120px;
+  height: 48px;
 }
 
 /* 导航栏 */
 .nav {
   display: flex !important;
   align-items: center !important;
-  justify-content: left;
-  height: 30px !important;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 120px 0 130px;
+  justify-content: space-evenly;
+  height: 100% !important;
   gap: 30px;
 }
 
@@ -58,8 +60,14 @@
 .navRight {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 40px;
   margin: 0 20px !important;
+}
+
+/* 留言板区域 - 独立块，靠右 */
+.navGuestbook {
+  display: flex;
+  align-items: center;
 }
 
 /* 一级菜单项 */
@@ -86,8 +94,46 @@
   color: var(--primary-blue);
 }
 
+/* ====== 摸鱼专栏 - 玫瑰粉紫轻奢动效 ====== */
 .menuItemHot {
-  color: #df4f19 !important;
+  color: transparent !important;
+  background: linear-gradient(135deg, #e84a7a, #f06292, #c458b4);
+  background-clip: text;
+  -webkit-background-clip: text;
+  font-weight: 600;
+  position: relative;
+}
+
+/* 微光呼吸 - 底部粉紫光晕 */
+.menuItemHot::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, rgba(232, 74, 122, 0.5), transparent);
+  animation: hotBreath 2.5s ease-in-out infinite;
+}
+
+@keyframes hotBreath {
+  0%, 100% { opacity: 0.3; width: 60%; }
+  50% { opacity: 0.65; width: 80%; }
+}
+
+/* 悬停强化 */
+.menuItemHot:hover {
+  background: linear-gradient(135deg, #f06292, #f48fb1, #d471ae);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.menuItemHot:hover::after {
+  opacity: 1;
+  width: 90%;
+  box-shadow: 0 0 8px rgba(232, 74, 122, 0.4);
 }
 
 /* 留言板入口 - 轻奢胶囊按钮 */
@@ -199,7 +245,7 @@
   justify-content: center;
   gap: 30px;
   max-width: 1400px;
-  padding: 12px 30px;
+  padding: 12px 120px;
   margin: 20px 110px 120px !important;
 }
 

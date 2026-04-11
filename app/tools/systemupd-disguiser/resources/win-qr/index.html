@@ -1,0 +1,132 @@
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>window err</title>
+    <style>
+        body { 
+            font-family:Segoe UI, Arial;
+            background-color: #0f81eb;
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .content {
+            width: 700px;
+            user-select: none;
+            color: #fff;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .pp{
+            font-size: 100px;
+            margin: 0;
+            height: 100px;
+            line-height: 100px;
+            margin-bottom: 20px;
+        }
+        .py{
+            font-size:20pt; 
+            margin:0; 
+            padding:0;
+        }
+        .pa{
+            font-size:14pt; 
+            color:#fff; 
+            padding:0;
+            line-height:32px;
+            margin: 0;
+        }
+        /* 图片 + 文字 水平对齐容器 */
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        /* 右侧文字区域 */
+        .text-box {
+            flex: 1;
+        }
+        /* 白色外框（你要的白边区块） */
+        .img-container {
+            width: 180px;
+            height: 180px;
+            background: #ffffff; /* 白色背景 */
+            padding: 8px; /* 白边大小：稍微大一点 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* 图片本身 */
+        .pimg{
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        .timerps{
+            font-size: 20pt;
+            margin: 0;
+            padding: 0;
+        }
+        .progress {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+    </head>
+<body>
+
+    <div class="content">
+        <p class="pp">:(</p>
+        <p class="py">
+            您的电脑遇到问题，需要重新启动。<br>
+            我们只收集某些错误信息，然后为您重新启动。
+        </p>
+        <br>
+        
+        <p class="timerps progress">
+            <span id="timer">0%</span> 完成
+        </p>
+        <br>
+
+        <!-- 图片白框 + 文字 顶部对齐 -->
+        <div class="info-row">
+            <div class="img-container">
+                <img src="win_err.png" class="pimg" alt="error">
+            </div>
+            <div class="text-box">
+                <p class="pa">
+                    有关此问题和可能修复的更多信息，请访问<br>
+                    http://windows.com/stopcode
+                    <br><br>
+                    如果致电支持人员，请向他们提供以下信息：<br>
+                    终止代码:  SYS_EXCEPTION_PONIES_NOT_HANDLED
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 进度条
+        let count = 0;
+        const timer = setInterval(() => {
+            count++;
+            if (count > 100) count = 100;
+            document.getElementById('timer').innerText = count + '%';
+            if (count === 100) clearInterval(timer);
+        }, 4080);
+
+        // 禁止右键
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+</body>
+</html>

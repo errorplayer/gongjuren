@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import Logo from '@/app/_components/Logo';
-import { TOOL_CATEGORIES, getToolsByCategory } from '@/lib/tool-categories';
+import { TOOL_CATEGORIES, getToolsByGroup, enrichToolsWithStats } from '@/lib/tool-categories';
 import styles from './HeaderNav.module.css';
 
 const { menus, subCategories } = TOOL_CATEGORIES;
@@ -13,7 +13,7 @@ const getSubCategoriesByL1 = (l1Id) => {
   return subCategories.filter((sub) => sub.l1Id === l1Id);
 };
 
-export default function HeaderNav() {
+export default function HeaderNav({ statsMap = {} }) {
   const [activeL1Id, setActiveL1Id] = useState(null);
   const [activeL2Id, setActiveL2Id] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,12 +25,12 @@ export default function HeaderNav() {
     closingRef.current = false;
     setIsClosing(false);
     setActiveL1Id(l1Id);
-    
+
     // 获取该 L1 对应的 L2 分类
     const l2Categories = getSubCategoriesByL1(l1Id);
     if (l2Categories.length > 0) {
-      // 默认选中第二个 L2（如果有的话）
-      setActiveL2Id(l2Categories[1]?.id || l2Categories[0].id);
+      // 不需要默认选中第二个 L2
+      setActiveL2Id(l2Categories[0].id);
     }
     setIsMenuOpen(true);
   };
@@ -73,9 +73,12 @@ export default function HeaderNav() {
 
   // 获取当前 L1 对应的 L2 分类
   const currentL2Categories = activeL1Id ? getSubCategoriesByL1(activeL1Id) : [];
-  
-  // 获取当前 L2 分类对应的工具
-  const currentTools = activeL2Id ? getToolsByCategory(activeL2Id) : [];
+
+  // 获取当前 L2 分类对应的工具，并注入真实 usageCount
+  const currentTools = useMemo(() => {
+    if (!activeL2Id) return [];
+    return enrichToolsWithStats(getToolsByGroup(activeL2Id), statsMap);
+  }, [activeL2Id, statsMap]);
 
   // 构建 MegaMenu 左侧分类列表（推荐始终第一位）
   const getMegaMenuL2List = () => {
@@ -97,40 +100,42 @@ export default function HeaderNav() {
         <div className={styles.navLeft}>
           <Logo size="dm" showText href="/v2/pc" />
         </div>
-        
+
         <div className={styles.navRight}>
           {menus.map((menu) => (
             <div
               key={menu.id}
-              className={`${styles.menuItem} ${activeL1Id === menu.id ? styles.menuItemActive : ''} ${menu.id === 'hot_list' ? styles.menuItemHot : ''}`}
+              className={`${styles.menuItem} ${activeL1Id === menu.id ? styles.menuItemActive : ''} ${menu.id === 'moyu' ? styles.menuItemHot : ''}`}
               onMouseEnter={() => handleL1MouseEnter(menu.id)}
               onMouseLeave={handleL1MouseLeave}
             >
               <span className={styles.menuLabel}>{menu.label}</span>
-              <svg 
+              <svg
                 className={`${styles.arrowIcon} ${isMenuOpen && activeL1Id === menu.id ? styles.arrowUp : ''}`}
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
                 strokeWidth="2"
               >
                 <path d="M6 9l6 6 6-6" />
               </svg>
             </div>
           ))}
-          
-          <Link href="/guestbook" className={styles.guestbookEntry}>
-            <svg className={styles.guestbookIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-            </svg>
-            <span className={styles.guestbookText}>留言板</span>
-          </Link>
         </div>
+        <div className={styles.navGuestbook}>
+        <Link href="/guestbook" className={styles.guestbookEntry}>
+          <svg className={styles.guestbookIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+          </svg>
+          <span className={styles.guestbookText}>留言板</span>
+        </Link>
+      </div>
       </nav>
+      
 
       {/* Mega Menu 全幅下拉 */}
       {isMenuOpen && activeL1Id && (
-        <div 
+        <div
           className={styles.megaMenu}
           onMouseEnter={handleMegaMenuMouseEnter}
           onMouseLeave={handleMegaMenuMouseLeave}
@@ -143,6 +148,7 @@ export default function HeaderNav() {
                   key={sub.id}
                   className={`${styles.l2Item} ${activeL2Id === sub.id ? styles.l2ItemActive : ''}`}
                   onClick={() => setActiveL2Id(sub.id)}
+                  onMouseEnter={() => setActiveL2Id(sub.id)}   // ← 新增这行
                 >
                   <span className={styles.l2Icon}>{sub.icon}</span>
                   <span className={styles.l2Label}>{sub.label}</span>
@@ -157,8 +163,8 @@ export default function HeaderNav() {
             <div className={styles.toolCards}>
               {currentTools.length > 0 ? (
                 currentTools.map((tool) => (
-                  <Link 
-                    key={tool.id} 
+                  <Link
+                    key={tool.id}
                     href={tool.path}
                     className={styles.toolCard}
                   >
@@ -170,8 +176,8 @@ export default function HeaderNav() {
                     {tool.tags.length > 0 && (
                       <div className={styles.toolCardTags}>
                         {tool.tags.map((tag) => (
-                          <span 
-                            key={tag} 
+                          <span
+                            key={tag}
                             className={`${styles.toolTag} ${tag === 'HOT' ? styles.tagHot : styles.tagAi}`}
                           >
                             {tag === 'HOT' ? '🔥' : '🤖'} {tag}

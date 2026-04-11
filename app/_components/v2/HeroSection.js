@@ -2,11 +2,14 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { getHotTools } from '@/lib/tool-categories';
+import { getAllTools, enrichToolsWithStats } from '@/lib/tool-categories';
 import styles from './HeroSection.module.css';
 
-export default function HeroSection() {
-  const hotTools = getHotTools();
+export default function HeroSection({ statsMap = {} }) {
+  // 先用 DB 数据 enrich，再按真实 usageCount 排序，取 top 3
+  const hotTools = enrichToolsWithStats(getAllTools(), statsMap)
+    .sort((a, b) => b.usageCount - a.usageCount)
+    .slice(0, 5);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef(null);

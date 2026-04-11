@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Windows 7 Update</title>
+	<style>
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+	body {
+		background: url(win7.jpg) #054696 no-repeat center center fixed;
+		background-size: cover;
+		text-align: center;
+		cursor: none;
+		width: 100vw;
+		height: 100vh;
+		overflow: hidden;
+		user-select: none;
+	}
+	/* 核心居中容器 */
+	.center-box {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 20px;
+		font-family: Segoe UI, Arial;
+		font-size: 24px;
+		color: #fff;
+		text-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	}
+/* 百分比 + 完成 同行显示 */
+	.progress-row {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+	/* 加载动画 + 文字行 */
+	.loading-row {
+		display: flex;
+		align-items: center;
+		gap: 15px;
+	}
+	/* 底部logo */
+	.win-logo {
+		position: absolute;
+		bottom: 30px;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+	</style>
+</head>
+<body>
+
+	<div class="center-box">
+		<div class="progress-row">
+<img src="win7.gif" alt="loading">  
+			<span id="ref"> 正在配置 Windows Updates</span>
+		</div>
+                <!-- 这一行：百分比 和 完成 同行显示 -->
+		<div class="progress-row">
+<!-- 加载动画 GIF -->
+			
+			<a id="timer">0%</a>
+			<span>完成</span>
+		</div>
+		<div>请不要关闭您的计算机</div>
+	</div>
+
+	<!-- 底部Windows7 logo -->
+	<img src="win7_logo.png" class="win-logo" alt="Windows 7">
+
+	<script>
+		// 简单清晰的进度条（删除了恶意混淆代码）
+		let count = 0;
+		const timer = setInterval(() => {
+			count++;
+			if (count > 100) count = 100;
+			document.getElementById('timer').innerText = count + '%';
+			if (count === 100) clearInterval(timer);
+		}, 4080);
+
+		// 禁止右键菜单
+		document.addEventListener('contextmenu', e => e.preventDefault());
+	</script>
+</body>
+</html>

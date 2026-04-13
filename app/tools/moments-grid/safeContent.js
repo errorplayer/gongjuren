@@ -281,13 +281,11 @@ export default function SafeContent() {
   // 替换原有的download函数
   function download() {
     // 移动端优先打包为ZIP，PC端可保留原多文件下载（也可统一ZIP）
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    if (isMobile) {
-      downloadAsZip(); // 移动端打包ZIP
-    } else {
-      downloadMultipleFiles(); // PC端保留原多文件下载
-    }
+
+    downloadAsZip(); // 移动端打包ZIP
+
   }
 
   // 新增：打包为ZIP下载
@@ -385,78 +383,68 @@ export default function SafeContent() {
   }
 
   return (<div className={styles.main}>
-      <div className={styles.toolContainer}>
-        <h2 className={styles.toolTitle}>朋友圈九宫格切图</h2>
-        <p className={styles.toolDesc}>保护隐私 · 本地处理 · 使用更放心</p>
+    <div className={styles.toolContainer}>
+      <h2 className={styles.toolTitle}>朋友圈九宫格切图</h2>
+      <p className={styles.toolDesc}>保护隐私 · 本地处理 · 使用更放心</p>
 
-        {isMobile ? (
-          <div className={styles.uploadBoxDisabled}>
-            <div className={styles.uploadDisabledIcon}>🖥️</div>
-            <div className={styles.uploadText}>目前仅支持PC端</div>
-            <div className={styles.uploadTip}>请在电脑浏览器中打开本页面使用</div>
-          </div>
-        ) : (
-          <label ref={uploadRef} className={styles.uploadBox}>
-            <input type="file" accept="image/*" onChange={onUpload} />
-            <div className={styles.uploadText}>点击上传图片</div>
-            <div className={styles.uploadTip}>支持 10M 以内 JPG / PNG 图片</div>
-          </label>
-        )}
+      {isMobile ? (
+        <div className={styles.uploadBoxDisabled}>
+          <div className={styles.uploadDisabledIcon}>🖥️</div>
+          <div className={styles.uploadText}>目前仅支持PC端</div>
+          <div className={styles.uploadTip}>请在电脑浏览器中打开本页面使用</div>
+        </div>
+      ) : (
+        <label ref={uploadRef} className={styles.uploadBox}>
+          <input type="file" accept="image/*" onChange={onUpload} />
+          <div className={styles.uploadText}>点击上传图片</div>
+          <div className={styles.uploadTip}>支持 10M 以内 JPG / PNG 图片</div>
+        </label>
+      )}
 
-        <div ref={controlRef} className={`${styles.controlPanel} ${styles.hidden}`}>
-          <div className={styles.colorGroup}>
-            <span className={styles.colorTitle}>留白颜色：</span>
-            <div className={`${styles.colorBtn} ${styles.colorWhite} ${activeColor === '#ffffff' ? styles.colorBtnActive : ''}`} onClick={() => setColor('#ffffff')} />
-            <div className={`${styles.colorBtn} ${styles.colorBlack} ${activeColor === '#000000' ? styles.colorBtnActive : ''}`} onClick={() => setColor('#000000')} />
-            <div className={`${styles.colorBtn} ${styles.colorTransparent} ${activeColor === 'transparent' ? styles.colorBtnActive : ''}`} onClick={() => setColor('transparent')} />
-          </div>
-
-          <div className={styles.templateGroup}>
-            <span className={styles.templateTitle}>边框模板：</span>
-            {templates.map(tpl => (
-              <div
-                key={tpl.id}
-                className={`${styles.templateBtn} ${selectedTemplateRef.current === tpl.id ? styles.templateBtnActive : ''}`}
-                onClick={() => { selectedTemplateRef.current = tpl.id; setTemplateKey(k => k + 1); redraw(); }}
-                title={tpl.name}
-                style={{ backgroundImage: `url(/templates/moments-grid/${tpl.id}.svg)` }}
-              />
-            ))}
-          </div>
-
-          <div className={styles.scaleGroup}>
-            <span className={styles.scaleTitle}>图片缩放：</span>
-            <input ref={scaleRef} type="range" min="0.5" max="2" step="0.01" defaultValue="1" className={styles.scaleSlider} onInput={onScale} />
-          </div>
-
-          <div className={styles.rotateGroup}>
-            <span className={styles.rotateTitle}>旋转：</span>
-            <button className={styles.rotateBtn} onClick={rotateImg}>↻</button>
-          </div>
+      <div ref={controlRef} className={`${styles.controlPanel} ${styles.hidden}`}>
+        <div className={styles.colorGroup}>
+          <span className={styles.colorTitle}>留白颜色：</span>
+          <div className={`${styles.colorBtn} ${styles.colorWhite} ${activeColor === '#ffffff' ? styles.colorBtnActive : ''}`} onClick={() => setColor('#ffffff')} />
+          <div className={`${styles.colorBtn} ${styles.colorBlack} ${activeColor === '#000000' ? styles.colorBtnActive : ''}`} onClick={() => setColor('#000000')} />
+          <div className={`${styles.colorBtn} ${styles.colorTransparent} ${activeColor === 'transparent' ? styles.colorBtnActive : ''}`} onClick={() => setColor('transparent')} />
         </div>
 
-        <div ref={editWrapperRef} className={`${styles.editWrapper} ${styles.hidden}`}>
-          <canvas ref={canvasRef} className={styles.editCanvas} />
+        <div className={styles.templateGroup}>
+          <span className={styles.templateTitle}>边框模板：</span>
+          {templates.map(tpl => (
+            <div
+              key={tpl.id}
+              className={`${styles.templateBtn} ${selectedTemplateRef.current === tpl.id ? styles.templateBtnActive : ''}`}
+              onClick={() => { selectedTemplateRef.current = tpl.id; setTemplateKey(k => k + 1); redraw(); }}
+              title={tpl.name}
+              style={{ backgroundImage: `url(/templates/moments-grid/${tpl.id}.svg)` }}
+            />
+          ))}
         </div>
 
-        <div ref={previewRef} className={styles.gridPreview}></div>
-
-        <div ref={btnGroupRef} className={`${styles.btnGroup} ${styles.hidden}`}>
-          <button className={`${styles.actionBtn} ${styles.btnReset}`} onClick={resetTool}>重新上传</button>
-          <button className={`${styles.actionBtn} ${styles.btnDownload}`} onClick={download}>
-            {/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)
-              ? '下载九宫格(ZIP包)'
-              : '下载九宫格'
-            }
-          </button>
-          {/* 移动端添加长按提示 */}
-          {/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent) && (
-            <p className={styles.mobileTip}>
-              提示：也可长按预览图单张保存
-            </p>
-          )}
+        <div className={styles.scaleGroup}>
+          <span className={styles.scaleTitle}>图片缩放：</span>
+          <input ref={scaleRef} type="range" min="0.5" max="2" step="0.01" defaultValue="1" className={styles.scaleSlider} onInput={onScale} />
         </div>
 
+        <div className={styles.rotateGroup}>
+          <span className={styles.rotateTitle}>旋转：</span>
+          <button className={styles.rotateBtn} onClick={rotateImg}>↻</button>
+        </div>
       </div>
-    </div>);
+
+      <div ref={editWrapperRef} className={`${styles.editWrapper} ${styles.hidden}`}>
+        <canvas ref={canvasRef} className={styles.editCanvas} />
+      </div>
+
+      <div ref={previewRef} className={styles.gridPreview}></div>
+
+      <div ref={btnGroupRef} className={`${styles.btnGroup} ${styles.hidden}`}>
+        <button className={`${styles.actionBtn} ${styles.btnReset}`} onClick={resetTool}>重新上传</button>
+        <button className={`${styles.actionBtn} ${styles.btnDownload}`} onClick={download}>
+          下载九宫格
+        </button>
+      </div>
+    </div>
+  </div>);
 }

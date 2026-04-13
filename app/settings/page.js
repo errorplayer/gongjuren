@@ -172,7 +172,8 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      <section className={styles.settingsSection}>
+
+      {isTouchDevice ? (<section className={styles.settingsSection}>
         <h2 className={styles.sectionTitle}>📌 首页工具排列</h2>
         <p className={styles.helpText}>
           {isTouchDevice ? '使用上下箭头调整顺序，勾选控制显示/隐藏' : '拖拽手柄排序（桌面端），勾选控制显示/隐藏'}
@@ -237,8 +238,8 @@ export default function SettingsPage() {
               </li>
             );
           })}
-        </ul>
-
+        </ul></section>) : (<br />)}
+      <section className={styles.settingsSection}>
         <div className={styles.actionButtons}>
           <button className={`${styles.actionButton} ${styles.danger}`} onClick={handleReset}>
             恢复默认

@@ -167,6 +167,7 @@ export default function HeaderNav({ statsMap = {} }) {
                     key={tool.id}
                     href={tool.path}
                     className={styles.toolCard}
+                    {...(tool.path.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                   >
                     <div className={styles.toolCardIcon}>{tool.icon}</div>
                     <div className={styles.toolCardContent}>

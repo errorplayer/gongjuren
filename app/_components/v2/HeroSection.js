@@ -96,7 +96,11 @@ export default function HeroSection({ statsMap = {} }) {
               <h1 className={styles.toolName}>{currentTool.title}</h1>
               <p className={styles.toolDesc}>{currentTool.brochure}</p>
 
-              <Link href={currentTool.path} className={styles.ctaButton}>
+              <Link
+                href={currentTool.path}
+                className={styles.ctaButton}
+                {...(currentTool.path.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              >
                 立即体验
                 <svg
                   viewBox="0 0 24 24"

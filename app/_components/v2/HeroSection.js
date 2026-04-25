@@ -75,10 +75,14 @@ export default function HeroSection({ statsMap = {} }) {
                     <span
                       key={tag}
                       className={`${styles.tag} ${
-                        tag === 'HOT' ? styles.tagHot : styles.tagAi
+                        tag === 'HOT' ? styles.tagHot : 
+                        tag === 'NEW' ? styles.tagNew : 
+                        styles.tagAi
                       }`}
                     >
-                      {tag === 'HOT' ? '🔥' : '🤖'} {tag}
+                      {tag === 'HOT' ? '🔥' : 
+                       tag === 'NEW' ? '✨' : 
+                       '🤖'} {tag}
                     </span>
                   ))}
                 </div>

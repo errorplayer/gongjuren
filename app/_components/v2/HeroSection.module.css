@@ -132,6 +132,11 @@
   color: #667eea;
 }
 
+.tagNew {
+  background: linear-gradient(135deg, rgba(0, 200, 83, 0.15) 0%, rgba(67, 160, 71, 0.15) 100%);
+  color: #00c853;
+}
+
 .activeBar {
   position: absolute;
   left: 0;

@@ -47,7 +47,6 @@
   align-items: center !important;
   justify-content: space-evenly;
   height: 100% !important;
-  gap: 30px;
 }
 
 /* 左侧 Logo */
@@ -142,7 +141,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 16px;
-  margin-left: 8px;
+  margin-left: 18px !important;
   font-size: 13px;
   font-weight: 500;
   color: #8b6914;
@@ -182,6 +181,56 @@
 }
 
 .guestbookIcon {
+  width: 14px;
+  height: 14px;
+}
+
+/* 记事本入口 - 黑底白字胶囊按钮 */
+.notepadEntry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  margin-left: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffffff;
+  background: #000000;
+  border: 1px solid #333333;
+  border-radius: 20px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.notepadEntry::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: #333333;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.notepadEntry:hover {
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.notepadEntry:hover::before {
+  opacity: 1;
+}
+
+.notepadEntry>* {
+  position: relative;
+  z-index: 1;
+}
+
+.notepadIcon {
   width: 14px;
   height: 14px;
 }

@@ -13,7 +13,7 @@ function sanitizeNickname(name) {
 
 export async function POST(request) {
     try {
-        const { nickname, content } = await request.json();
+        const { nickname, content, contact } = await request.json();
 
         if (!content || content.trim().length === 0) {
             return Response.json({ error: '留言内容不能为空' }, { status: 400 });
@@ -28,6 +28,7 @@ export async function POST(request) {
             .insert({
                 nickname: sanitizeNickname(nickname),
                 content: content.trim(),
+                contact: contact || '',
             });
 
         if (error) {

@@ -31,6 +31,7 @@ function formatTime(dateStr) {
 export default function GuestbookPage() {
     const [nickname, setNickname] = useState('游客');
     const [content, setContent] = useState('');
+    const [contact, setContact] = useState('');
     const [captcha, setCaptcha] = useState(generateCaptcha);
     const [captchaInput, setCaptchaInput] = useState('');
     const [submitting, setSubmitting] = useState(false);
@@ -77,7 +78,7 @@ export default function GuestbookPage() {
             const res = await fetch('/api/guestbook/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nickname, content }),
+                body: JSON.stringify({ nickname, content, contact }),
             });
 
             const json = await res.json();
@@ -86,6 +87,7 @@ export default function GuestbookPage() {
                 setErrorMsg(json.error);
             } else {
                 setContent('');
+                setContact('');
                 setCaptchaInput('');
                 setCaptcha(generateCaptcha());
                 fetchMessages();
@@ -115,10 +117,21 @@ export default function GuestbookPage() {
                         <Link href="/settings" className="guestbook-nickname-link">到设置修改昵称</Link>
                     </div>
                     <div className="guestbook-row">
+                        <input
+                            type="text"
+                            value={contact}
+                            onChange={(e) => setContact(e.target.value)}
+                            placeholder="联系方式（选填，仅管理员可见）"
+                            maxLength={80}
+                            className="guestbook-input"
+                        />
+                        <span className="guestbook-char-count">{contact.length}/80</span>
+                    </div>
+                    <div className="guestbook-row">
                         <textarea
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
-                            placeholder="写下你想说的话..."
+                            placeholder="写下你想说的话，对本网站的建议或意见都可以..."
                             maxLength={500}
                             className="guestbook-input guestbook-textarea"
                         />
